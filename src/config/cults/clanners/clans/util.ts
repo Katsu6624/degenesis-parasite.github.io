@@ -22,6 +22,7 @@ export const clanRank =
       parentRanks,
       isOutsideHierarchy,
       hierarchyLevelOverride,
-      clan.name
+      clan.name,
+      clan
     )
   }

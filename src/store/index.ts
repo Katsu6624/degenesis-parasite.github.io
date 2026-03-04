@@ -56,6 +56,7 @@ export type State = {
   gender: string
   height: string
   weight: string
+  isLoading: boolean
 }
 
 export const useCharacterStore = defineStore('character', {
@@ -77,7 +78,8 @@ export const useCharacterStore = defineStore('character', {
     age: '',
     gender: '',
     height: '',
-    weight: ''
+    weight: '',
+    isLoading: false
   }),
   getters: {
     attributeValue:
@@ -253,7 +255,9 @@ export const useCharacterStore = defineStore('character', {
   },
   actions: {
     loadCharacter(character: Character) {
+      this.isLoading = true
       this.$reset()
+      this.isLoading = true  // $reset() remet isLoading à false, on le remet à true
       this.setCharacterName(character.name)
       this.editorMode = character.editorMode ?? EditorMode.Default
       character.attributes.forEach(([name, v]) => {
@@ -298,6 +302,7 @@ export const useCharacterStore = defineStore('character', {
       this.gender = character.gender || ''
       this.height = character.height || ''
       this.weight = character.weight || ''
+      this.isLoading = false
     },
     adjustProperties() {
       if (this.editorMode == EditorMode.HardLimits) {
@@ -477,20 +482,13 @@ export const useCharacterStore = defineStore('character', {
           }
         }
       }
-      if (
-        potential.isAttainable(
-          this.cult,
-          this.attributeValues,
-          this.skillValues,
-          this.originValues,
-          this.rank,
-          this.mentalPowerSkill,
-          this.mentalResistanceSkill,
-          this.clan
-        )
-      ) {
-        this.potentials.set(potential, newValue())
+      
+      // In HardLimits mode, only allow eligible potentials
+      if (this.editorMode === EditorMode.HardLimits && !this.eligiblePotentials.has(potential)) {
+        return
       }
+      
+      this.potentials.set(potential, newValue())
     },
     setLegacy(legacy: Legacy, value: number) {
       const newValue = () => {
