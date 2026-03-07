@@ -225,7 +225,7 @@ export const messages = {
       displayOriginalLabels: 'Original',
     },
     characters: 'Personnages',
-    exportCharacter: 'Exporter',
+    exportCharacter: 'Exporter le JSON',
     importCharacter: 'Importer un personnage',
     editorModes: {
       label: 'Modes d\'édition',
