@@ -214,7 +214,7 @@ export const messages = {
     password: 'Mot de passe',
     enter: 'Entrer',
     confirmCharacterDeletion: 'Supprimer définitivement le personnage "{name}"?',
-    characterSheet: 'feuille de personnage',
+    characterSheet: 'feuille de personnage (pdf)',
     generateSheet: 'Générer un PDF',
     sheetOptions: 'Options de feuille',
     preferences: {
