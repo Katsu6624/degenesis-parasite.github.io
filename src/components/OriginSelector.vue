@@ -1,6 +1,7 @@
 <template>
     <div class="mb-2">
-            {{ $t('messages.origins').toUpperCase() }}
+            <span>{{ $t('messages.origins').toUpperCase() }}</span>
+            <span style="font-size:12px;color:#999;margin-left:16px">{{ store.spentPoints.origins }}/{{ config.availablePoints.origins }}</span>
           </div>
           <v-divider class="mb-4"></v-divider>
           <div v-for="origin in config.origins" v-bind:key="origin.name">

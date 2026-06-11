@@ -56,6 +56,8 @@ export type State = {
   gender: string
   height: string
   weight: string
+  experience: string
+  portrait: string
   isLoading: boolean
 }
 
@@ -79,6 +81,8 @@ export const useCharacterStore = defineStore('character', {
     gender: '',
     height: '',
     weight: '',
+    experience: '',
+    portrait: '',
     isLoading: false
   }),
   getters: {
@@ -187,6 +191,8 @@ export const useCharacterStore = defineStore('character', {
         undefined,
         state.editorMode,
         state.clan?.name,
+        state.experience,
+        state.portrait,
       )
     },
     maxEgo(): number {
@@ -207,6 +213,39 @@ export const useCharacterStore = defineStore('character', {
     },
     maxTrauma(): number {
       return this.attributeValue(Attributes.body) + this.attributeValue(Attributes.psyche)
+    },
+    // Starting wealth per cult: [amount, currency]. Total = (rankLevel + resources) * amount.
+    computedDinars(): { value: number; factor: number; currency: string; rankLevel: number; resources: number } | null {
+      const cultFactors: Record<string, [number, string]> = {
+        anabaptists: [50, 'LC'],
+        anubians: [100, 'dinars'],
+        apocalyptics: [200, 'LC'],
+        palers: [50, 'LC'],
+        chroniclers: [128, 'LC'],
+        clanners: [50, 'LC'],
+        scrappers: [50, 'LC'],
+        scourgers: [100, 'dinars'],
+        hellvetics: [50, 'LC'],
+        jehammedans: [100, 'LC'],
+        judges: [50, 'LC'],
+        neolibyans: [1000, 'dinars'],
+        spitalians: [100, 'LC']
+      }
+      if (!this.cult) return null
+      const factor = cultFactors[this.cult.name]
+      if (!factor) return null
+      const rankLevel = this.rank ? this.rank.hierarchyLevel || 1 : 1
+      let resources = 0
+      this.origins.forEach((v, o) => {
+        if (o.name === 'resources') resources = v
+      })
+      return {
+        value: (rankLevel + resources) * factor[0],
+        factor: factor[0],
+        currency: factor[1],
+        rankLevel,
+        resources
+      }
     },
     attributeValues(): Value<Attribute>[] {
       return Array.from(this.attributes.entries()).map(([a, v]) => a.withValue(v))
@@ -302,6 +341,8 @@ export const useCharacterStore = defineStore('character', {
       this.gender = character.gender || ''
       this.height = character.height || ''
       this.weight = character.weight || ''
+      this.experience = character.experience || ''
+      this.portrait = character.portrait || ''
       this.isLoading = false
     },
     adjustProperties() {

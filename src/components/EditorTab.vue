@@ -76,36 +76,81 @@
                             </v-col>
                           </v-row>
                           <v-row>
-                            <v-col cols="6" sm="3">
+                            <v-col cols="6" sm="2">
                               <v-text-field
                                 v-model="store.age"
                                 :label="$t('messages.age')"
                                 variant="underlined"
                               ></v-text-field>
                             </v-col>
-                            <v-col cols="6" sm="3">
+                            <v-col cols="6" sm="2">
                               <v-text-field
                                 v-model="store.gender"
                                 :label="$t('messages.gender')"
                                 variant="underlined"
                               ></v-text-field>
                             </v-col>
-                            <v-col cols="6" sm="3">
+                            <v-col cols="6" sm="2">
                               <v-text-field
                                 v-model="store.height"
                                 :label="$t('messages.height')"
                                 variant="underlined"
                               ></v-text-field>
                             </v-col>
-                            <v-col cols="6" sm="3">
+                            <v-col cols="6" sm="2">
                               <v-text-field
                                 v-model="store.weight"
                                 :label="$t('messages.weight')"
                                 variant="underlined"
                               ></v-text-field>
                             </v-col>
+                            <v-col cols="6" sm="2">
+                              <v-text-field
+                                v-model="store.experience"
+                                :label="$t('messages.experience')"
+                                variant="underlined"
+                              ></v-text-field>
+                            </v-col>
+                            <v-col cols="6" sm="2">
+                              <div class="text-caption text-grey-darken-1" style="font-size: 12px;">
+                                {{ $t('messages.dinars') }}
+                              </div>
+                              <div class="pt-1" style="min-height: 1.5em;">
+                                <span v-if="store.computedDinars">
+                                  {{ store.computedDinars.value }} {{ store.computedDinars.currency }}
+                                </span>
+                              </div>
+                            </v-col>
                           </v-row>
                         </v-container>
+                      </div>
+                    </v-col>
+                    <v-col cols="12" md="6" lg="4" xl="3" class="d-flex flex-column align-center justify-center">
+                      <div class="text-center">
+                        <img
+                          v-if="store.portrait"
+                          :src="store.portrait"
+                          style="max-width: 260px; max-height: 260px; border: 1px solid #888; cursor: pointer;"
+                          @click="triggerPortraitUpload"
+                        />
+                        <div
+                          v-else
+                          @click="triggerPortraitUpload"
+                          style="width: 260px; height: 260px; border: 2px dashed #888; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #888;"
+                        >
+                          Portrait
+                        </div>
+                        <input
+                          ref="portraitInput"
+                          type="file"
+                          accept="image/*"
+                          style="display: none;"
+                          @change="onPortraitChange"
+                        />
+                        <div class="mt-2">
+                          <v-btn size="small" @click="triggerPortraitUpload">Choisir</v-btn>
+                          <v-btn v-if="store.portrait" size="small" class="ml-2" @click="store.portrait = ''">Supprimer</v-btn>
+                        </div>
                       </div>
                     </v-col>
                   </v-row>
@@ -321,6 +366,32 @@ import EditorArchetypeSelector from './EditorArchetypeSelector.vue'
 const store = useCharacterStore()
 const appStore = useApplicationStore()
 const i18n = useI18n()
+
+const portraitInput = ref<HTMLInputElement | null>(null)
+const triggerPortraitUpload = () => portraitInput.value?.click()
+const onPortraitChange = (ev: Event) => {
+  const input = ev.target as HTMLInputElement
+  const file = input.files?.[0]
+  if (!file) return
+  const img = new Image()
+  img.onload = () => {
+    const canvas = document.createElement('canvas')
+    const MAX = 400
+    let w = img.width
+    let h = img.height
+    if (w > MAX || h > MAX) {
+      const s = Math.min(MAX / w, MAX / h)
+      w = Math.round(w * s)
+      h = Math.round(h * s)
+    }
+    canvas.width = w
+    canvas.height = h
+    canvas.getContext('2d')?.drawImage(img, 0, 0, w, h)
+    store.portrait = canvas.toDataURL('image/png')
+  }
+  img.src = URL.createObjectURL(file)
+  input.value = ''
+}
 
 const { attributes, availablePoints } = config
 

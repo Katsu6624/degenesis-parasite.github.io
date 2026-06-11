@@ -318,7 +318,9 @@
   function startWatcher() {
     var btn = createButton();
     setInterval(function () {
-      if (window.__charStore) {
+      // Only show the button when a character is actually open (not on the welcome page).
+      var s = window.__charStore;
+      if (s && s.characterName && s.characterName.length > 0) {
         btn.style.display = "block";
       } else {
         btn.style.display = "none";
