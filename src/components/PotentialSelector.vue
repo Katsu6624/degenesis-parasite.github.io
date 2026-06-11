@@ -5,6 +5,7 @@
   </div>
   <v-divider class="mb-4"></v-divider>
 
+  <div class="mb-2" style="font-size:12px;color:#aaa;letter-spacing:0.08em">{{ $t('messages.commonPotentials').toUpperCase() }}</div>
   <v-container>
     <v-row>
       <v-col
@@ -14,7 +15,7 @@
         md="3"
         xl="2"
         class="py-0"
-        v-for="{ potential, label, altLabel, value } in potentials()"
+        v-for="{ potential, label, altLabel, value } in commonPotentialsList()"
         v-bind:key="potential.name"
       >
         <ValueSelector
@@ -32,18 +33,54 @@
           @mouseenter="store.setHighlighted(...requirements(potential))"
           @mouseleave="store.unsetHighlighted(...requirements(potential))"
           type="potentials"
-        >
-        </ValueSelector>
+        />
       </v-col>
     </v-row>
   </v-container>
+
+  <template v-if="cultPotentialsList().length > 0">
+    <v-divider class="my-4"></v-divider>
+    <div class="mb-2" style="font-size:12px;color:#aaa;letter-spacing:0.08em">{{ $t('messages.cultPotentials', { cult: $t(`culturesConceptsCults.${store.cult.name}`) }).toUpperCase() }}</div>
+    <v-container>
+      <v-row>
+        <v-col
+          cols="12"
+          xs="12"
+          sm="6"
+          md="3"
+          xl="2"
+          class="py-0"
+          v-for="{ potential, label, altLabel, value } in cultPotentialsList()"
+          v-bind:key="potential.name"
+        >
+          <ValueSelector
+            :name="potential.name"
+            :label="label"
+            :altLabel="altLabel"
+            :value="value"
+            :max="1"
+            :count="3"
+            :active="store.editorMode === EditorMode.HardLimits ? store.eligiblePotentials.has(potential) : true"
+            :ineligible="store.editorMode === EditorMode.SoftLimits && !store.eligiblePotentials.has(potential)"
+            :min="config.pointLimits.potentials.min"
+            @change="(v) => store.setPotential(potential, v)"
+            :display-max="store.editorMode != EditorMode.Free"
+            @mouseenter="store.setHighlighted(...requirements(potential))"
+            @mouseleave="store.unsetHighlighted(...requirements(potential))"
+            type="potentials"
+          />
+        </v-col>
+      </v-row>
+    </v-container>
+  </template>
 </template>
 
 <script setup lang="ts">
 import ValueSelector from '@/components/ValueSelector.vue'
 import config from '@/config'
 import { EditorMode } from '@/config/modes'
-import { potentialsByCult } from '@/config/potentials'
+import { cultSpecificPotentials } from '@/config/potentials'
+import { CommonPotentials } from '@/config/potentials/common'
 import { useCharacterStore } from '@/store'
 const store = useCharacterStore()
 const i18n = useI18n()
@@ -56,26 +93,29 @@ const englishPotentialNames = new Map(Object.entries(messages.en.potentials))
 function englishName(potential: Potential) {
   return englishPotentialNames.get(potential.name) || potential.name
 }
-function potentials() {
-  return potentialsByCult(store.cult, store.clan)
-    .map((potential) => {
-      const translatedLabel = i18n.t(`potentials.${potential.name}`)
-      const originalLabel = englishName(potential)
-      const displayTranslation = store.displayTranslatedLabels
+function mapPotential(potential: Potential) {
+  const translatedLabel = i18n.t(`potentials.${potential.name}`)
+  const originalLabel = englishName(potential)
+  const displayTranslation = store.displayTranslatedLabels
+  const value = store.potentialValue(potential)
 
-      const value = store.potentialValue(potential)
-
-      if (i18n.locale.value == 'en') {
-        return { potential: potential, label: translatedLabel, altLabel: '', value: value }
-      }
-      return {
-        potential: potential,
-        label: displayTranslation ? translatedLabel : originalLabel,
-        altLabel: displayTranslation ? originalLabel : translatedLabel,
-        value: value
-      }
-    })
-    .sort((p1, p2) => p1.label.localeCompare(p2.label))
+  if (i18n.locale.value == 'en') {
+    return { potential, label: translatedLabel, altLabel: '', value }
+  }
+  return {
+    potential,
+    label: displayTranslation ? translatedLabel : originalLabel,
+    altLabel: displayTranslation ? originalLabel : translatedLabel,
+    value
+  }
+}
+function commonPotentialsList() {
+  return CommonPotentials.map(mapPotential).sort((a, b) => a.label.localeCompare(b.label))
+}
+function cultPotentialsList() {
+  return cultSpecificPotentials(store.cult, store.clan)
+    .map(mapPotential)
+    .sort((a, b) => a.label.localeCompare(b.label))
 }
 function requirements(potential: Potential) {
   return [
