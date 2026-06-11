@@ -112,14 +112,12 @@
                               ></v-text-field>
                             </v-col>
                             <v-col cols="6" sm="2">
-                              <div class="text-caption text-grey-darken-1" style="font-size: 12px;">
-                                {{ $t('messages.dinars') }}
-                              </div>
-                              <div class="pt-1" style="min-height: 1.5em;">
-                                <span v-if="store.computedDinars">
-                                  {{ store.computedDinars.value }} {{ store.computedDinars.currency }}
-                                </span>
-                              </div>
+                              <v-text-field
+                                :model-value="store.computedDinars ? `${store.computedDinars.value} ${store.computedDinars.currency}` : ''"
+                                :label="$t('messages.dinars')"
+                                variant="underlined"
+                                readonly
+                              ></v-text-field>
                             </v-col>
                           </v-row>
                         </v-container>
