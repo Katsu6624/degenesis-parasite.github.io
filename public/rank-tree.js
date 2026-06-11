@@ -56,7 +56,7 @@
     }
 
     // ─── Observe DOM for mount point ───
-    var lastCult = null, lastClan = null, lastRank = null, lastEligible = "";
+    var lastCult = null, lastClan = null, lastRank = null, lastEligible = "", lastMode = "";
 
     new MutationObserver(function () { checkMount(); })
       .observe(document.body, { childList: true, subtree: true });
@@ -69,10 +69,11 @@
       var cn = store.cult ? store.cult.name : "";
       var cl = store.clan ? store.clan.name : "";
       var rn = store.rank ? store.rank.name : "";
+      var md = store.editorMode || "";
       var el = "";
       try { el = Array.from(store.eligibleRanks).map(function(r){return r.name;}).sort().join(","); } catch(e){}
-      if (forceUpdate || cn !== lastCult || cl !== lastClan || rn !== lastRank || el !== lastEligible) {
-        lastCult = cn; lastClan = cl; lastRank = rn; lastEligible = el;
+      if (forceUpdate || cn !== lastCult || cl !== lastClan || rn !== lastRank || el !== lastEligible || md !== lastMode) {
+        lastCult = cn; lastClan = cl; lastRank = rn; lastEligible = el; lastMode = md;
         renderTree(mount);
       }
     }
@@ -96,7 +97,7 @@
         });
       });
 
-      // Sort children: fewer descendants first (smaller branches on top)
+      // Static descendant count (used for initial ordering)
       function descendantCount(r, seen) {
         seen = seen || {};
         if (seen[r.name]) return 0;
@@ -104,10 +105,18 @@
         var ch = childrenOf[r.name] || [];
         return ch.reduce(function (n, c) { return n + 1 + descendantCount(c, seen); }, 0);
       }
-      for (var k in childrenOf) {
-        childrenOf[k].sort(function (a, b) {
-          return descendantCount(a) - descendantCount(b);
-        });
+      // Effective descendant count: ignores already-visited nodes so that a node
+      // whose children are all placed (e.g. Arbiter when HighJudge is already visited)
+      // sorts as 0 and gets placed first (closer to its sibling in the tree).
+      function effectiveDescendantCount(r, seen) {
+        seen = seen || {};
+        if (seen[r.name] || visited[r.name]) return 0;
+        seen[r.name] = true;
+        var ch = childrenOf[r.name] || [];
+        return ch.reduce(function (n, c) {
+          if (visited[c.name]) return n;
+          return n + 1 + effectiveDescendantCount(c, seen);
+        }, 0);
       }
 
       // roots
@@ -162,6 +171,9 @@
 
         var col = rank.hierarchyLevel - 1;
         var children = (childrenOf[rank.name] || []).filter(function (c) { return !visited[c.name] && !c.isOutsideHierarchy && c.hierarchyLevel > 0; });
+        // Sort by effective descendants at this moment: nodes whose subtree is already
+        // placed (0 effective desc) float to the top, keeping the tree compact.
+        children.sort(function (a, b) { return effectiveDescendantCount(a) - effectiveDescendantCount(b); });
 
         if (children.length === 0) {
           posOf[rank.name] = { col: col, row: nextRow };
@@ -181,9 +193,9 @@
           if (g.type === "single") {
             allChildRows.push(assign(g.rank));
           } else {
-            // Sort items: those with extra children (beyond the convergence target) come first
-            // so they appear at the top and their extra connections are short
             var convName = g.convergence ? g.convergence.name : null;
+
+            // Sort items: those with extra children first so they appear at the top
             g.items.sort(function (a, b) {
               var aExtra = (childrenOf[a.name] || []).filter(function (c) {
                 return c.name !== convName && !visited[c.name];
@@ -194,8 +206,7 @@
               return bExtra - aExtra;
             });
 
-            var groupRows = [];
-            var extraPlaced = {};
+            var groupRows = [], extraPlaced = {};
             g.items.forEach(function (item) {
               if (!visited[item.name]) {
                 visited[item.name] = true;
@@ -203,11 +214,10 @@
                 groupRows.push(nextRow);
                 nextRow++;
 
-                // Place leaf extra children inline right after their parent
+                // Inline leaf extra children right after their parent
                 (childrenOf[item.name] || []).forEach(function (child) {
                   if (child.name === convName) return;
                   if (visited[child.name] || extraPlaced[child.name]) return;
-                  // Only leaves (no own children): non-leaves handled by normal assign
                   if (childrenOf[child.name] && childrenOf[child.name].length > 0) return;
                   extraPlaced[child.name] = true;
                   visited[child.name] = true;
@@ -217,17 +227,55 @@
               }
             });
 
-            // Process convergence target
-            if (g.convergence && !visited[g.convergence.name]) {
-              assign(g.convergence);
-              // Shift convergence + descendants to center of group items
-              if (groupRows.length > 0) {
-                var center = (groupRows[0] + groupRows[groupRows.length - 1]) / 2;
-                var convRow = posOf[g.convergence.name] ? posOf[g.convergence.name].row : center;
-                var shift = center - convRow;
-                if (Math.abs(shift) > 0.01) shiftSubtree(g.convergence, shift);
+            if (groupRows.length === 0) { allChildRows.push.apply(allChildRows, groupRows); return; }
+            var groupCenter = (groupRows[0] + groupRows[groupRows.length - 1]) / 2;
+
+            // Collect ALL non-leaf children shared by ≥2 group items (primary convergence + siblings like Shaman)
+            var allShared = [];
+            if (g.convergence && !visited[g.convergence.name]) allShared.push(g.convergence);
+            g.items.forEach(function (item) {
+              (childrenOf[item.name] || []).forEach(function (child) {
+                if (child.name === convName) return;
+                if (visited[child.name] || extraPlaced[child.name]) return;
+                if (allShared.some(function (s) { return s.name === child.name; })) return;
+                if (!(childrenOf[child.name] && childrenOf[child.name].length > 0)) return;
+                var n = g.items.filter(function (it) {
+                  return (childrenOf[it.name] || []).some(function (c) { return c.name === child.name; });
+                }).length;
+                if (n >= 2) allShared.push(child);
+              });
+            });
+
+            // Place all shared children symmetrically around groupCenter (without advancing nextRow)
+            var M = allShared.length;
+            allShared.forEach(function (sc, idx) {
+              if (!visited[sc.name]) {
+                visited[sc.name] = true;
+                posOf[sc.name] = { col: sc.hierarchyLevel - 1, row: groupCenter - (M - 1) / 2 + idx };
               }
+            });
+
+            // Assign subtrees of each shared child (only unvisited children)
+            allShared.forEach(function (sc) {
+              (childrenOf[sc.name] || []).filter(function (c) { return !visited[c.name]; })
+                .forEach(function (c) { assign(c); });
+            });
+
+            // Re-center the direct children of allShared over the shared children's row span
+            if (allShared.length > 0) {
+              var sharedCenter = (posOf[allShared[0].name].row + posOf[allShared[allShared.length - 1].name].row) / 2;
+              var jointKids = {};
+              allShared.forEach(function (sc) {
+                (childrenOf[sc.name] || []).forEach(function (c) {
+                  if (posOf[c.name]) jointKids[c.name] = c;
+                });
+              });
+              Object.keys(jointKids).forEach(function (name) {
+                var shift = sharedCenter - posOf[name].row;
+                if (Math.abs(shift) > 0.01) shiftSubtree(jointKids[name], shift);
+              });
             }
+
             allChildRows.push.apply(allChildRows, groupRows);
           }
         });
@@ -253,6 +301,21 @@
       roots.forEach(function (r) { assign(r); });
       normal.forEach(function (r) { if (!visited[r.name]) assign(r); });
 
+      // Center multi-parent leaf nodes between their parents' rows.
+      // Only applies to leaves (no children in normal hierarchy) to avoid
+      // cascading collisions with already-placed subtrees.
+      normal.forEach(function (r) {
+        if ((childrenOf[r.name] || []).length > 0) return;
+        var parentPositions = r.parentRanks
+          .filter(function (p) { return posOf[p.name]; })
+          .map(function (p) { return posOf[p.name].row; });
+        if (parentPositions.length >= 2 && posOf[r.name]) {
+          var avgRow = parentPositions.reduce(function (a, b) { return a + b; }, 0) / parentPositions.length;
+          var shift = avgRow - posOf[r.name].row;
+          if (Math.abs(shift) > 0.01) shiftSubtree(r, shift);
+        }
+      });
+
       // Calculate maxCol of normal ranks
       var normalMaxCol = Math.max.apply(null, normal.filter(function (r) { return posOf[r.name]; }).map(function (r) { return posOf[r.name].col; }).concat([0]));
 
@@ -269,14 +332,43 @@
           if (outsideNames[p.name]) assignOutside(p);
         });
         outsideVisited[r.name] = true;
-        var col = normalMaxCol + 1;
-        r.parentRanks.forEach(function (p) {
-          if (outsideNames[p.name] && posOf[p.name]) {
-            col = Math.max(col, posOf[p.name].col + 1);
-          }
-        });
-        posOf[r.name] = { col: col, row: outsideRow };
-        outsideRow++;
+        var hasNormalParent = r.parentRanks.some(function (p) { return !outsideNames[p.name] && posOf[p.name]; });
+        var col;
+        if (hasNormalParent) {
+          // Place one step LEFT of the normal parent: visually "below" the parent's predecessors
+          col = 0;
+          r.parentRanks.forEach(function (p) {
+            if (!outsideNames[p.name] && posOf[p.name])
+              col = Math.max(col, Math.max(0, posOf[p.name].col - 2));
+          });
+          r.parentRanks.forEach(function (p) {
+            if (outsideNames[p.name] && posOf[p.name])
+              col = Math.max(col, posOf[p.name].col + 1);
+          });
+        } else {
+          // No normal parent: chain to right of outside parent, or place at far right if no parents
+          var hasOutsideParent = r.parentRanks.some(function (p) { return outsideNames[p.name] && posOf[p.name]; });
+          col = hasOutsideParent ? 0 : normalMaxCol + 1;
+          r.parentRanks.forEach(function (p) {
+            if (outsideNames[p.name] && posOf[p.name])
+              col = Math.max(col, posOf[p.name].col + 1);
+          });
+          if (!hasOutsideParent && col === 0) col = normalMaxCol + 1;
+        }
+        // If this rank has ONLY outside parents (chained: e.g. Kifo after Moyo),
+        // place it on the same row as its parent — they sit side by side
+        var onlyOutsideParents = r.parentRanks.length > 0 && !hasNormalParent;
+        if (onlyOutsideParents) {
+          var parentRow = outsideRow;
+          r.parentRanks.forEach(function (p) {
+            if (outsideNames[p.name] && posOf[p.name]) parentRow = posOf[p.name].row;
+          });
+          posOf[r.name] = { col: col, row: parentRow };
+          // Don't increment outsideRow — they share the same row
+        } else {
+          posOf[r.name] = { col: col, row: outsideRow };
+          outsideRow++;
+        }
       }
       outside.forEach(function (r) { assignOutside(r); });
 
@@ -296,7 +388,7 @@
       ranks.forEach(function (r) {
         if (!r.isOutsideHierarchy && r.hierarchyLevel > 0) return;
         r.parentRanks.forEach(function (p) {
-          if (posOf[r.name] && posOf[p.name] && posOf[p.name].col <= posOf[r.name].col)
+          if (posOf[r.name] && posOf[p.name])
             connections.push({ from: posOf[p.name], to: posOf[r.name], fromName: p.name, toName: r.name });
         });
       });
@@ -472,11 +564,13 @@
 
     function makeBadge(rank, col, row, eligibleNames) {
       var isEligible = !!eligibleNames[rank.name];
+      var isFreeMode = store.editorMode === "free";
+      var isClickable = isEligible || isFreeMode;
       var isSelected = store.rank && rank.name === store.rank.name;
 
       var div = document.createElement("div");
       div.className = "rank-badge" +
-        (isSelected ? " selected" : isEligible ? " eligible" : " disabled");
+        (isSelected ? " selected" : isEligible ? " eligible" : isFreeMode ? " eligible" : " disabled");
       div.dataset.rank = rank.name;
       div.style.position = "absolute";
       div.style.left = col * COL_WIDTH + "px";
@@ -494,7 +588,7 @@
 
       // Click
       div.addEventListener("click", function () {
-        if (isEligible) store.setRank(rank);
+        if (isClickable) store.setRank(rank);
       });
 
       // Hover: highlight requirements

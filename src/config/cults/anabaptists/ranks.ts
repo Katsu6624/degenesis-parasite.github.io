@@ -58,7 +58,7 @@ export const Emissary: Rank = anabaptistRank(
     either(atLeastSkill(Skills.faith, 10), atLeastSkill(Skills.willpower, 10))
   ],
   [atLeastOrigin(Origins.authority, 4), atLeastOrigin(Origins.renown, 3)],
-  [Furor, Elysian]
+  [Furor]
 )
 
 export const Counselor: Rank = anabaptistRank(
@@ -83,7 +83,7 @@ export const Sublime: Rank = anabaptistRank(
   'sublime',
   [either(atLeastSkill(Skills.focus, 10), atLeastSkill(Skills.primal, 10))],
   [atLeastOrigin(Origins.allies, 4), atLeastOrigin(Origins.renown, 6)],
-  [Furor, Elysian]
+  [Elysian]
 )
 
 export const Acheron: Rank = anabaptistRank(

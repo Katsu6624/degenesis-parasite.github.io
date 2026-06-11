@@ -54,15 +54,6 @@ export const Simba: Rank = scourgerRank(
   [Damu]
 )
 
-export const Moyo: Rank = scourgerRank(
-  'moyo',
-  [atLeastSkill(Skills.empathy, 8), atLeastSkill(Skills.stamina, 8)],
-  [atLeastOrigin(Origins.renown, 5)],
-  [],
-  false,
-  0
-)
-
 export const Dumisai: Rank = scourgerRank(
   'dumisai',
   [
@@ -71,9 +62,20 @@ export const Dumisai: Rank = scourgerRank(
     atLeastSkill(Skills.projectiles, 10)
   ],
   [atLeastOrigin(Origins.renown, 5), atLeastOrigin(Origins.authority, 5)],
-  [Chaga, Simba, Moyo]
+  [Chaga, Simba]
 )
 
-export const Kifo: Rank = scourgerRank('kifo', [], [], [Moyo, Dumisai], true)
+export const Moyo: Rank = scourgerRank(
+  'moyo',
+  [atLeastSkill(Skills.empathy, 8), atLeastSkill(Skills.stamina, 8)],
+  [atLeastOrigin(Origins.renown, 5)],
+  [],
+  true,
+  undefined,
+  undefined,
+  [Dumisai]
+)
 
-export const ScourgerRanks = [Dufu, Hondo, Damu, Chaga, Simba, Moyo, Dumisai, Kifo]
+export const Kifo: Rank = scourgerRank('kifo', [], [], [Moyo], true)
+
+export const ScourgerRanks = [Dufu, Hondo, Damu, Chaga, Simba, Dumisai, Moyo, Kifo]
