@@ -288,18 +288,16 @@
       ranks.forEach(function (r) {
         if (r.isOutsideHierarchy || r.hierarchyLevel <= 0) return;
         r.parentRanks.forEach(function (p) {
-          // Skip outside/level-0 parents to avoid backwards right-to-left connections
           if (p.isOutsideHierarchy || p.hierarchyLevel <= 0) return;
           if (posOf[r.name] && posOf[p.name])
-            connections.push({ from: posOf[p.name], to: posOf[r.name] });
+            connections.push({ from: posOf[p.name], to: posOf[r.name], fromName: p.name, toName: r.name });
         });
       });
-      // Connections for outside/level-0 ranks (only left-to-right)
       ranks.forEach(function (r) {
         if (!r.isOutsideHierarchy && r.hierarchyLevel > 0) return;
         r.parentRanks.forEach(function (p) {
           if (posOf[r.name] && posOf[p.name] && posOf[p.name].col <= posOf[r.name].col)
-            connections.push({ from: posOf[p.name], to: posOf[r.name] });
+            connections.push({ from: posOf[p.name], to: posOf[r.name], fromName: p.name, toName: r.name });
         });
       });
 
@@ -374,35 +372,96 @@
         svg.setAttribute("class", "rank-tree-svg");
         svg.style.cssText = "position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:visible";
 
+        var cr = container.getBoundingClientRect();
+
+        function seg(x1, y1, x2, y2) {
+          var line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+          line.setAttribute("x1", x1); line.setAttribute("y1", y1);
+          line.setAttribute("x2", x2); line.setAttribute("y2", y2);
+          line.setAttribute("stroke", LINE_COLOR);
+          line.setAttribute("stroke-width", LINE_WIDTH);
+          line.setAttribute("stroke-linecap", "square");
+          svg.appendChild(line);
+        }
+
+        // Resolve pixel coordinates for each connection
+        var connData = [];
         layout.connections.forEach(function (conn) {
-          var fromEl = badgeEls[conn.from.name || ""];
-          var toEl = badgeEls[conn.to.name || ""];
-          // Use node data from layout for position computation
-          var fromNode = layout.nodes.find(function (n) { return n.col === conn.from.col && n.row === conn.from.row; });
-          var toNode = layout.nodes.find(function (n) { return n.col === conn.to.col && n.row === conn.to.row; });
-
-          if (fromNode) fromEl = badgeEls[fromNode.rank.name];
-          if (toNode) toEl = badgeEls[toNode.rank.name];
-
+          var fromEl = badgeEls[conn.fromName];
+          var toEl   = badgeEls[conn.toName];
           if (!fromEl || !toEl) return;
-
           var fr = fromEl.getBoundingClientRect();
           var tr = toEl.getBoundingClientRect();
-          var cr = container.getBoundingClientRect();
+          connData.push({
+            fromName: conn.fromName, toName: conn.toName,
+            fromCol: conn.from.col,  toCol: conn.to.col,
+            x1: fr.right  - cr.left, y1: fr.top + fr.height / 2 - cr.top,
+            x2: tr.left   - cr.left, y2: tr.top + tr.height / 2 - cr.top
+          });
+        });
 
-          var x1 = fr.right - cr.left;
-          var y1 = fr.top + fr.height / 2 - cr.top;
-          var x2 = tr.left - cr.left;
-          var y2 = tr.top + tr.height / 2 - cr.top;
+        // Group by column-transition key, then find connected components
+        // (components share a source or target name → drawn with a shared spine)
+        var transitions = {};
+        connData.forEach(function (c) {
+          var k = c.fromCol + "-" + c.toCol;
+          (transitions[k] = transitions[k] || []).push(c);
+        });
 
-          var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-          var mid = x1 + (x2 - x1) * 0.45;
-          path.setAttribute("d", "M" + x1 + "," + y1 + " H" + mid + " V" + y2 + " H" + x2);
-          path.setAttribute("fill", "none");
-          path.setAttribute("stroke", LINE_COLOR);
-          path.setAttribute("stroke-width", LINE_WIDTH);
-          path.setAttribute("stroke-linejoin", "round");
-          svg.appendChild(path);
+        Object.keys(transitions).forEach(function (k) {
+          var conns = transitions[k];
+          var used  = new Array(conns.length).fill(false);
+
+          for (var i = 0; i < conns.length; i++) {
+            if (used[i]) continue;
+            var comp = [i]; used[i] = true;
+            var changed = true;
+            while (changed) {
+              changed = false;
+              for (var j = 0; j < conns.length; j++) {
+                if (used[j]) continue;
+                var linked = comp.some(function (ki) {
+                  return conns[ki].fromName === conns[j].fromName ||
+                         conns[ki].toName   === conns[j].toName;
+                });
+                if (linked) { comp.push(j); used[j] = true; changed = true; }
+              }
+            }
+
+            // Unique sources and targets in this component
+            var srcMap = {}, tgtMap = {};
+            comp.forEach(function (ci) {
+              srcMap[conns[ci].fromName] = { x: conns[ci].x1, y: conns[ci].y1 };
+              tgtMap[conns[ci].toName]   = { x: conns[ci].x2, y: conns[ci].y2 };
+            });
+            var srcs = Object.keys(srcMap).map(function (n) { return srcMap[n]; });
+            var tgts = Object.keys(tgtMap).map(function (n) { return tgtMap[n]; });
+
+            if (srcs.length === 1 && tgts.length === 1) {
+              // Simple connection: H then optional V then H
+              var s = srcs[0], t = tgts[0];
+              if (Math.abs(s.y - t.y) < 1) {
+                seg(s.x, s.y, t.x, t.y);          // pure horizontal
+              } else {
+                var mid = s.x + (t.x - s.x) * 0.4;
+                seg(s.x, s.y, mid, s.y);           // H out
+                seg(mid, s.y, mid, t.y);            // V
+                seg(mid, t.y, t.x, t.y);            // H in
+              }
+              continue;
+            }
+
+            // Spine: vertical bar between all sources and targets
+            var maxSrcX = Math.max.apply(null, srcs.map(function (s) { return s.x; }));
+            var minTgtX = Math.min.apply(null, tgts.map(function (t) { return t.x; }));
+            var spineX  = maxSrcX + (minTgtX - maxSrcX) * 0.35;
+
+            var allY = srcs.map(function (s) { return s.y; }).concat(tgts.map(function (t) { return t.y; }));
+            seg(spineX, Math.min.apply(null, allY), spineX, Math.max.apply(null, allY));
+
+            srcs.forEach(function (s) { seg(s.x, s.y, spineX, s.y); });
+            tgts.forEach(function (t) { seg(spineX, t.y, t.x, t.y); });
+          }
         });
 
         container.insertBefore(svg, container.firstChild);
