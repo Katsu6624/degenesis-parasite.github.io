@@ -117,30 +117,34 @@
       });
 
       // Detect convergence: siblings that share a common child
+      // Picks the shared child with the MOST co-parents (not just the first match)
       function findConvergenceGroups(siblings) {
         var groups = [], used = {};
         for (var i = 0; i < siblings.length; i++) {
           if (used[siblings[i].name]) continue;
           var myKids = (childrenOf[siblings[i].name] || []).map(function (c) { return c.name; });
-          var group = [siblings[i]];
-          var shared = null;
-          for (var j = i + 1; j < siblings.length; j++) {
-            if (used[siblings[j].name]) continue;
-            var theirKids = (childrenOf[siblings[j].name] || []).map(function (c) { return c.name; });
-            for (var ki = 0; ki < myKids.length; ki++) {
-              if (theirKids.indexOf(myKids[ki]) >= 0) {
-                group.push(siblings[j]);
-                shared = shared || myKids[ki];
-                used[siblings[j].name] = true;
-                break;
-              }
+
+          var bestKid = null, bestMembers = null;
+          for (var ki = 0; ki < myKids.length; ki++) {
+            var kid = myKids[ki];
+            var members = [siblings[i]];
+            for (var j = 0; j < siblings.length; j++) {
+              if (j === i || used[siblings[j].name]) continue;
+              var theirKids = (childrenOf[siblings[j].name] || []).map(function (c) { return c.name; });
+              if (theirKids.indexOf(kid) >= 0) members.push(siblings[j]);
+            }
+            if (!bestMembers || members.length > bestMembers.length) {
+              bestMembers = members;
+              bestKid = kid;
             }
           }
-          used[siblings[i].name] = true;
-          if (group.length > 1 && shared) {
-            var convRank = (childrenOf[group[0].name] || []).find(function (c) { return c.name === shared; });
-            groups.push({ type: "group", items: group, convergence: convRank });
+
+          if (bestMembers && bestMembers.length > 1 && bestKid) {
+            var convRank = (childrenOf[siblings[i].name] || []).find(function (c) { return c.name === bestKid; });
+            bestMembers.forEach(function (m) { used[m.name] = true; });
+            groups.push({ type: "group", items: bestMembers, convergence: convRank });
           } else {
+            used[siblings[i].name] = true;
             groups.push({ type: "single", rank: siblings[i] });
           }
         }
@@ -221,12 +225,29 @@
       // Calculate maxCol of normal ranks
       var normalMaxCol = Math.max.apply(null, normal.filter(function (r) { return posOf[r.name]; }).map(function (r) { return posOf[r.name].col; }).concat([0]));
 
-      // Outside hierarchy & special ranks - place them at the bottom, after normal tree
+      // Outside hierarchy & special ranks — place them after the normal tree,
+      // in topological order so chained outside ranks (e.g. Moyo → Kifo) get sequential columns
+      var outsideNames = {};
+      outside.forEach(function (r) { outsideNames[r.name] = true; });
       var outsideRow = nextRow;
-      outside.forEach(function (r) {
-        posOf[r.name] = { col: normalMaxCol + 2, row: outsideRow };
+      var outsideVisited = {};
+      function assignOutside(r) {
+        if (outsideVisited[r.name]) return;
+        // Ensure outside parents are placed first
+        r.parentRanks.forEach(function (p) {
+          if (outsideNames[p.name]) assignOutside(p);
+        });
+        outsideVisited[r.name] = true;
+        var col = normalMaxCol + 1;
+        r.parentRanks.forEach(function (p) {
+          if (outsideNames[p.name] && posOf[p.name]) {
+            col = Math.max(col, posOf[p.name].col + 1);
+          }
+        });
+        posOf[r.name] = { col: col, row: outsideRow };
         outsideRow++;
-      });
+      }
+      outside.forEach(function (r) { assignOutside(r); });
 
       // Build output
       var nodes = [], connections = [];
@@ -234,10 +255,19 @@
         if (posOf[r.name]) nodes.push({ rank: r, col: posOf[r.name].col, row: posOf[r.name].row });
       });
       ranks.forEach(function (r) {
-        // Only draw connections for normal hierarchy ranks
         if (r.isOutsideHierarchy || r.hierarchyLevel <= 0) return;
         r.parentRanks.forEach(function (p) {
+          // Skip outside/level-0 parents to avoid backwards right-to-left connections
+          if (p.isOutsideHierarchy || p.hierarchyLevel <= 0) return;
           if (posOf[r.name] && posOf[p.name])
+            connections.push({ from: posOf[p.name], to: posOf[r.name] });
+        });
+      });
+      // Connections for outside/level-0 ranks (only left-to-right)
+      ranks.forEach(function (r) {
+        if (!r.isOutsideHierarchy && r.hierarchyLevel > 0) return;
+        r.parentRanks.forEach(function (p) {
+          if (posOf[r.name] && posOf[p.name] && posOf[p.name].col <= posOf[r.name].col)
             connections.push({ from: posOf[p.name], to: posOf[r.name] });
         });
       });
@@ -335,11 +365,12 @@
           var y2 = tr.top + tr.height / 2 - cr.top;
 
           var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-          var mx = (x1 + x2) / 2;
-          path.setAttribute("d", "M" + x1 + "," + y1 + " C" + mx + "," + y1 + " " + mx + "," + y2 + " " + x2 + "," + y2);
+          var mid = x1 + (x2 - x1) * 0.45;
+          path.setAttribute("d", "M" + x1 + "," + y1 + " H" + mid + " V" + y2 + " H" + x2);
           path.setAttribute("fill", "none");
           path.setAttribute("stroke", LINE_COLOR);
           path.setAttribute("stroke-width", LINE_WIDTH);
+          path.setAttribute("stroke-linejoin", "round");
           svg.appendChild(path);
         });
 
