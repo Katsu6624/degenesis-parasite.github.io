@@ -20,7 +20,9 @@ export class Character {
     // Legacy flag, superseded by editorMode
     wasCreatedWithFreeMode?: boolean,
     readonly editorMode?: EditorMode,
-    readonly clan?: string
+    readonly clan?: string,
+    readonly experience?: string,
+    readonly portrait?: string
   ) {
     this.storageVersion = 'v1'
     const legacyEditorMode = wasCreatedWithFreeMode ? (wasCreatedWithFreeMode ? EditorMode.Free : editorMode) : editorMode

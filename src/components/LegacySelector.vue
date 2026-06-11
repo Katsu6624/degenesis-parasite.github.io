@@ -1,6 +1,7 @@
 <template>
   <div class="mb-2">
-    {{ $t('messages.legacies').toUpperCase() }}
+    <span>{{ $t('messages.legacies').toUpperCase() }}</span>
+    <span style="font-size:12px;color:#999;margin-left:16px">{{ store.spentPoints.legacies }}/{{ config.availablePoints.legacies }}</span>
   </div>
   <v-divider class="mb-4"></v-divider>
 

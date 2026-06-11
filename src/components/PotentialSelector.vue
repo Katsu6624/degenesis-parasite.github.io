@@ -1,6 +1,7 @@
 <template>
   <div class="mb-2">
-    {{ $t('messages.potentials').toUpperCase() }}
+    <span>{{ $t('messages.potentials').toUpperCase() }}</span>
+    <span style="font-size:12px;color:#999;margin-left:16px">{{ store.spentPoints.potentials }}/{{ config.availablePoints.potentials }}</span>
   </div>
   <v-divider class="mb-4"></v-divider>
 
