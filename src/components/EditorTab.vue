@@ -124,7 +124,7 @@
                         </v-container>
                       </div>
                       <v-row class="mt-2">
-                        <v-col cols="12" sm="4" md="4" lg="3" xl="2">
+                        <v-col cols="12" :sm="store.clan ? '3' : '4'">
                           <EditorArchetypeSelector
                             type="culture"
                             :typeLabel="$t(`messages.culture`)"
@@ -137,7 +137,7 @@
                             @change="store.setCulture"
                           ></EditorArchetypeSelector>
                         </v-col>
-                        <v-col cols="12" sm="4" md="4" lg="3" xl="2">
+                        <v-col cols="12" :sm="store.clan ? '3' : '4'">
                           <EditorArchetypeSelector
                             type="concept"
                             :typeLabel="$t(`messages.concept`)"
@@ -150,7 +150,7 @@
                             @change="store.setConcept"
                           ></EditorArchetypeSelector>
                         </v-col>
-                        <v-col cols="12" sm="4" md="4" lg="3" xl="2">
+                        <v-col cols="12" :sm="store.clan ? '3' : '4'">
                           <EditorArchetypeSelector
                             type="cult"
                             :typeLabel="$t(`messages.cult`)"
@@ -163,7 +163,7 @@
                             @change="store.setCult"
                           ></EditorArchetypeSelector>
                         </v-col>
-                        <v-col v-if="store.clan" cols="12" sm="4" md="4" lg="3" xl="2">
+                        <v-col v-if="store.clan" cols="12" sm="3">
                           <EditorArchetypeSelector
                             type="clan"
                             :typeLabel="$t(`messages.clan`)"
