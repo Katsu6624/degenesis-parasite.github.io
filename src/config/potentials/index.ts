@@ -16,6 +16,12 @@ export function potentialsByCult(cult: Cult, clan: Clan | undefined): Potential[
   )
 }
 
+export function cultSpecificPotentials(cult: Cult, clan: Clan | undefined): Potential[] {
+  return (PotentialsByCults.get(cult.name) || []).filter(
+    (p) => !p.clan || p.clan?.name == clan?.name
+  )
+}
+
 export const PotentialsByName = new Map(
   AllPotentials.map((potential) => [potential.name, potential])
 )
