@@ -56,20 +56,23 @@
     }
 
     // ─── Observe DOM for mount point ───
-    var lastCult = null, lastClan = null;
+    var lastCult = null, lastClan = null, lastRank = null, lastEligible = "";
 
     new MutationObserver(function () { checkMount(); })
       .observe(document.body, { childList: true, subtree: true });
 
-    store.$subscribe(function () { checkMount(true); });
+    store.$subscribe(function () { checkMount(); });
 
     function checkMount(forceUpdate) {
       var mount = document.querySelector(".rank-tree-mount");
       if (!mount) { lastCult = null; return; }
       var cn = store.cult ? store.cult.name : "";
       var cl = store.clan ? store.clan.name : "";
-      if (cn !== lastCult || cl !== lastClan || forceUpdate) {
-        lastCult = cn; lastClan = cl;
+      var rn = store.rank ? store.rank.name : "";
+      var el = "";
+      try { el = Array.from(store.eligibleRanks).map(function(r){return r.name;}).sort().join(","); } catch(e){}
+      if (forceUpdate || cn !== lastCult || cl !== lastClan || rn !== lastRank || el !== lastEligible) {
+        lastCult = cn; lastClan = cl; lastRank = rn; lastEligible = el;
         renderTree(mount);
       }
     }
