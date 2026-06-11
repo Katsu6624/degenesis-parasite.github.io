@@ -50,7 +50,7 @@
                   {{ $t('messages.createNewCharacter') }}
                 </v-card-title>
                 <v-card-text>
-                  <v-form>
+                  <v-form @submit.prevent="createNewCharacter">
                     <v-text-field
                       v-model="newCharacterName"
                       :label="$t('messages.characterName')"
