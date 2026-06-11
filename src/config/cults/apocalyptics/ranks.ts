@@ -182,8 +182,11 @@ export const Phoenix: Rank = apocalypticRank(
     either(atLeastSkill(Skills.faith, 10), atLeastSkill(Skills.willpower, 10))
   ],
   [],
-  [Raven, Albatross, Buzzard],
-  true
+  [],
+  true,
+  undefined,
+  undefined,
+  [Raven, Albatross, Buzzard]
 )
 
 export const ApocalypticsRanks = [
@@ -192,12 +195,16 @@ export const ApocalypticsRanks = [
   Magpie,
   Vulture,
   Cuckoo,
+  Owl,
+  Woodpecker,
   Stork,
   Raven,
   Tern,
   Seagull,
   Pelican,
+  Albatross,
   Hummingbird,
+  Marabou,
   Ibis,
   Toco,
   Buzzard,

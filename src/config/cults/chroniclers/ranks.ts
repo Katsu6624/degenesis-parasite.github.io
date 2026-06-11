@@ -93,7 +93,7 @@ export const Zero: Rank = chroniclerRank(
   'zero',
   [atLeastSkill(Skills.cunning, 8), atLeastSkill(Skills.deception, 10)],
   [atLeastOrigin(Origins.secrets, 4), atLeastOrigin(Origins.network, 6)],
-  [Shutter, Mediator],
+  [],
   false,
   0
 )

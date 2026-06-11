@@ -13,7 +13,8 @@ export class Rank implements Translatable {
     readonly isOutsideHierarchy: boolean = false,
     hierarchyLevelOverride: number | undefined = undefined,
     readonly description?: string,
-    readonly clan?: Clan
+    readonly clan?: Clan,
+    readonly requiredRanks: Array<Rank> = []
   ) {
     this.hierarchyLevel = parentRanks.reduce(
       (level, parent) => Math.max(level, parent.hierarchyLevel + 1),
@@ -58,7 +59,10 @@ export class Rank implements Translatable {
         const parentEligible = parent.isEligible(cult, skills, origins, clan)
         return eligible || parentEligible
       }, false)
-    return skillsEligible && originsEligible && anyParentEligible
+    const allRequiredRanksEligible =
+      this.requiredRanks.length === 0 ||
+      this.requiredRanks.some((req) => req.isEligible(cult, skills, origins, clan))
+    return skillsEligible && originsEligible && anyParentEligible && allRequiredRanksEligible
   }
 
   compare(other: Rank): number {
@@ -86,7 +90,8 @@ export const cultRank =
     parentRanks: Array<Rank> = [],
     isOutsideHierarchy: boolean = false,
     hierarchyLevelOverride: number | undefined = undefined,
-    description: string | undefined = undefined
+    description: string | undefined = undefined,
+    requiredRanks: Array<Rank> = []
   ): Rank => {
     return new Rank(
       name,
@@ -96,7 +101,9 @@ export const cultRank =
       parentRanks,
       isOutsideHierarchy,
       hierarchyLevelOverride,
-      description
+      description,
+      undefined,
+      requiredRanks
     )
   }
 

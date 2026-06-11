@@ -122,6 +122,10 @@ export const Arianoi: Rank = jehammedanRank(
     either(atLeastSkill(Skills.faith, 8), atLeastSkill(Skills.willpower, 8))
   ],
   [atLeastOrigin(Origins.secrets, 3)],
+  [],
+  true,
+  undefined,
+  undefined,
   [Delilah, SwordOfJehammed, JehammedsBlessing, Maculate]
 )
 
@@ -133,7 +137,8 @@ export const BloodOfAries: Rank = jehammedanRank(
     atLeastSkill(Skills.orienteering, 6)
   ],
   [atLeastOrigin(Origins.secrets, 4)],
-  [Arianoi]
+  [Arianoi],
+  true
 )
 
 export const Fatum: Rank = jehammedanRank(
@@ -144,7 +149,8 @@ export const Fatum: Rank = jehammedanRank(
     atLeastOrigin(Origins.authority, 5),
     atLeastOrigin(Origins.renown, 5)
   ],
-  [BloodOfAries]
+  [BloodOfAries],
+  true
 )
 
 export const JehammedansRanks = [

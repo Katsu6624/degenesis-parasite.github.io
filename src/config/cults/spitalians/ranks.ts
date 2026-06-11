@@ -95,7 +95,7 @@ export const Anesthesiologist: Rank = spitalianRank(
   [Famulancer]
 )
 
-export const VillageDoctor: Rank = spitalianRank('villageDoctor', [], [], [Famulancer], true)
+export const VillageDoctor: Rank = spitalianRank('villageDoctor', [], [], [], true, undefined, undefined, [Famulancer])
 
 export const Registrar: Rank = spitalianRank(
   'registrar',
@@ -156,7 +156,7 @@ export const Elder: Rank = spitalianRank(
   'elder',
   [],
   [atLeastOrigin(Origins.renown, 4)],
-  [Recruit],
+  [],
   true
 )
 
