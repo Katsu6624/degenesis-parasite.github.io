@@ -4,9 +4,9 @@ import vue from '@vitejs/plugin-vue'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  // Chemins relatifs : le site est déployé dans un sous-chemin
+  // Déploiement sur GitHub Pages avec sous-chemin
   // (github.com/Katsu6624/degenesis-parasite.github.io -> /degenesis-parasite.github.io/)
-  base: './',
+  base: '/degenesis-parasite.github.io/',
   
   plugins: [
     vue(),
