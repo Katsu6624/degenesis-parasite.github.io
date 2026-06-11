@@ -123,7 +123,7 @@
                         </v-container>
                       </div>
                     </v-col>
-                    <v-col cols="12" md="6" lg="4" xl="3" class="d-flex flex-column" style="position: relative; min-height: 200px;">
+                    <v-col cols="12" md="6" lg="7" xl="7" class="d-flex flex-column" style="position: relative; min-height: 200px;">
                       <div style="position: relative; width: 100%; height: 100%; flex: 1;">
                         <img
                           v-if="store.portrait"
