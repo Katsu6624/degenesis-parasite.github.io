@@ -9,7 +9,7 @@
           v-if="store.editorMode === 'free'"
           type="number"
           :value="store.manualLC !== null ? store.manualLC : (store.computedDinars?.value ?? 0)"
-          @change="e => store.setManualLC(e.target.value === '' ? null : Number(e.target.value))"
+          @change="e => { const v = (e.target as HTMLInputElement).value; store.setManualLC(v === '' ? null : Number(v)) }"
           class="inv-lc-inline-input"
           :class="store.remainingLC < 0 ? 'text-red' : ''"
         />
