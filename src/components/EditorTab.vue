@@ -114,20 +114,23 @@
                             </v-col>
                             <v-col cols="6" sm="2">
                               <v-text-field
-                                v-if="store.editorMode === 'free'"
-                                :model-value="store.manualLC !== null ? store.manualLC : (store.computedDinars?.value ?? 0)"
-                                :label="$t('messages.dinars') + ' (' + (store.computedDinars?.currency ?? 'LC') + ')'"
-                                variant="underlined"
-                                type="number"
-                                @update:model-value="val => store.setManualLC(val === '' || val === null ? null : Number(val))"
-                              ></v-text-field>
-                              <v-text-field
-                                v-else
+                                v-if="store.editorMode !== 'free'"
                                 :model-value="store.computedDinars ? `${store.computedDinars.value} ${store.computedDinars.currency}` : ''"
                                 :label="$t('messages.dinars')"
                                 variant="underlined"
                                 readonly
                               ></v-text-field>
+                              <div v-else style="padding-top:12px">
+                                <label style="font-size:0.75rem;color:rgba(var(--v-theme-on-surface),0.6);display:block;margin-bottom:2px">
+                                  {{ $t('messages.dinars') }} ({{ store.computedDinars?.currency ?? 'LC' }})
+                                </label>
+                                <input
+                                  type="number"
+                                  :value="store.manualLC !== null ? store.manualLC : (store.computedDinars?.value ?? 0)"
+                                  @change="e => store.setManualLC((e.target as HTMLInputElement).value === '' ? null : Number((e.target as HTMLInputElement).value))"
+                                  class="editor-lc-inline-input"
+                                />
+                              </div>
                             </v-col>
                           </v-row>
                         </v-container>
@@ -493,6 +496,24 @@ const renameCharacter = () => {
 <style scoped>
 #appBarIcon {
   height: 2em;
+}
+
+.editor-lc-inline-input {
+  font-size: 1rem;
+  font-weight: 500;
+  color: rgb(var(--v-theme-on-surface));
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(var(--v-theme-on-surface), 0.42);
+  outline: none;
+  width: 100%;
+  padding: 4px 0;
+  -moz-appearance: textfield;
+}
+.editor-lc-inline-input::-webkit-inner-spin-button,
+.editor-lc-inline-input::-webkit-outer-spin-button { -webkit-appearance: none; }
+.editor-lc-inline-input:focus {
+  border-bottom: 2px solid rgb(var(--v-theme-primary));
 }
 
 a {
