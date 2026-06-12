@@ -1,5 +1,13 @@
 import { type Clan } from '@/config/model'
 import { EditorMode } from '@/config/modes'
+import {
+  ITEMS,
+  ResourceMode,
+  ADVANCEMENT_THRESHOLDS,
+  advancementsToLevel,
+  levelToMinAdvancements,
+  type InventoryPurchase,
+} from '@/config/items'
 import { PotentialsByName, eligiblePotentials } from '@/config/potentials'
 import type { Potential } from '@/config/potentials/potential'
 import { AllLegacies, eligibleLegacies } from '@/config/legacies'
@@ -59,6 +67,8 @@ export type State = {
   experience: string
   portrait: string
   isLoading: boolean
+  inventory: InventoryPurchase[]
+  resourceMode: ResourceMode
 }
 
 export const useCharacterStore = defineStore('character', {
@@ -83,7 +93,9 @@ export const useCharacterStore = defineStore('character', {
     weight: '',
     experience: '',
     portrait: '',
-    isLoading: false
+    isLoading: false,
+    inventory: [],
+    resourceMode: ResourceMode.A,
   }),
   getters: {
     attributeValue:
@@ -193,6 +205,8 @@ export const useCharacterStore = defineStore('character', {
         state.clan?.name,
         state.experience,
         state.portrait,
+        state.inventory,
+        state.resourceMode,
       )
     },
     maxEgo(): number {
@@ -247,6 +261,46 @@ export const useCharacterStore = defineStore('character', {
         resources
       }
     },
+    baseResourcesLevel(): number {
+      let val = 0
+      this.origins.forEach((v, o) => { if (o.name === 'resources') val = v })
+      return val
+    },
+    resourceDecrements(): number {
+      return this.inventory.filter(p => p.decrementedResources).length
+    },
+    effectiveResourcesLevel(): number {
+      return Math.max(0, this.baseResourcesLevel - this.resourceDecrements)
+    },
+    resourceAdvancements(): number {
+      return levelToMinAdvancements(this.baseResourcesLevel)
+    },
+    remainingAdvancements(): number {
+      const spent = this.inventory
+        .filter(p => p.purchasedWithResources)
+        .reduce((sum, p) => {
+          const item = ITEMS.find(i => i.id === p.itemId)
+          return sum + (item?.resources ?? 0)
+        }, 0)
+      return Math.max(0, this.resourceAdvancements - spent)
+    },
+    effectiveResourcesLevelForModeC(): number {
+      return advancementsToLevel(this.remainingAdvancements)
+    },
+    remainingLC(): number {
+      const base = this.computedDinars?.value ?? 0
+      const spent = this.inventory
+        .filter(p => !p.purchasedWithResources)
+        .reduce((sum, p) => {
+          const item = ITEMS.find(i => i.id === p.itemId)
+          return sum + (item?.value ?? 0) * (p.level ?? 1)
+        }, 0)
+      return base - spent
+    },
+    inventoryItems(): Array<{ purchase: InventoryPurchase; index: number }> {
+      return this.inventory.map((purchase, index) => ({ purchase, index }))
+    },
+
     attributeValues(): Value<Attribute>[] {
       return Array.from(this.attributes.entries()).map(([a, v]) => a.withValue(v))
     },
@@ -344,6 +398,8 @@ export const useCharacterStore = defineStore('character', {
       this.weight = character.weight || ''
       this.experience = character.experience || ''
       this.portrait = character.portrait || ''
+      this.inventory = character.inventory ? [...character.inventory] : []
+      this.resourceMode = character.resourceMode ?? ResourceMode.A
       this.isLoading = false
     },
     adjustProperties() {
@@ -592,6 +648,39 @@ export const useCharacterStore = defineStore('character', {
       setTimeout(() => {
         this.unsetHighlighted(...items)
       }, 3000)
-    }
+    },
+    buyItemWithLC(itemId: string, level = 1) {
+      const item = ITEMS.find(i => i.id === itemId)
+      if (!item) return
+      if (this.remainingLC < item.value * level) return
+      this.inventory.push({ itemId, purchasedWithResources: false, decrementedResources: false, level: level > 1 ? level : undefined })
+    },
+    buyItemWithResources(itemId: string) {
+      const item = ITEMS.find(i => i.id === itemId)
+      if (!item || item.resources === undefined) return
+
+      let canBuy = false
+      let decrements = false
+
+      if (this.resourceMode === ResourceMode.A) {
+        canBuy = item.resources <= this.effectiveResourcesLevel
+        decrements = canBuy
+      } else if (this.resourceMode === ResourceMode.B) {
+        canBuy = item.resources <= this.effectiveResourcesLevel
+        decrements = item.resources === this.effectiveResourcesLevel
+      } else {
+        canBuy = item.resources <= this.effectiveResourcesLevelForModeC
+        decrements = false
+      }
+
+      if (!canBuy) return
+      this.inventory.push({ itemId, purchasedWithResources: true, decrementedResources: decrements })
+    },
+    removeInventoryItem(index: number) {
+      this.inventory.splice(index, 1)
+    },
+    setResourceMode(mode: ResourceMode) {
+      this.resourceMode = mode
+    },
   }
 })

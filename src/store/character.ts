@@ -1,4 +1,5 @@
 import { EditorMode } from "@/config/modes";
+import type { InventoryPurchase, ResourceMode } from "@/config/items";
 
 
 export class Character {
@@ -22,7 +23,9 @@ export class Character {
     readonly editorMode?: EditorMode,
     readonly clan?: string,
     readonly experience?: string,
-    readonly portrait?: string
+    readonly portrait?: string,
+    readonly inventory?: InventoryPurchase[],
+    readonly resourceMode?: ResourceMode,
   ) {
     this.storageVersion = 'v1'
     const legacyEditorMode = wasCreatedWithFreeMode ? (wasCreatedWithFreeMode ? EditorMode.Free : editorMode) : editorMode
