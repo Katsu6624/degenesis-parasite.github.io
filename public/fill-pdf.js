@@ -302,34 +302,42 @@
     var armors  = items.filter(function(i) { return ARMOR_CATEGORIES.indexOf(i.category) !== -1; });
     var others  = items.filter(function(i) { return WEAPON_CATEGORIES.indexOf(i.category) === -1 && ARMOR_CATEGORIES.indexOf(i.category) === -1; });
 
-    // Weapons (up to 5)
+    // Weapons (up to 5). No dedicated caliber field in PDF — prepend to portée.
     weapons.slice(0, 5).forEach(function(item, idx) {
       var n = idx + 1;
-      safeSetText(form, 'ARME' + n, item.name || '');
+      var weaponName = item.caliber ? (item.name || '') + ' (' + item.caliber + ')' : (item.name || '');
+      safeSetText(form, 'ARME' + n, weaponName);
       safeSetText(form, 'MANIEMENTRow' + n, item.handling || '');
       safeSetText(form, 'Row' + n, item.range || '');
       safeSetText(form, 'Row' + n + '_2', item.damage || '');
       safeSetText(form, 'Row' + n + '_3', item.properties || '');
-      if (n <= 4) safeSetText(form, 'Row' + n + '_4', item.caliber || '');
       safeSetText(form, 'CHARGRow' + n, item.magazine != null ? String(item.magazine) : '');
       safeSetText(form, 'EMPLRow' + n, item.slots != null ? String(item.slots) : '');
       safeSetText(form, 'ENCRow' + n, item.encumbrance != null ? String(item.encumbrance) : '');
       safeSetText(form, 'TECHRow' + n, item.techLevel || '');
     });
 
-    // Armors (up to 3)
+    // Armors (up to 3). Row{n}_4 = armor PROPRIÉTÉS column (shares row layout with weapons 1-3).
     armors.slice(0, 3).forEach(function(item, idx) {
       var n = idx + 1;
       safeSetText(form, 'ARMURE' + n, item.name || '');
       safeSetText(form, 'VALEUR DARMURERow' + n, item.armorValue != null ? String(item.armorValue) : '');
+      safeSetText(form, 'Row' + n + '_4', item.properties || '');
       safeSetText(form, 'ENCRow' + n + '_2', item.encumbrance != null ? String(item.encumbrance) : '');
       safeSetText(form, 'TECHRow' + n + '_2', item.techLevel || '');
       safeSetText(form, 'EMPLRow' + n + '_2', item.slots != null ? String(item.slots) : '');
     });
 
+    // Equipment ENC field names follow a non-sequential pattern derived from PDF layout.
+    var equipEncFields = [
+      'ENCRow1_3', 'ENCRow2_3', 'ENCRow3_3', 'ENCRow4_2', 'ENCRow5_2', 'ENCRow6',  'ENCRow7',
+      'ENCRow1_4', 'ENCRow2_4', 'ENCRow3_4', 'ENCRow4_3', 'ENCRow5_3', 'ENCRow6_2','ENCRow7_2'
+    ];
+
     // Other equipment (up to 14)
     others.slice(0, 14).forEach(function(item, idx) {
       safeSetText(form, 'ÉQUIPEMENT' + (idx + 1), item.name || '');
+      safeSetText(form, equipEncFields[idx], item.encumbrance != null ? String(item.encumbrance) : '');
     });
   }
 
