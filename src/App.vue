@@ -198,6 +198,7 @@ import Sheet from '@/components/InventoryTab.vue'
 import config from '@/config'
 import { useCharacterStore } from '@/store'
 import type { Character } from '@/store/character'
+import { ITEMS } from '@/config/items'
 import browserStorage from '@/store/browserStorage'
 import romanize from '@/util/romanize'
 import {
@@ -226,6 +227,7 @@ const theme = useTheme()
 // Note: window.__i18n (the instance, with .global.t) is exposed in main.ts.
 ;(window as any).__charStore = store
 ;(window as any).__getRanks = (cult: any, clan: any) => ranksByCult(cult, clan)
+;(window as any).__items = ITEMS
 
 // Restore persisted theme
 const _savedTheme = localStorage.getItem('parasite-theme')

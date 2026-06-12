@@ -273,6 +273,8 @@
       } catch (e) {}
     }
 
+    fillInventory(form, store);
+
     var filledBytes = await pdf.save();
     var blob = new Blob([filledBytes], { type: "application/pdf" });
     var url = URL.createObjectURL(blob);
@@ -283,6 +285,51 @@
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+  }
+
+  var WEAPON_CATEGORIES = ['armesDeCorpsACorps', 'armesDeJet', 'armesAProjectiles', 'fusils', 'armesLourdes', 'armesDePoing', 'armesSoniques', 'artefactsEthylens'];
+  var ARMOR_CATEGORIES = ['armures', 'boucliers'];
+
+  function fillInventory(form, store) {
+    var allItems = window.__items || [];
+    var purchases = (store.inventory || []).filter(function(p) { return !p.purchasedWithResources; });
+    var items = purchases.map(function(p) {
+      var item = allItems.find(function(i) { return i.id === p.itemId; });
+      return item ? Object.assign({}, item, { _level: p.level || 1 }) : null;
+    }).filter(Boolean);
+
+    var weapons = items.filter(function(i) { return WEAPON_CATEGORIES.indexOf(i.category) !== -1; });
+    var armors  = items.filter(function(i) { return ARMOR_CATEGORIES.indexOf(i.category) !== -1; });
+    var others  = items.filter(function(i) { return WEAPON_CATEGORIES.indexOf(i.category) === -1 && ARMOR_CATEGORIES.indexOf(i.category) === -1; });
+
+    // Weapons (up to 5)
+    weapons.slice(0, 5).forEach(function(item, idx) {
+      var n = idx + 1;
+      safeSetText(form, 'ARME' + n, item.name || '');
+      safeSetText(form, 'MANIEMENTRow' + n, item.handling || '');
+      safeSetText(form, 'Row' + n, item.caliber || '');
+      safeSetText(form, 'Row' + n + '_2', item.range || '');
+      safeSetText(form, 'Row' + n + '_3', item.damage || '');
+      if (n <= 4) safeSetText(form, 'Row' + n + '_4', item.properties || '');
+      safeSetText(form, 'CHARGRow' + n, item.magazine != null ? String(item.magazine) : '');
+      safeSetText(form, 'EMPLRow' + n, item.slots != null ? String(item.slots) : '');
+      safeSetText(form, 'ENCRow' + n, item.encumbrance != null ? String(item.encumbrance) : '');
+      safeSetText(form, 'TECHRow' + n, item.techLevel || '');
+    });
+
+    // Armors (up to 3)
+    armors.slice(0, 3).forEach(function(item, idx) {
+      var n = idx + 1;
+      safeSetText(form, 'ARMURE' + n, item.name || '');
+      safeSetText(form, 'VALEUR DARMURERow' + n, item.armorValue || '');
+      safeSetText(form, 'VALEUR APPROXRow' + n, item.value != null ? String(item.value) : '');
+      safeSetText(form, 'ENCRow' + (5 + n), item.encumbrance != null ? String(item.encumbrance) : '');
+    });
+
+    // Other equipment (up to 14)
+    others.slice(0, 14).forEach(function(item, idx) {
+      safeSetText(form, 'ÉQUIPEMENT' + (idx + 1), item.name || '');
+    });
   }
 
   window.downloadFilledPDF = downloadFilledPDF;
@@ -481,6 +528,8 @@
       } catch (e) {}
     }
 
+    fillInventory_en(form, store);
+
     var filledBytes = await pdf.save();
     var blob = new Blob([filledBytes], { type: "application/pdf" });
     var url = URL.createObjectURL(blob);
@@ -491,6 +540,51 @@
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+  }
+
+  function fillInventory_en(form, store) {
+    var allItems = window.__items || [];
+    var purchases = (store.inventory || []).filter(function(p) { return !p.purchasedWithResources; });
+    var items = purchases.map(function(p) {
+      var item = allItems.find(function(i) { return i.id === p.itemId; });
+      return item ? Object.assign({}, item, { _level: p.level || 1 }) : null;
+    }).filter(Boolean);
+
+    var weapons = items.filter(function(i) { return WEAPON_CATEGORIES.indexOf(i.category) !== -1; });
+    var armors  = items.filter(function(i) { return ARMOR_CATEGORIES.indexOf(i.category) !== -1; });
+    var others  = items.filter(function(i) { return WEAPON_CATEGORIES.indexOf(i.category) === -1 && ARMOR_CATEGORIES.indexOf(i.category) === -1; });
+
+    // Weapons (up to 5)
+    weapons.slice(0, 5).forEach(function(item, idx) {
+      var n = idx + 1;
+      safeSetText(form, 'Weapon' + n, item.name || '');
+      safeSetText(form, 'Handling' + n, item.handling || '');
+      safeSetText(form, 'Damage' + n, item.damage || '');
+      safeSetText(form, 'Mag' + n, item.magazine != null ? String(item.magazine) : '');
+      safeSetText(form, 'Slots' + n, item.slots != null ? String(item.slots) : '');
+      safeSetText(form, 'Enc' + n, item.encumbrance != null ? String(item.encumbrance) : '');
+      safeSetText(form, 'Tech' + n, item.techLevel || '');
+      safeSetText(form, 'Properties' + n, (item.caliber ? item.caliber + ' | ' : '') + (item.range ? item.range + ' | ' : '') + (item.properties || ''));
+    });
+
+    // Armors (up to 3)
+    armors.slice(0, 3).forEach(function(item, idx) {
+      var n = idx + 1;
+      safeSetText(form, 'Armor' + n, item.name || '');
+      safeSetText(form, 'ArmorValue' + n, item.armorValue || '');
+      safeSetText(form, 'ArmorEnc' + n, item.encumbrance != null ? String(item.encumbrance) : '');
+      safeSetText(form, 'ArmorTech' + n, item.techLevel || '');
+      safeSetText(form, 'ArmorSlots' + n, item.slots != null ? String(item.slots) : '');
+      safeSetText(form, 'ArmorProperties' + n, item.properties || '');
+    });
+
+    // Other equipment — PossessionsA1-7 then PossessionsB1-7 (14 total)
+    others.slice(0, 14).forEach(function(item, idx) {
+      var col = idx < 7 ? 'A' : 'B';
+      var row = (idx % 7) + 1;
+      safeSetText(form, 'Possessions' + col + row, item.name || '');
+      safeSetText(form, 'PossessionsEnc' + col + row, item.encumbrance != null ? String(item.encumbrance) : '');
+    });
   }
 
   window.downloadFilledPDF_en = downloadFilledPDF_en;
