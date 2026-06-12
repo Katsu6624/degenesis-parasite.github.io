@@ -5,25 +5,18 @@
       <!-- Budget LC/Dinars -->
       <div class="inv-stat-chip">
         <span class="inv-stat-label">{{ store.computedDinars?.currency ?? 'LC' }}</span>
-        <span class="inv-stat-value" :class="store.remainingLC < 0 ? 'text-red' : ''">
+        <input
+          v-if="store.editorMode === 'free'"
+          type="number"
+          :value="store.manualLC !== null ? store.manualLC : (store.computedDinars?.value ?? 0)"
+          @change="e => store.setManualLC(e.target.value === '' ? null : Number(e.target.value))"
+          class="inv-lc-inline-input"
+          :class="store.remainingLC < 0 ? 'text-red' : ''"
+        />
+        <span v-else class="inv-stat-value" :class="store.remainingLC < 0 ? 'text-red' : ''">
           {{ store.remainingLC }}
         </span>
-        <template v-if="store.editorMode === 'free'">
-          <v-text-field
-            :model-value="store.manualLC ?? store.computedDinars?.value ?? 0"
-            @update:model-value="val => store.setManualLC(val === '' || val === null ? null : Number(val))"
-            type="number"
-            density="compact"
-            hide-details
-            variant="outlined"
-            style="width:110px;font-size:12px"
-            class="ml-1"
-            :label="'base ' + (store.computedDinars?.currency ?? 'LC')"
-          />
-        </template>
-        <template v-else>
-          <span class="inv-stat-sub inv-muted">(base : {{ store.computedDinars?.value ?? 0 }})</span>
-        </template>
+        <span v-if="store.editorMode !== 'free'" class="inv-stat-sub inv-muted">(base : {{ store.computedDinars?.value ?? 0 }})</span>
       </div>
 
       <v-divider vertical class="mx-2" style="height:40px"></v-divider>
@@ -555,6 +548,24 @@ const availableCategoryOptions = computed(() => {
   font-size: 1.25rem;
   font-weight: 600;
   color: rgb(var(--v-theme-on-surface));
+}
+
+.inv-lc-inline-input {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: rgb(var(--v-theme-on-surface));
+  background: transparent;
+  border: none;
+  border-bottom: 1px dashed rgba(var(--v-theme-on-surface), 0.4);
+  outline: none;
+  width: 80px;
+  text-align: center;
+  -moz-appearance: textfield;
+}
+.inv-lc-inline-input::-webkit-inner-spin-button,
+.inv-lc-inline-input::-webkit-outer-spin-button { -webkit-appearance: none; }
+.inv-lc-inline-input:focus {
+  border-bottom-color: rgb(var(--v-theme-primary));
 }
 
 .inv-stat-sub {
