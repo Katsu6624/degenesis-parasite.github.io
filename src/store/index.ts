@@ -69,6 +69,7 @@ export type State = {
   isLoading: boolean
   inventory: InventoryPurchase[]
   resourceMode: ResourceMode
+  manualLC: number | null
 }
 
 export const useCharacterStore = defineStore('character', {
@@ -96,6 +97,7 @@ export const useCharacterStore = defineStore('character', {
     isLoading: false,
     inventory: [],
     resourceMode: ResourceMode.A,
+    manualLC: null,
   }),
   getters: {
     attributeValue:
@@ -207,6 +209,7 @@ export const useCharacterStore = defineStore('character', {
         state.portrait,
         state.inventory,
         state.resourceMode,
+        state.manualLC,
       )
     },
     maxEgo(): number {
@@ -288,7 +291,9 @@ export const useCharacterStore = defineStore('character', {
       return advancementsToLevel(this.remainingAdvancements)
     },
     remainingLC(): number {
-      const base = this.computedDinars?.value ?? 0
+      const base = (this.editorMode === EditorMode.Free && this.manualLC !== null)
+        ? this.manualLC
+        : (this.computedDinars?.value ?? 0)
       const spent = this.inventory
         .filter(p => !p.purchasedWithResources)
         .reduce((sum, p) => {
@@ -400,6 +405,7 @@ export const useCharacterStore = defineStore('character', {
       this.portrait = character.portrait || ''
       this.inventory = character.inventory ? [...character.inventory] : []
       this.resourceMode = character.resourceMode ?? ResourceMode.A
+      this.manualLC = character.manualLC ?? null
       this.isLoading = false
     },
     adjustProperties() {
@@ -613,6 +619,9 @@ export const useCharacterStore = defineStore('character', {
     },
     setCharacterName(name: string) {
       this.characterName = name
+    },
+    setManualLC(value: number | null) {
+      this.manualLC = value
     },
     setEditorMode(mode: EditorMode) {
       // We can't switch to HardLimits if any point limit is exceeded, because we can't decide what to truncate

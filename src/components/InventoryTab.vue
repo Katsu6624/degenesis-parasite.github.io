@@ -8,7 +8,22 @@
         <span class="inv-stat-value" :class="store.remainingLC < 0 ? 'text-red' : ''">
           {{ store.remainingLC }}
         </span>
-        <span class="inv-stat-sub inv-muted">(base : {{ store.computedDinars?.value ?? 0 }})</span>
+        <template v-if="store.editorMode === 'free'">
+          <v-text-field
+            :model-value="store.manualLC ?? store.computedDinars?.value ?? 0"
+            @update:model-value="val => store.setManualLC(val === '' || val === null ? null : Number(val))"
+            type="number"
+            density="compact"
+            hide-details
+            variant="outlined"
+            style="width:110px;font-size:12px"
+            class="ml-1"
+            :label="'base ' + (store.computedDinars?.currency ?? 'LC')"
+          />
+        </template>
+        <template v-else>
+          <span class="inv-stat-sub inv-muted">(base : {{ store.computedDinars?.value ?? 0 }})</span>
+        </template>
       </div>
 
       <v-divider vertical class="mx-2" style="height:40px"></v-divider>

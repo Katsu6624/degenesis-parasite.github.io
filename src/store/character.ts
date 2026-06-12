@@ -26,6 +26,7 @@ export class Character {
     readonly portrait?: string,
     readonly inventory?: InventoryPurchase[],
     readonly resourceMode?: ResourceMode,
+    readonly manualLC?: number | null,
   ) {
     this.storageVersion = 'v1'
     const legacyEditorMode = wasCreatedWithFreeMode ? (wasCreatedWithFreeMode ? EditorMode.Free : editorMode) : editorMode
