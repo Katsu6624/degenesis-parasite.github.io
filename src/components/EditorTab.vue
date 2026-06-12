@@ -114,23 +114,11 @@
                             </v-col>
                             <v-col cols="6" sm="2">
                               <v-text-field
-                                v-if="store.editorMode !== 'free'"
                                 :model-value="store.computedDinars ? `${store.computedDinars.value} ${store.computedDinars.currency}` : ''"
                                 :label="$t('messages.dinars')"
                                 variant="underlined"
                                 readonly
                               ></v-text-field>
-                              <div v-else style="padding-top:12px">
-                                <label style="font-size:0.75rem;color:rgba(var(--v-theme-on-surface),0.6);display:block;margin-bottom:2px">
-                                  {{ $t('messages.dinars') }} ({{ store.computedDinars?.currency ?? 'LC' }})
-                                </label>
-                                <input
-                                  type="number"
-                                  :value="store.manualLC !== null ? store.manualLC : (store.computedDinars?.value ?? 0)"
-                                  @change="e => store.setManualLC((e.target as HTMLInputElement).value === '' ? null : Number((e.target as HTMLInputElement).value))"
-                                  class="editor-lc-inline-input"
-                                />
-                              </div>
                             </v-col>
                           </v-row>
                         </v-container>
