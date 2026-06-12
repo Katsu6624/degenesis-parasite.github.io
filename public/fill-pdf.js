@@ -287,7 +287,215 @@
 
   window.downloadFilledPDF = downloadFilledPDF;
 
-  function createButton() {
+  var SKILL_TO_PDF_EN = {
+    athletics: "Ath",
+    brawl: "Brw",
+    force: "For",
+    melee: "Mel",
+    stamina: "Sta",
+    toughness: "Tgh",
+    projectiles: "Pro",
+    crafting: "Cra",
+    dexterity: "Dex",
+    stealth: "Ste",
+    mobility: "Mob",
+    navigation: "Nav",
+    arts: "Art",
+    conduct: "Con",
+    expression: "Exp",
+    leadership: "Lea",
+    negotiation: "Neg",
+    seduction: "Sed",
+    empathy: "Emp",
+    orienteering: "Ori",
+    perception: "Per",
+    primal: "Pri",
+    survival: "Sur",
+    taming: "Tam",
+    domination: "Dom",
+    faith: "Fai",
+    reaction: "Rea",
+    cunning: "Cun",
+    deception: "Dec",
+    willpower: "Wil",
+    focus: "Fcs",
+    artifactLore: "ArL",
+    legends: "Leg",
+    medicine: "Med",
+    science: "Sci",
+    engineering: "Eng"
+  };
+
+  var ATTR_TO_PDF_EN = {
+    body: "Bod",
+    agility: "Agi",
+    charisma: "Cha",
+    intellect: "Int",
+    psyche: "Psy",
+    instinct: "Ins"
+  };
+
+  var ORIGIN_TO_PDF_EN = {
+    allies: "All",
+    authority: "Aut",
+    renown: "Ren",
+    network: "Net",
+    resources: "Res",
+    secrets: "Sec"
+  };
+
+  async function downloadFilledPDF_en() {
+    var store = window.__charStore;
+    var i18n = window.__i18n;
+
+    if (!store) {
+      alert("Please open the Character Sheet (PDF) tab first.");
+      return;
+    }
+
+    var PDFLib = window.PDFLib;
+    if (!PDFLib) {
+      alert("PDF library not loaded. Please reload the page.");
+      return;
+    }
+
+    var pdfUrl = new URL("fiche_degenesis_en.pdf", window.location.href).href;
+    var pdfBytes = await fetch(pdfUrl).then(function (r) { return r.arrayBuffer(); });
+    var pdf = await PDFLib.PDFDocument.load(pdfBytes);
+    var form = pdf.getForm();
+
+    safeSetText(form, "Name", store.characterName || "");
+    safeSetText(form, "Age", store.age != null ? String(store.age) : "");
+    safeSetText(form, "Sex", store.gender || "");
+    safeSetText(form, "Height", store.height != null ? String(store.height) : "");
+    safeSetText(form, "Weight", store.weight != null ? String(store.weight) : "");
+    safeSetText(form, "XPC", store.experience || "");
+
+    var CULT_FACTORS = {
+      "anabaptists": [50, "LC"], "anubians": [100, "dinars"],
+      "apocalyptics": [200, "LC"], "palers": [50, "LC"],
+      "chroniclers": [128, "LC"], "clanners": [50, "LC"],
+      "scrappers": [50, "LC"], "scourgers": [100, "dinars"],
+      "hellvetics": [50, "LC"], "jehammedans": [100, "LC"],
+      "judges": [50, "LC"], "neolibyans": [1000, "dinars"],
+      "spitalians": [100, "LC"]
+    };
+    if (store.cult && store.cult.name && CULT_FACTORS[store.cult.name]) {
+      var cf = CULT_FACTORS[store.cult.name];
+      var rankLevel = store.rank ? (store.rank.hierarchyLevel || 1) : 1;
+      var resources = 0;
+      store.origins.forEach(function (v, o) { if (o.name === "resources") resources = v; });
+      var dinarsVal = (rankLevel + resources) * cf[0];
+      safeSetText(form, "Dinars/Drafts", dinarsVal + " " + cf[1]);
+    }
+
+    if (store.culture && store.culture.name) {
+      safeSetText(form, "Culture", tr(i18n, store.culture.name, "culturesConceptsCults"));
+      await embedImage(pdf, form, "CultureImage", "logotypes/cultures/" + store.culture.name + ".svg", 200);
+    }
+    if (store.concept && store.concept.name) {
+      safeSetText(form, "Concept", tr(i18n, store.concept.name, "culturesConceptsCults"));
+      await embedImage(pdf, form, "ConceptImage", "logotypes/concepts/" + store.concept.name + ".svg", 200);
+    }
+    if (store.cult && store.cult.name) {
+      safeSetText(form, "Cult", tr(i18n, store.cult.name, "culturesConceptsCults"));
+      await embedImage(pdf, form, "CultImage", "logotypes/cults/" + store.cult.name + ".svg", 200);
+    }
+    if (store.portrait) {
+      await embedPortrait(pdf, form, "CharPortrait", store.portrait);
+    }
+    if (store.rank && store.rank.name) {
+      safeSetText(form, "Rank", tr(i18n, store.rank.name, "ranks"));
+    }
+    if (store.clan && store.clan.name) {
+      safeSetText(form, "Group Name", tr(i18n, store.clan.name, "clans"));
+    }
+
+    store.attributes.forEach(function (value, attr) {
+      var pdfPrefix = ATTR_TO_PDF_EN[attr.name];
+      if (pdfPrefix) checkBoxes(form, pdfPrefix, value, 2, 6);
+    });
+
+    store.skills.forEach(function (value, skill) {
+      var pdfPrefix = SKILL_TO_PDF_EN[skill.name];
+      if (pdfPrefix) checkBoxes(form, pdfPrefix, value, 1, 6);
+    });
+
+    store.origins.forEach(function (value, origin) {
+      var pdfPrefix = ORIGIN_TO_PDF_EN[origin.name];
+      if (pdfPrefix) checkBoxes(form, pdfPrefix, value, 1, 6);
+    });
+
+    var potIndex = 1;
+    store.potentials.forEach(function (value, potential) {
+      if (potIndex <= 6) {
+        safeSetText(form, "Potential" + potIndex, tr(i18n, potential.name, "potentials"));
+        ["a", "b", "c"].forEach(function (lvl, idx) {
+          try {
+            var cb = form.getCheckBox("Pot" + potIndex + lvl);
+            if ((idx + 1) <= value) cb.check();
+            else cb.uncheck();
+          } catch (e) {}
+        });
+        potIndex++;
+      }
+    });
+
+    var legacyIndex = 1;
+    store.legacies.forEach(function (value, legacy) {
+      if (value > 0 && legacyIndex <= 4) {
+        safeSetText(form, "Legacy" + legacyIndex, tr(i18n, legacy.name, "legacies"));
+        legacyIndex++;
+      }
+    });
+
+    var egoMax = store.maxEgo || 0;
+    for (var i = 1; i <= 24; i++) {
+      try {
+        var cb = form.getCheckBox("Ego" + i);
+        if (i <= egoMax) cb.check(); else cb.uncheck();
+      } catch (e) {}
+    }
+
+    var sporuMax = store.maxSporeInfestations || 0;
+    for (var i = 1; i <= 24; i++) {
+      try {
+        var cb = form.getCheckBox("Si" + i);
+        if (i <= sporuMax) cb.check(); else cb.uncheck();
+      } catch (e) {}
+    }
+
+    var traumaMax = store.maxTrauma || 0;
+    for (var i = 1; i <= 12; i++) {
+      try {
+        var cb = form.getCheckBox("Tr" + i);
+        if (i <= traumaMax) cb.check(); else cb.uncheck();
+      } catch (e) {}
+    }
+
+    var fleshMax = store.maxFleshwounds || 0;
+    for (var i = 1; i <= 24; i++) {
+      try {
+        var cb = form.getCheckBox("FW" + i);
+        if (i <= fleshMax) cb.check(); else cb.uncheck();
+      } catch (e) {}
+    }
+
+    var filledBytes = await pdf.save();
+    var blob = new Blob([filledBytes], { type: "application/pdf" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = (store.characterName || "character").replace(/[^a-zA-Z0-9À-ɏ\s\-]/g, "") + "_sheet.pdf";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  window.downloadFilledPDF_en = downloadFilledPDF_en;
+
+  function createButtonFR() {
     var btn = document.createElement("button");
     btn.id = "fill-pdf-btn";
     btn.innerHTML = "&#x1F4C4; Télécharger PDF";
@@ -324,17 +532,52 @@
     return btn;
   }
 
+  function createButtonEN() {
+    var btn = document.createElement("button");
+    btn.id = "fill-pdf-btn-en";
+    btn.innerHTML = "&#x1F4C4; Download PDF";
+    btn.style.cssText =
+      "position:fixed;bottom:24px;right:24px;z-index:9999;" +
+      "padding:14px 28px;font-size:15px;font-weight:bold;" +
+      "background:#B71C1C;color:#fff;border:2px solid #fff;" +
+      "border-radius:12px;cursor:pointer;" +
+      "box-shadow:0 4px 16px rgba(0,0,0,0.5);" +
+      "font-family:inherit;transition:all 0.2s;" +
+      "display:none;";
+    btn.onmouseenter = function () { btn.style.background = "#D32F2F"; };
+    btn.onmouseleave = function () { btn.style.background = "#B71C1C"; };
+    btn.onclick = function () {
+      var orig = btn.innerHTML;
+      btn.innerHTML = "&#x23F3; Generating...";
+      btn.disabled = true;
+      btn.style.opacity = "0.7";
+      downloadFilledPDF_en()
+        .then(function () {
+          btn.innerHTML = orig;
+          btn.disabled = false;
+          btn.style.opacity = "1";
+        })
+        .catch(function (err) {
+          console.error("PDF fill error:", err);
+          btn.innerHTML = orig;
+          btn.disabled = false;
+          btn.style.opacity = "1";
+          alert("Error: " + err.message);
+        });
+    };
+    document.body.appendChild(btn);
+    return btn;
+  }
+
   function startWatcher() {
-    var btn = createButton();
+    var btnFR = createButtonFR();
+    var btnEN = createButtonEN();
     setInterval(function () {
-      // Only show the button when a character is actually open (not on the welcome page).
       var s = window.__charStore;
       var locale = localStorage.getItem("locale");
-      if (s && s.characterName && s.characterName.length > 0 && (locale === "fr" || locale === null)) {
-        btn.style.display = "block";
-      } else {
-        btn.style.display = "none";
-      }
+      var hasName = s && s.characterName && s.characterName.length > 0;
+      btnFR.style.display = (hasName && (locale === "fr" || locale === null)) ? "block" : "none";
+      btnEN.style.display = (hasName && locale === "en") ? "block" : "none";
     }, 500);
   }
 
