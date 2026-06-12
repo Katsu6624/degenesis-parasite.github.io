@@ -114,6 +114,15 @@
                             </v-col>
                             <v-col cols="6" sm="2">
                               <v-text-field
+                                v-if="store.editorMode === 'free'"
+                                :model-value="store.manualLC !== null ? store.manualLC : (store.computedDinars?.value ?? 0)"
+                                :label="$t('messages.dinars')"
+                                variant="underlined"
+                                type="number"
+                                @update:model-value="val => store.setManualLC(val === '' || val === null ? null : Number(val))"
+                              ></v-text-field>
+                              <v-text-field
+                                v-else
                                 :model-value="store.computedDinars ? `${store.computedDinars.value} ${store.computedDinars.currency}` : ''"
                                 :label="$t('messages.dinars')"
                                 variant="underlined"
