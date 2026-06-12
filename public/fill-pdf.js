@@ -576,8 +576,9 @@
       var s = window.__charStore;
       var locale = localStorage.getItem("locale");
       var hasName = s && s.characterName && s.characterName.length > 0;
-      btnFR.style.display = (hasName && (locale === "fr" || locale === null)) ? "block" : "none";
-      btnEN.style.display = (hasName && locale === "en") ? "block" : "none";
+      var onInventoryTab = window.__currentTab && window.__currentTab.value === "sheet";
+      btnFR.style.display = (hasName && !onInventoryTab && (locale === "fr" || locale === null)) ? "block" : "none";
+      btnEN.style.display = (hasName && !onInventoryTab && locale === "en") ? "block" : "none";
     }, 500);
   }
 

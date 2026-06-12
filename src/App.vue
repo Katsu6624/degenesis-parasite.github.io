@@ -194,7 +194,7 @@
 <script setup lang="ts">
 import IntroPage from '@/components/IntroPage.vue'
 import AppPreferences from '@/components/AppPreferences.vue'
-import Sheet from '@/components/SheetTab.vue'
+import Sheet from '@/components/InventoryTab.vue'
 import config from '@/config'
 import { useCharacterStore } from '@/store'
 import type { Character } from '@/store/character'
@@ -271,6 +271,7 @@ const cultLabels = () => {
 }
 
 const tab = ref('')
+;(window as any).__currentTab = tab
 
 // persist state whenever it changes
 watch(

@@ -100,4 +100,7 @@ onBeforeUnmount(() => {
 .hover-tooltip-wrapper {
   display: inherit;
 }
+.hover-tooltip-wrapper.prop-block {
+  display: block;
+}
 </style>
