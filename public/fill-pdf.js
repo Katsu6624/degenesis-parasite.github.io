@@ -307,10 +307,10 @@
       var n = idx + 1;
       safeSetText(form, 'ARME' + n, item.name || '');
       safeSetText(form, 'MANIEMENTRow' + n, item.handling || '');
-      safeSetText(form, 'Row' + n, item.caliber || '');
-      safeSetText(form, 'Row' + n + '_2', item.range || '');
-      safeSetText(form, 'Row' + n + '_3', item.damage || '');
-      if (n <= 4) safeSetText(form, 'Row' + n + '_4', item.properties || '');
+      safeSetText(form, 'Row' + n, item.range || '');
+      safeSetText(form, 'Row' + n + '_2', item.damage || '');
+      safeSetText(form, 'Row' + n + '_3', item.properties || '');
+      if (n <= 4) safeSetText(form, 'Row' + n + '_4', item.caliber || '');
       safeSetText(form, 'CHARGRow' + n, item.magazine != null ? String(item.magazine) : '');
       safeSetText(form, 'EMPLRow' + n, item.slots != null ? String(item.slots) : '');
       safeSetText(form, 'ENCRow' + n, item.encumbrance != null ? String(item.encumbrance) : '');
@@ -321,9 +321,10 @@
     armors.slice(0, 3).forEach(function(item, idx) {
       var n = idx + 1;
       safeSetText(form, 'ARMURE' + n, item.name || '');
-      safeSetText(form, 'VALEUR DARMURERow' + n, item.armorValue || '');
-      safeSetText(form, 'VALEUR APPROXRow' + n, item.value != null ? String(item.value) : '');
-      safeSetText(form, 'ENCRow' + (5 + n), item.encumbrance != null ? String(item.encumbrance) : '');
+      safeSetText(form, 'VALEUR DARMURERow' + n, item.armorValue != null ? String(item.armorValue) : '');
+      safeSetText(form, 'ENCRow' + n + '_2', item.encumbrance != null ? String(item.encumbrance) : '');
+      safeSetText(form, 'TECHRow' + n + '_2', item.techLevel || '');
+      safeSetText(form, 'EMPLRow' + n + '_2', item.slots != null ? String(item.slots) : '');
     });
 
     // Other equipment (up to 14)
