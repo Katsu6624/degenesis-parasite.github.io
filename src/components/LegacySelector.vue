@@ -88,6 +88,51 @@
     </v-card>
   </v-dialog>
 
+  <!-- Dialog Techno-Influenceur : choix artéfact -->
+  <v-dialog v-model="artefactDialogOpen" max-width="520" persistent>
+    <v-card>
+      <v-card-title class="text-h6 pa-4">Techno-Influenceur — Artéfact Légendaire</v-card-title>
+      <v-card-text class="pa-4 pt-0">
+        <p style="font-size:14px;line-height:1.6;color:#ccc" class="mb-4">
+          Vous avez trouvé par pure chance un artéfact légendaire. Attention, le MJ peut décider que vous n'en avez pas du tout (on vous l'a volé, vous l'avez déjà vendu). Mais dans le cas où il vous le laisse, il y a deux possibilités. Soit il vous en donne un aléatoire (cliquez sur "Aléatoire") soit vous choisissez votre artéfact.
+        </p>
+        <p style="font-size:13px;font-weight:700;color:#aaa;letter-spacing:0.05em" class="mb-3">QU'EST-CE QUE VOTRE MJ AUTORISE ?</p>
+
+        <!-- Sélection artéfact -->
+        <v-select
+          v-if="artefactPickMode === 'choose'"
+          v-model="artefactChosen"
+          :items="legendaryArtefactItems"
+          label="Choisir un artéfact"
+          density="compact"
+          variant="outlined"
+          class="mt-2"
+        ></v-select>
+
+        <!-- Message artéfact aléatoire -->
+        <div v-if="artefactPickMode === 'random' && artefactRandom" class="mt-2 pa-3" style="background:rgba(255,255,255,0.06);border-radius:6px;font-size:14px">
+          🎲 Vous avez reçu <strong>{{ artefactRandom.name }}</strong> — allez voir dans l'inventaire !
+        </div>
+      </v-card-text>
+      <v-card-actions class="pa-4 pt-0" style="flex-wrap:wrap;gap:8px">
+        <template v-if="artefactPickMode === 'random'">
+          <v-spacer></v-spacer>
+          <v-btn variant="flat" color="primary" @click="artefactDialogOpen = false">Fermer</v-btn>
+        </template>
+        <template v-else-if="artefactPickMode === 'choose'">
+          <v-btn variant="text" color="grey" @click="artefactPickMode = null">Retour</v-btn>
+          <v-spacer></v-spacer>
+          <v-btn variant="flat" color="primary" :disabled="!artefactChosen" @click="confirmArtefactChosenDialog">Confirmer</v-btn>
+        </template>
+        <template v-else>
+          <v-btn variant="outlined" color="grey" @click="confirmArtefactDialog('none')">Pas d'Artéfact</v-btn>
+          <v-btn variant="outlined" color="primary" @click="confirmArtefactDialog('random')">Artéfact aléatoire</v-btn>
+          <v-btn variant="outlined" color="secondary" @click="artefactPickMode = 'choose'">Choisir un Artéfact</v-btn>
+        </template>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+
   <!-- Dialog Transfuge -->
   <v-dialog v-model="sidewinderDialogOpen" max-width="480" persistent>
     <v-card>
@@ -124,11 +169,13 @@ import ValueSelector from '@/components/ValueSelector.vue'
 import config from '@/config'
 import { EditorMode } from '@/config/modes'
 import { AllLegacies } from '@/config/legacies'
+import { TechTuned } from '@/config/legacies/legacies'
 import { useCharacterStore } from '@/store'
 import { Attributes, Origins, Skills } from '@/config/properties'
 import type { LegacyEffect } from '@/config/legacies/effects'
 import { SCOPE_SKILLS } from '@/config/legacies/effects'
 import { Cults } from '@/config/cults/cults'
+import { ITEMS } from '@/config/items'
 const store = useCharacterStore()
 const i18n = useI18n()
 
@@ -221,6 +268,49 @@ function missingConditionsHtml(legacy: Legacy): string {
     missing.map(m => `• ${m}`).join('<br>')
 }
 
+// ── Techno-Influenceur : artéfact légendaire dialog ──────────────────────────
+
+const LEGENDARY_ARTEFACTS = ITEMS.filter(i => i.category === 'artefactsLegendaires')
+
+const legendaryArtefactItems = computed(() =>
+  LEGENDARY_ARTEFACTS.map(i => ({ title: i.name, value: i.id }))
+    .sort((a, b) => a.title.localeCompare(b.title))
+)
+
+const artefactDialogOpen = ref(false)
+const artefactDialogPendingValue = ref(0)
+const artefactPickMode = ref<'none' | 'random' | 'choose' | null>(null)
+const artefactChosen = ref<string | null>(null)
+const artefactRandom = ref<{ id: string; name: string } | null>(null)
+
+function openArtefactDialog(value: number) {
+  artefactDialogPendingValue.value = value
+  artefactPickMode.value = null
+  artefactChosen.value = null
+  artefactRandom.value = null
+  artefactDialogOpen.value = true
+}
+
+function confirmArtefactDialog(mode: 'none' | 'random') {
+  store.setLegacy(TechTuned, artefactDialogPendingValue.value)
+  if (mode === 'random') {
+    const pool = LEGENDARY_ARTEFACTS
+    const picked = pool[Math.floor(Math.random() * pool.length)]
+    store.addItemFree(picked.id)
+    artefactRandom.value = { id: picked.id, name: picked.name }
+    artefactPickMode.value = 'random'
+  } else {
+    artefactDialogOpen.value = false
+  }
+}
+
+function confirmArtefactChosenDialog() {
+  if (!artefactChosen.value) return
+  store.setLegacy(TechTuned, artefactDialogPendingValue.value)
+  store.addItemFree(artefactChosen.value)
+  artefactDialogOpen.value = false
+}
+
 // ── Sidewinder (Transfuge) dialog ─────────────────────────────────────────────
 
 const sidewinderDialogOpen = ref(false)
@@ -302,6 +392,10 @@ function autoFillChoices(legacy: Legacy): { attributes: Record<string, string>; 
 }
 
 function handleLegacyChange(legacy: Legacy, value: number) {
+  if (legacy.name === 'techtuned' && value > 0) {
+    openArtefactDialog(value)
+    return
+  }
   if (legacy.name === 'sidewinder' && value > 0) {
     openSidewinderDialog(value)
     return
