@@ -249,7 +249,7 @@
                         :active="store.editorMode != EditorMode.Free"
                         :title="$t('messages.originPoints')"
                         :value="store.spentPoints.origins"
-                        :max="availablePoints.origins + store.legacyXPOriginBonus"
+                        :max="store.originBudget"
                       ></PointMeter>
                     </v-col>
                     <v-col cols="12" sm="4" lg="3" xl="2">

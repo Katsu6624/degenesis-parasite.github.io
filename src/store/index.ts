@@ -207,6 +207,15 @@ export const useCharacterStore = defineStore('character', {
         .filter(e => e.type === 'xpOriginBonus')
         .reduce((sum, e) => sum + (e as any).points, 0)
     },
+    hasOptimized(): boolean {
+      let found = false
+      this.legacies.forEach((v, legacy) => { if (v > 0 && legacy.name === 'optimized') found = true })
+      return found
+    },
+    originBudget(): number {
+      if (this.hasOptimized) return 1
+      return config.availablePoints.origins + this.legacyXPOriginBonus
+    },
     legacyXPPotentialBonus(): number {
       return this.activeLegacyEffects
         .filter(e => e.type === 'xpPotentialBonus')
@@ -447,7 +456,7 @@ export const useCharacterStore = defineStore('character', {
       )
     },
     eligibleLegacies(): Set<Legacy> {
-      return eligibleLegacies(
+      const set = eligibleLegacies(
         this.attributeValues,
         this.skillValues,
         this.originValues,
@@ -455,12 +464,16 @@ export const useCharacterStore = defineStore('character', {
         this.mentalResistanceSkill,
         this.concept,
       )
+      if (this.editorMode !== EditorMode.Free && this.spentPoints.origins > 0) {
+        set.forEach(l => { if (l.name === 'optimized') set.delete(l) })
+      }
+      return set
     },
     anyPointLimitExceeded(): boolean {
       return (
         this.spentPoints.attributes > config.availablePoints.attributes + this.legacyXPAttributeBonus ||
         this.spentPoints.skills > config.availablePoints.skills + this.legacyXPSkillBonus ||
-        this.spentPoints.origins > config.availablePoints.origins + this.legacyXPOriginBonus ||
+        this.spentPoints.origins > this.originBudget ||
         this.spentPoints.potentials > config.availablePoints.potentials + this.legacyXPPotentialBonus ||
         this.spentPoints.legacies > config.availablePoints.legacies
       )
@@ -673,7 +686,7 @@ export const useCharacterStore = defineStore('character', {
             const boundedValue = Math.min(value, config.pointLimits.origins.max)
             const currentValue = this.originValue(origin)
             const expectedPointSpend = boundedValue - currentValue
-            const maximumPointSpend = config.availablePoints.origins + this.legacyXPOriginBonus - this.spentPoints.origins
+            const maximumPointSpend = this.originBudget - this.spentPoints.origins
             const boundedPointSpend = Math.min(expectedPointSpend, maximumPointSpend)
             return currentValue + boundedPointSpend
           }
@@ -732,6 +745,10 @@ export const useCharacterStore = defineStore('character', {
       
       // In HardLimits mode, only allow eligible legacies
       if (this.editorMode === EditorMode.HardLimits && !this.eligibleLegacies.has(legacy)) {
+        return
+      }
+      // Block Optimized if origins already spent (non-free mode)
+      if (legacy.name === 'optimized' && newValue() > 0 && this.editorMode !== EditorMode.Free && this.spentPoints.origins > 0) {
         return
       }
       
