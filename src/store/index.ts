@@ -254,6 +254,16 @@ export const useCharacterStore = defineStore('character', {
       this.legacies.forEach((v, legacy) => { if (v > 0 && legacy.name === 'optimized') found = true })
       return found
     },
+    hasCreatureOfHabit(): boolean {
+      let found = false
+      this.legacies.forEach((v, legacy) => { if (v > 0 && legacy.name === 'creatureofhabit') found = true })
+      return found
+    },
+    hasPrimordial(): boolean {
+      let found = false
+      this.legacies.forEach((v, legacy) => { if (v > 0 && legacy.name === 'primordial') found = true })
+      return found
+    },
     originBudget(): number {
       if (this.hasOptimized) return 1
       return config.availablePoints.origins + this.legacyXPOriginBonus
@@ -889,6 +899,9 @@ export const useCharacterStore = defineStore('character', {
         if (legacy.name === 'sidewinder') {
           this.sidewinderOldCultName = null
         }
+        if (legacy.name === 'techtuned') {
+          this.inventory = this.inventory.filter(p => p.fromLegacy !== 'techtuned')
+        }
       } else {
         this.legacies.set(legacy, newValue())
       }
@@ -1001,8 +1014,8 @@ export const useCharacterStore = defineStore('character', {
     removeInventoryItem(index: number) {
       this.inventory.splice(index, 1)
     },
-    addItemFree(itemId: string) {
-      this.inventory.push({ itemId, purchasedWithResources: false, decrementedResources: false })
+    addItemFree(itemId: string, fromLegacy?: string) {
+      this.inventory.push({ itemId, purchasedWithResources: false, decrementedResources: false, fromLegacy })
     },
     setResourceMode(mode: ResourceMode) {
       this.resourceMode = mode

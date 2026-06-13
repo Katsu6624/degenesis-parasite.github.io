@@ -163,6 +163,7 @@ export interface InventoryPurchase {
   decrementedResources: boolean
   level?: number
   entrepreneurResources?: boolean
+  fromLegacy?: string
 }
 
 export enum ResourceMode {

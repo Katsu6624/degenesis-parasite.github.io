@@ -326,11 +326,40 @@
             <div class="xp-tooltip-content">
               <p>Chaque augmentation coûte en XP la <strong>nouvelle valeur × un facteur</strong> selon le type :</p>
               <table class="xp-table">
-                <tr><td>Attribut</td><td>× 12 XP</td></tr>
-                <tr><td>Attribut préféré <span class="xp-star">*</span></td><td>× 10 XP</td></tr>
-                <tr><td>Compétence</td><td>× 5 XP</td></tr>
-                <tr><td>Compétence préférée <span class="xp-star">*</span></td><td>× 4 XP</td></tr>
+                <tr>
+                  <td>Attribut non-préféré</td>
+                  <td :class="(store.hasCreatureOfHabit || store.hasPrimordial) ? 'xp-modified' : ''">
+                    × {{ (store.hasCreatureOfHabit || store.hasPrimordial) ? '14' : '12' }} XP
+                    <span v-if="store.hasCreatureOfHabit || store.hasPrimordial" class="xp-badge xp-badge-up">+2</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Attribut préféré <span class="xp-star">*</span></td>
+                  <td :class="(store.hasCreatureOfHabit || store.hasPrimordial) ? 'xp-modified-down' : ''">
+                    × {{ (store.hasCreatureOfHabit || store.hasPrimordial) ? '8' : '10' }} XP
+                    <span v-if="store.hasCreatureOfHabit || store.hasPrimordial" class="xp-badge xp-badge-down">-2</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Compétence non-préférée</td>
+                  <td :class="(store.hasCreatureOfHabit || store.hasPrimordial) ? 'xp-modified' : ''">
+                    × {{ (store.hasCreatureOfHabit || store.hasPrimordial) ? '6' : '5' }} XP
+                    <span v-if="store.hasCreatureOfHabit || store.hasPrimordial" class="xp-badge xp-badge-up">+1</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Compétence préférée <span class="xp-star">*</span></td>
+                  <td :class="(store.hasCreatureOfHabit || store.hasPrimordial) ? 'xp-modified-down' : ''">
+                    × {{ (store.hasCreatureOfHabit || store.hasPrimordial) ? '3' : '4' }} XP
+                    <span v-if="store.hasCreatureOfHabit || store.hasPrimordial" class="xp-badge xp-badge-down">-1</span>
+                  </td>
+                </tr>
               </table>
+              <p v-if="store.hasCreatureOfHabit || store.hasPrimordial" class="xp-legacy-note">
+                ✦ Héritage <strong>{{ store.hasCreatureOfHabit ? 'Routinier' : 'Impulsif' }}</strong> :
+                coût réduit pour les {{ store.hasCreatureOfHabit ? 'attributs/compétences Concentration' : 'attributs/compétences Pulsions' }},
+                augmenté pour les autres.
+              </p>
               <p v-if="store.mentalPowerChoice" class="xp-preferred-note">
                 <span class="xp-star">*</span> Préférés pour
                 <strong>{{ store.mentalPowerChoice === 'primal' ? 'Pulsions' : 'Concentration' }}</strong> :
@@ -597,6 +626,34 @@ const renameCharacter = () => {
   margin-top: 8px;
   font-size: 12px;
   color: #ccc;
+}
+.xp-modified {
+  color: #ef9a9a;
+}
+.xp-modified-down {
+  color: #a5d6a7;
+}
+.xp-badge {
+  font-size: 10px;
+  font-weight: 700;
+  margin-left: 4px;
+  padding: 1px 4px;
+  border-radius: 3px;
+}
+.xp-badge-up {
+  background: rgba(239,83,80,0.25);
+  color: #ef9a9a;
+}
+.xp-badge-down {
+  background: rgba(76,175,80,0.2);
+  color: #a5d6a7;
+}
+.xp-legacy-note {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #ffe082;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  padding-top: 6px;
 }
 
 #appBarIcon {
