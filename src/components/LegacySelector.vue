@@ -296,7 +296,7 @@ function confirmArtefactDialog(mode: 'none' | 'random') {
   if (mode === 'random') {
     const pool = LEGENDARY_ARTEFACTS
     const picked = pool[Math.floor(Math.random() * pool.length)]
-    store.addItemFree(picked.id)
+    store.addItemFree(picked.id, 'techtuned')
     artefactRandom.value = { id: picked.id, name: picked.name }
     artefactPickMode.value = 'random'
   } else {
@@ -307,7 +307,7 @@ function confirmArtefactDialog(mode: 'none' | 'random') {
 function confirmArtefactChosenDialog() {
   if (!artefactChosen.value) return
   store.setLegacy(TechTuned, artefactDialogPendingValue.value)
-  store.addItemFree(artefactChosen.value)
+  store.addItemFree(artefactChosen.value, 'techtuned')
   artefactDialogOpen.value = false
 }
 
