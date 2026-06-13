@@ -390,7 +390,7 @@ export const ITEMS: Item[] = [
   { id: 'arbalete-repetition', name: 'Arbalète à Répétition', category: 'armesAProjectiles', image: IMG + 'projectiles/repeating_crossbow.png', caliber: 'Carreaux', range: '15/60', damage: '10', magazine: '4', encumbrance: 2, techLevel: 'III', slots: 2, value: 2000 },
   { id: 'arc-composite', name: 'Arc Composite', category: 'armesAProjectiles', image: IMG + 'projectiles/composite_bow.png', caliber: 'Flèches', range: '15/60', damage: '8+F/3', magazine: '1', encumbrance: 1, techLevel: 'IV', slots: 2, value: 2000 },
   { id: 'arc', name: 'Arc', category: 'armesAProjectiles', image: IMG + 'projectiles/bow.png', caliber: 'Flèches', handling: '-1D', range: '10/40', damage: '6+F/3', magazine: '1', encumbrance: 1, techLevel: 'I', slots: 2, value: 200 },
-  { id: 'sarbacane', name: 'Sarbacane', category: 'armesAProjectiles', image: IMG + 'projectiles/blow_gun.png', caliber: 'Clous', range: '3/12', damage: '4', magazine: '1', techLevel: 'I', slots: 1, value: 30 },
+  { id: 'sarbacane', name: 'Sarbacane', category: 'armesAProjectiles', image: IMG + 'projectiles/blow_gun.png', caliber: 'Clous', range: '3/12', damage: '4', magazine: '1', techLevel: 'I', slots: 0, value: 30 },
 
   // ─── FUSILS ───
   { id: 'carabine-neo', name: 'Carabine (Neo.)', category: 'fusils', cult: 'neolibyans', image: IMG + 'rifles/hunting_rifle_neo.png', caliber: '.357', handling: '+1D', range: '30/120', damage: '6', magazine: '4', properties: 'Spécial', encumbrance: 2, techLevel: 'IV', slots: 2, value: 1800, resources: 3 },
