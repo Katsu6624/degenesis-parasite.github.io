@@ -293,6 +293,11 @@ export const useCharacterStore = defineStore('character', {
       if (!hasExperienced) return new Set()
       return new Set(chosen)
     },
+    hasOffspring(): boolean {
+      let found = false
+      this.legacies.forEach((v, legacy) => { if (v > 0 && legacy.name === 'offspring') found = true })
+      return found
+    },
     hasCreatureOfHabit(): boolean {
       let found = false
       this.legacies.forEach((v, legacy) => { if (v > 0 && legacy.name === 'creatureofhabit') found = true })

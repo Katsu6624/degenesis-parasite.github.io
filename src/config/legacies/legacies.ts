@@ -33,8 +33,8 @@ export const Landlord = new Legacy('landlord', [], [], [atLeastOrigin(Origins.re
   m('1 000 LC de revenus mensuels. Si Ressources < 2 : perte de la propriété, -3 Autorité et -3 Renommée.'),
 ])
 export const Offspring = new Legacy('offspring', [], [atLeastAttribute(Attributes.intellect, 2), atLeastAttribute(Attributes.charisma, 2)], [], undefined, undefined, [], [
-  attr('body', 1),
-  attr('instinct', 1),
+  attrEx('body', 1),
+  attrEx('instinct', 1),
   attr('charisma', -1),
   attr('intellect', -1),
 ])
