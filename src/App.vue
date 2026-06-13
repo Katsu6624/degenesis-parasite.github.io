@@ -161,6 +161,9 @@
     <div v-if="store.characterName.length == 0" class="bg-grey-darken-4">
       <IntroPage></IntroPage>
     </div>
+    <v-snackbar v-model="ownCharSnackbar" timeout="6000" color="blue-darken-2">
+      C'est ta propre fiche — elle s'est ouverte depuis ta sauvegarde locale.
+    </v-snackbar>
     <v-overlay
       v-model="showOverlay"
       persistent
@@ -223,21 +226,39 @@ const appStore = useApplicationStore()
 
 const isSharedView = ref(false)
 provide('isSharedView', isSharedView)
+const ownCharSnackbar = ref(false)
 
 onMounted(async () => {
-  const params = new URLSearchParams(window.location.search)
+  const hash = window.location.hash.slice(1)
+  const params = new URLSearchParams(hash)
+  const bbKey = params.get('bb')
   const viewParam = params.get('view')
-  if (viewParam) {
-    try {
-      const parsed = await decodeCharacter(viewParam) as Character
-      if (parsed?.storageVersion === 'v1') {
-        store.loadCharacter(parsed)
-        isSharedView.value = true
-        tab.value = 'edit'
-      }
-    } catch (e) {
-      console.error('Failed to decode shared character', e)
+
+  try {
+    let parsed: Character | null = null
+
+    if (bbKey) {
+      const res = await fetch(`https://bytebin.lucko.me/${bbKey}`)
+      if (res.ok) parsed = JSON.parse(await res.text()) as Character
+    } else if (viewParam) {
+      parsed = await decodeCharacter(viewParam) as Character
     }
+
+    if (parsed?.storageVersion === 'v1') {
+      if (browserStorage.characterIsStored(parsed.name)) {
+        // C'est la fiche de l'utilisateur courant — ouvrir depuis le local
+        const local = browserStorage.loadCharacter(parsed.name)
+        if (local) store.loadCharacter(local)
+        ownCharSnackbar.value = true
+      } else {
+        // Marquer AVANT le chargement pour que le watch ne stocke pas ce personnage partagé
+        isSharedView.value = true
+        store.loadCharacter(parsed)
+      }
+      tab.value = 'edit'
+    }
+  } catch (e) {
+    console.error('Failed to load shared character', e)
   }
 })
 const i18n = useI18n()
@@ -301,7 +322,7 @@ watch(
   () => store.$state,
   (state) => {
     // we can't sensibly persist characters without a name, as the name is the storage key
-    if (state.characterName && state.characterName.length > 0) {
+    if (state.characterName && state.characterName.length > 0 && !isSharedView.value) {
       browserStorage.storeCharacter(store.asCharacter)
       appStore.refresh()
     }
