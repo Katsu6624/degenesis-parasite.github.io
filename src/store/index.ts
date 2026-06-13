@@ -70,6 +70,7 @@ export type State = {
   inventory: InventoryPurchase[]
   resourceMode: ResourceMode
   manualLC: number | null
+  legacyChoices: Record<string, { attributes?: string[]; skills?: string[] }>
 }
 
 export const useCharacterStore = defineStore('character', {
@@ -98,6 +99,7 @@ export const useCharacterStore = defineStore('character', {
     inventory: [],
     resourceMode: ResourceMode.A,
     manualLC: null,
+    legacyChoices: {},
   }),
   getters: {
     attributeValue:
@@ -139,21 +141,45 @@ export const useCharacterStore = defineStore('character', {
       return effects
     },
     legacyAttributeBonus(): (name: string) => number {
-      return (name: string) =>
-        this.activeLegacyEffects
-          .filter(e => e.type === 'attribute' && e.name === name)
+      return (name: string) => {
+        let total = this.activeLegacyEffects
+          .filter(e => e.type === 'attribute' && (e as any).name === name)
           .reduce((sum, e) => sum + (e as any).bonus, 0)
+        this.legacies.forEach((v, legacy) => {
+          if (v > 0) {
+            const chosen = this.legacyChoices[legacy.name]?.attributes || []
+            for (const e of legacy.effects) {
+              if (e.type === 'choiceAttribute' && chosen.includes(name)) {
+                total += e.bonus
+              }
+            }
+          }
+        })
+        return total
+      }
     },
     legacySkillBonus(): (name: string) => number {
-      return (name: string) =>
-        this.activeLegacyEffects
-          .filter(e => e.type === 'skill' && e.name === name)
+      return (name: string) => {
+        let total = this.activeLegacyEffects
+          .filter(e => e.type === 'skill' && (e as any).name === name)
           .reduce((sum, e) => sum + (e as any).bonus, 0)
+        this.legacies.forEach((v, legacy) => {
+          if (v > 0) {
+            const chosen = this.legacyChoices[legacy.name]?.skills || []
+            for (const e of legacy.effects) {
+              if (e.type === 'choiceSkill' && chosen.includes(name)) {
+                total += e.bonus
+              }
+            }
+          }
+        })
+        return total
+      }
     },
     legacyOriginBonus(): (name: string) => number {
       return (name: string) =>
         this.activeLegacyEffects
-          .filter(e => e.type === 'origin' && e.name === name)
+          .filter(e => e.type === 'origin' && (e as any).name === name)
           .reduce((sum, e) => sum + (e as any).bonus, 0)
     },
     legacyEgoMaxBonus(): number {
@@ -169,6 +195,16 @@ export const useCharacterStore = defineStore('character', {
     legacyXPSkillBonus(): number {
       return this.activeLegacyEffects
         .filter(e => e.type === 'xpSkillBonus')
+        .reduce((sum, e) => sum + (e as any).points, 0)
+    },
+    legacyXPOriginBonus(): number {
+      return this.activeLegacyEffects
+        .filter(e => e.type === 'xpOriginBonus')
+        .reduce((sum, e) => sum + (e as any).points, 0)
+    },
+    legacyXPPotentialBonus(): number {
+      return this.activeLegacyEffects
+        .filter(e => e.type === 'xpPotentialBonus')
         .reduce((sum, e) => sum + (e as any).points, 0)
     },
     legacyModifiers(): string[] {
@@ -268,6 +304,7 @@ export const useCharacterStore = defineStore('character', {
         state.inventory,
         state.resourceMode,
         state.manualLC,
+        Object.keys(state.legacyChoices).length > 0 ? state.legacyChoices : undefined,
       )
     },
     maxEgo(): number {
@@ -406,8 +443,8 @@ export const useCharacterStore = defineStore('character', {
       return (
         this.spentPoints.attributes > config.availablePoints.attributes ||
         this.spentPoints.skills > config.availablePoints.skills + this.legacyXPSkillBonus ||
-        this.spentPoints.origins > config.availablePoints.origins ||
-        this.spentPoints.potentials > config.availablePoints.potentials ||
+        this.spentPoints.origins > config.availablePoints.origins + this.legacyXPOriginBonus ||
+        this.spentPoints.potentials > config.availablePoints.potentials + this.legacyXPPotentialBonus ||
         this.spentPoints.legacies > config.availablePoints.legacies
       )
     }
@@ -466,6 +503,7 @@ export const useCharacterStore = defineStore('character', {
       this.inventory = character.inventory ? [...character.inventory] : []
       this.resourceMode = character.resourceMode ?? ResourceMode.A
       this.manualLC = character.manualLC ?? null
+      this.legacyChoices = character.legacyChoices ? { ...character.legacyChoices } : {}
       this.isLoading = false
     },
     adjustProperties() {
@@ -618,7 +656,7 @@ export const useCharacterStore = defineStore('character', {
             const boundedValue = Math.min(value, config.pointLimits.origins.max)
             const currentValue = this.originValue(origin)
             const expectedPointSpend = boundedValue - currentValue
-            const maximumPointSpend = config.availablePoints.origins - this.spentPoints.origins
+            const maximumPointSpend = config.availablePoints.origins + this.legacyXPOriginBonus - this.spentPoints.origins
             const boundedPointSpend = Math.min(expectedPointSpend, maximumPointSpend)
             return currentValue + boundedPointSpend
           }
@@ -640,19 +678,28 @@ export const useCharacterStore = defineStore('character', {
             const currentValue = this.potentialValue(potential)
             const expectedPointSpend = boundedValue - currentValue
             const maximumPointSpend =
-              config.availablePoints.potentials - this.spentPoints.potentials
+              config.availablePoints.potentials + this.legacyXPPotentialBonus - this.spentPoints.potentials
             const boundedPointSpend = Math.min(expectedPointSpend, maximumPointSpend)
             return currentValue + boundedPointSpend
           }
         }
       }
-      
+
       // In HardLimits mode, only allow eligible potentials
       if (this.editorMode === EditorMode.HardLimits && !this.eligiblePotentials.has(potential)) {
         return
       }
       
       this.potentials.set(potential, newValue())
+    },
+    setLegacyChoices(legacyName: string, choices: { attributes?: string[]; skills?: string[] } | null) {
+      if (!choices || ((!choices.attributes || choices.attributes.length === 0) && (!choices.skills || choices.skills.length === 0))) {
+        const updated = { ...this.legacyChoices }
+        delete updated[legacyName]
+        this.legacyChoices = updated
+      } else {
+        this.legacyChoices = { ...this.legacyChoices, [legacyName]: choices }
+      }
     },
     setLegacy(legacy: Legacy, value: number) {
       const newValue = () => {
@@ -673,6 +720,7 @@ export const useCharacterStore = defineStore('character', {
       
       if (newValue() <= 0) {
         this.legacies.delete(legacy)
+        this.setLegacyChoices(legacy.name, null)
       } else {
         this.legacies.set(legacy, newValue())
       }

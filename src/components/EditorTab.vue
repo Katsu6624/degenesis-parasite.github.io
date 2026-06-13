@@ -241,7 +241,7 @@
                         :active="store.editorMode != EditorMode.Free"
                         :title="$t('messages.skillPoints')"
                         :value="store.spentPoints.skills"
-                        :max="availablePoints.skills"
+                        :max="availablePoints.skills + store.legacyXPSkillBonus"
                       ></PointMeter>
                     </v-col>
                     <v-col cols="12" sm="4" lg="3" xl="2">
@@ -249,7 +249,7 @@
                         :active="store.editorMode != EditorMode.Free"
                         :title="$t('messages.originPoints')"
                         :value="store.spentPoints.origins"
-                        :max="availablePoints.origins"
+                        :max="availablePoints.origins + store.legacyXPOriginBonus"
                       ></PointMeter>
                     </v-col>
                     <v-col cols="12" sm="4" lg="3" xl="2">
@@ -257,7 +257,7 @@
                         :active="store.editorMode != EditorMode.Free"
                         :title="$t('messages.potentialPoints')"
                         :value="store.spentPoints.potentials"
-                        :max="availablePoints.potentials"
+                        :max="availablePoints.potentials + store.legacyXPPotentialBonus"
                       ></PointMeter>
                     </v-col>
                     <v-col cols="12" sm="4" lg="3" xl="2">

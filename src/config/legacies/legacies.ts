@@ -41,7 +41,8 @@ export const DarkSecret = new Legacy('darksecret', [], [], [atLeastOrigin(Origin
   m('Si le secret est révélé publiquement, un agent de haut rang est envoyé pour vous éliminer.'),
 ])
 export const Heritage = new Legacy('heritage', [], [], [], undefined, undefined, ['traditionalist', 'abomination', 'chosen'], [
-  m('+1 niveau de Potentiel (unique, lié au clan). Aucun historique ne peut dépasser 4 sans approbation.'),
+  { type: 'xpPotentialBonus' as const, points: 1 },
+  m('Aucun historique ne peut dépasser 4 sans approbation.'),
 ])
 export const Debitor = new Legacy('debitor', [], [], [atLeastOrigin(Origins.renown, 2)], undefined, undefined, [], [
   xp(5),
@@ -70,12 +71,15 @@ export const CreatureOfHabit = new Legacy('creatureofhabit', [], [], [], Skills.
   m('Coût XP -2 pour attributs privilégiés, -1 pour compétences privilégiées. Coût XP +2 pour attributs non-privilégiés, +1 pour compétences non-privilégiées.'),
 ])
 export const Marked = new Legacy('marked', [], [], [atLeastOrigin(Origins.secrets, 2)], undefined, undefined, ['adventurer', 'seeker', 'heretic', 'abomination'], [
-  { type: 'sporeMax', bonus: 5 },
-  m('+1 dans une compétence d\'INS au choix. +5 valeur maximale de sporulation temporaire. -3D pour éviter de retomber dans la dépendance.'),
+  { type: 'sporeMax' as const, bonus: 5 },
+  { type: 'choiceSkill' as const, bonus: 1, count: 1, scope: 'ins' as const, description: '+1 dans une compétence d\'INS au choix' },
+  m('+5 valeur maximale de sporulation temporaire. -3D pour éviter de retomber dans la dépendance.'),
 ])
 export const Experienced = new Legacy('experienced', [], [], [], undefined, undefined, [], [
   xp(6),
-  m('+1 dans n\'importe quel historique (au choix). +2 niveaux de Potentiel. -1 point dans deux attributs au choix (ces attributs ne peuvent jamais dépasser 5).'),
+  { type: 'xpOriginBonus' as const, points: 1 },
+  { type: 'xpPotentialBonus' as const, points: 2 },
+  { type: 'choiceAttribute' as const, bonus: -1, count: 2, description: '-1 dans deux attributs au choix' },
 ])
 export const Sidewinder = new Legacy('sidewinder', [], [], [atLeastOrigin(Origins.network, 1), atLeastOrigin(Origins.secrets, 3)], undefined, undefined, ['heretic', 'defiler', 'abomination'], [
   xp(6),
@@ -110,19 +114,22 @@ export const Solo = new Legacy('solo', [], [], [], undefined, undefined, [], [
   m('2 points d\'Égo pour agir en étroite collaboration avec quelqu\'un, sinon -1D à toutes vos actions.'),
 ])
 export const Abducted = new Legacy('abducted', [], [], [atLeastOrigin(Origins.secrets, 3)], undefined, undefined, ['abomination'], [
-  m('+1 point d\'attribut au choix. Vous débutez avec 3 points de sporulation permanente.'),
+  { type: 'choiceAttribute' as const, bonus: 1, count: 1, description: '+1 point d\'attribut au choix' },
+  m('Vous débutez avec 3 points de sporulation permanente.'),
 ])
 export const Veteran = new Legacy('veteran', [], [], [atLeastOrigin(Origins.renown, 2), atLeastOrigin(Origins.authority, 2)], undefined, undefined, [], [
   origin('renown', 2),
   origin('allies', 2),
-  m('+2 points dans une compétence de combat au choix (peut dépasser le max normal). Si vous perdez un combat ou une mission, tous vos Historiques baissent de 2.'),
+  { type: 'choiceSkill' as const, bonus: 2, count: 1, scope: 'combat' as const, description: '+2 dans une compétence de combat au choix' },
+  m('Si vous perdez un combat ou une mission, tous vos Historiques baissent de 2.'),
 ])
 export const Journeyman = new Legacy('journeyman', [], [], [atLeastOrigin(Origins.network, 2), atLeastOrigin(Origins.resources, 1)], undefined, undefined, ['adventurer', 'traveler'], [
   origin('network', 1),
   m('+1D INS+Orientation. Alliés et Autorité ne peuvent pas dépasser 3.'),
 ])
 export const Superstitious = new Legacy('superstitious', [], [], [], undefined, undefined, ['healer', 'traditionalist', 'zealot', 'disciple'], [
-  m('+2 points dans n\'importe quelle compétence d\'INS au choix (peut dépasser le max normal). Science et Technologie ne peuvent pas dépasser 0.'),
+  { type: 'choiceSkill' as const, bonus: 2, count: 1, scope: 'ins' as const, description: '+2 dans une compétence d\'INS au choix' },
+  m('Peut dépasser le max normal. Science et Technologie ne peuvent pas dépasser 0.'),
 ])
 export const FamilyBond = new Legacy('familybond', [], [], [atLeastOrigin(Origins.allies, 1), atLeastOrigin(Origins.network, 1)], undefined, undefined, [], [
   origin('resources', 2),
@@ -138,9 +145,10 @@ export const TechTuned = new Legacy('techtuned', [atLeastSkill(Skills.artifactLo
   m('+2D pour rassembler un groupe de chercheurs de ferraille. Chaque mauvaise estimation perd 1 Renommée et réduit ce bonus de 1D (max -2D).'),
 ])
 export const Vigilante = new Legacy('vigilante', [], [], [], undefined, undefined, ['conqueror', 'chosen', 'protector', 'righteous'], [
+  { type: 'xpPotentialBonus' as const, points: 1 },
   skill('faith', 1),
   skill('willpower', 1),
-  m('+1 niveau de Potentiel. -2D interactions sociales avec forces de l\'ordre et entités criminelles.'),
+  m('-2D interactions sociales avec forces de l\'ordre et entités criminelles.'),
 ])
 export const CannonFodder = new Legacy('cannonfodder', [], [], [atLeastOrigin(Origins.renown, 2)], undefined, undefined, ['martyr', 'conqueror', 'destroyer'], [
   skill('brawl', 1),
@@ -175,7 +183,8 @@ export const Mesmerized = new Legacy('mesmerized', [], [], [atLeastOrigin(Origin
   m('-1D défense mentale contre la mémétique. Le Dormeur qui vous a contrôlé vous cherche toujours.'),
 ])
 export const Programmed = new Legacy('programmed', [], [], [atLeastOrigin(Origins.secrets, 2)], undefined, undefined, [], [
-  m('+1 niveau de Potentiel. Jet de Défense mentale (2) pour résister à agir selon votre conditionnement.'),
+  { type: 'xpPotentialBonus' as const, points: 1 },
+  m('Jet de Défense mentale (2) pour résister à agir selon votre conditionnement.'),
 ])
 export const Primordial = new Legacy('primordial', [], [], [], Skills.primal, undefined, [], [
   m('Coût XP -2 pour attributs privilégiés, -1 pour compétences privilégiées. Coût XP +2 pour attributs non-privilégiés, +1 pour compétences non-privilégiées.'),
