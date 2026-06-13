@@ -1,7 +1,7 @@
 export type SkillScope = 'ins' | 'cha' | 'int' | 'psy' | 'agi' | 'body' | 'combat' | 'faithOrWillpower'
 
 export type LegacyEffect =
-  | { type: 'attribute'; name: string; bonus: number }
+  | { type: 'attribute'; name: string; bonus: number; exceedsMax?: true }
   | { type: 'skill'; name: string; bonus: number; exceedsMax?: true }
   | { type: 'origin'; name: string; bonus: number }
   | { type: 'egoMax'; bonus: number }

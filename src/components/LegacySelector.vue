@@ -87,6 +87,35 @@
       </v-card-actions>
     </v-card>
   </v-dialog>
+
+  <!-- Dialog Transfuge -->
+  <v-dialog v-model="sidewinderDialogOpen" max-width="480" persistent>
+    <v-card>
+      <v-card-title class="text-h6 pa-4">Transfuge</v-card-title>
+      <v-card-text class="pa-4 pt-0">
+        <v-select
+          v-model="sidewinderOldCult"
+          :label="'Quel était le premier culte de votre personnage ?'"
+          :items="allCultItems"
+          density="compact"
+          variant="outlined"
+          class="mb-4"
+        ></v-select>
+        <v-select
+          v-model="sidewinderNewCult"
+          :label="'Quel est le nouveau culte de votre personnage ?'"
+          :items="allCultItems.filter(c => c.value !== sidewinderOldCult)"
+          density="compact"
+          variant="outlined"
+        ></v-select>
+      </v-card-text>
+      <v-card-actions class="pa-4 pt-0">
+        <v-spacer></v-spacer>
+        <v-btn variant="text" @click="cancelSidewinderDialog">Annuler</v-btn>
+        <v-btn variant="flat" color="primary" :disabled="!sidewinderOldCult || !sidewinderNewCult" @click="confirmSidewinderDialog">Confirmer</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script setup lang="ts">
@@ -99,6 +128,7 @@ import { useCharacterStore } from '@/store'
 import { Attributes, Origins, Skills } from '@/config/properties'
 import type { LegacyEffect } from '@/config/legacies/effects'
 import { SCOPE_SKILLS } from '@/config/legacies/effects'
+import { Cults } from '@/config/cults/cults'
 const store = useCharacterStore()
 const i18n = useI18n()
 
@@ -191,6 +221,39 @@ function missingConditionsHtml(legacy: Legacy): string {
     missing.map(m => `• ${m}`).join('<br>')
 }
 
+// ── Sidewinder (Transfuge) dialog ─────────────────────────────────────────────
+
+const sidewinderDialogOpen = ref(false)
+const sidewinderPendingValue = ref(0)
+const sidewinderOldCult = ref<string>('')
+const sidewinderNewCult = ref<string>('')
+
+const allCultItems = computed(() =>
+  Object.values(Cults).map(c => ({
+    title: i18n.t(`culturesConceptsCults.${c.name}`) as string,
+    value: c.name,
+  })).sort((a, b) => a.title.localeCompare(b.title))
+)
+
+function openSidewinderDialog(value: number) {
+  sidewinderPendingValue.value = value
+  sidewinderOldCult.value = store.sidewinderOldCultName ?? store.cult.name
+  sidewinderNewCult.value = ''
+  sidewinderDialogOpen.value = true
+}
+
+function cancelSidewinderDialog() {
+  sidewinderDialogOpen.value = false
+}
+
+function confirmSidewinderDialog() {
+  if (!sidewinderOldCult.value || !sidewinderNewCult.value) return
+  const sidewinder = AllLegacies.find(l => l.name === 'sidewinder')!
+  store.setLegacy(sidewinder, sidewinderPendingValue.value)
+  store.setSidewinderCults(sidewinderOldCult.value, sidewinderNewCult.value)
+  sidewinderDialogOpen.value = false
+}
+
 // ── Choice dialog ────────────────────────────────────────────────────────────
 
 const dialogOpen = ref(false)
@@ -239,6 +302,10 @@ function autoFillChoices(legacy: Legacy): { attributes: Record<string, string>; 
 }
 
 function handleLegacyChange(legacy: Legacy, value: number) {
+  if (legacy.name === 'sidewinder' && value > 0) {
+    openSidewinderDialog(value)
+    return
+  }
   if (value > 0 && hasChoiceEffects(legacy)) {
     dialogLegacy.value = legacy
     dialogPendingValue.value = value
