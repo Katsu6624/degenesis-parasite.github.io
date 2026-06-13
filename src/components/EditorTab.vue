@@ -302,7 +302,7 @@
       </v-container>
     </v-sheet>
     <v-container class="px-8" fluid>
-      <v-row v-if="store.editorMode !== 'free'">
+      <v-row>
         <v-col cols="12" md="8" lg="6">
           <MentalDilemmaSelector />
         </v-col>
