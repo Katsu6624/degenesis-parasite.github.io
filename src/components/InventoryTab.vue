@@ -316,6 +316,7 @@
                 </td>
                 <td class="text-no-wrap">
                   <v-btn
+                    v-if="!isOtherCultBlocked(item)"
                     size="x-small"
                     variant="outlined"
                     color="green-darken-2"
@@ -480,8 +481,17 @@ function hasArmorValue(items: Item[]) {
   return items.some(i => i.armorValue !== undefined)
 }
 
+function isOtherCultBlocked(item: Item): boolean {
+  if (item.cult === undefined) return false
+  if (item.cult === store.cult?.name) return false
+  if (item.cult === store.imposteurCult?.name) return false
+  if (store.hasEntrepreneur) return false
+  if (store.editorMode === 'free') return false
+  return true
+}
+
 function canBuyWithLC(item: Item): boolean {
-  // For levelable items, affordable if at least level 1 is reachable
+  if (isOtherCultBlocked(item)) return false
   return store.remainingLC >= item.value
 }
 
