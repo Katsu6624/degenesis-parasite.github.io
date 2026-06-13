@@ -12,7 +12,7 @@
       >
         <div
           class="box d-flex justify-center align-end"
-          :class="{ ...boxColors(field) }"
+          :class="boxClasses(field)"
           :data-value="field"
         >
           <div
@@ -21,14 +21,6 @@
             class="bg-red-darken-4 partial-fill"
           ></div>
         </div>
-      </div>
-      <!-- Bonus boxes: always filled, special color, non-interactive -->
-      <div
-        v-for="i in bonus"
-        :key="'bonus-' + i"
-        class="boxContainer bonus-box"
-      >
-        <div class="box bonus-filled"></div>
       </div>
     </div>
   </div>
@@ -68,13 +60,30 @@ const emit = defineEmits<{
 
 const fieldValues = [...Array(props.count).keys()].map((x) => x + 1)
 
+// hovered: -1 = not hovering (rest layout), 0 = hovering bonus zone, >0 = hovering field N
+const hovered = ref(-1)
+
 const handleClick = (event: any) => {
   if (props.interactive) {
-    const value = parseInt(event.target.attributes['data-value'].value)
-    if (props.value == value) {
-      emit('change', props.min)
+    const field = parseInt(event.target.attributes['data-value'].value)
+    const bonus = props.bonus ?? 0
+    if (bonus > 0) {
+      // In hover layout: bonus zone is max+1..max+bonus → ignore
+      if (field > props.max) {
+        hovered.value = -1
+        return
+      }
+      if (props.value === field) {
+        emit('change', props.min)
+      } else {
+        emit('change', field)
+      }
     } else {
-      emit('change', value)
+      if (props.value == field) {
+        emit('change', props.min)
+      } else {
+        emit('change', field)
+      }
     }
   }
   hovered.value = -1
@@ -82,7 +91,13 @@ const handleClick = (event: any) => {
 
 const handleMouseEnter = (field: number) => {
   if (props.interactive) {
-    hovered.value = field
+    const bonus = props.bonus ?? 0
+    if (bonus > 0) {
+      // Switch to hover layout; bonus zone has no fill preview
+      hovered.value = field > props.max ? 0 : field
+    } else {
+      hovered.value = field
+    }
   }
 }
 
@@ -92,52 +107,75 @@ const handleMouseLeave = () => {
   }
 }
 
-const hovered = ref(-1)
+function boxClasses(field: number): Record<string, boolean> {
+  const bonus = props.bonus ?? 0
 
-function boxColors(field: number) {
-  // If ineligible and selected, show red
-  if (props.ineligible && field <= props.value) {
-    return {
-      'bg-red': true
+  if (bonus > 0) {
+    // isHovering: entering any box switches to hover layout (rest = -1)
+    const isHovering = hovered.value >= 0
+    // Bonus sticks right after filled boxes; on hover-add it follows the cursor
+    const h = hovered.value // -1=rest, 0=bonus zone, >0=normal field
+    const fillEnd = isHovering && h > props.value ? h : props.value
+    const bonusStart = fillEnd + 1
+    const bonusThreshold = props.max + bonus
+
+    if (field > bonusThreshold) return { 'bg-grey-lighten-2': true }
+
+    if (field >= bonusStart && field < bonusStart + bonus) {
+      return { 'bg-red': true }
     }
+
+    if (isHovering && h > 0) {
+      if (field <= props.value) {
+        return {
+          'bg-grey-darken-4': field > h,
+          'bg-red-darken-4': field <= h,
+        }
+      } else if (field <= h) {
+        return { 'bg-red': true }
+      }
+    } else {
+      if (field <= props.value) return { 'bg-grey-darken-4': true }
+    }
+    return {}
+  }
+
+  // ── Original behavior (no bonus) ──────────────────────────────────────────
+  if (props.ineligible && field <= props.value) {
+    return { 'bonus-filled': true }
   }
 
   if (props.inverted && !props.interactive) {
-    return {
-      'bg-grey-lighten-1': field > props.value
-    }
+    return { 'bg-grey-lighten-1': field > props.value }
   }
 
   if (field <= props.value) {
     if (field > props.max) {
       if (field > hovered.value) {
         return {
-          'bg-red': props.displayMax,
-          'bg-grey-darken-4': !props.displayMax
+          'bonus-filled': props.displayMax,
+          'bg-grey-darken-4': !props.displayMax,
         }
       } else {
-        return {
-          'bg-red': true
-        }
+        return { 'bonus-filled': true }
       }
     } else {
       return {
         'bg-grey-darken-4': field > hovered.value,
-        'bg-red-darken-4': field <= hovered.value
+        'bg-red-darken-4': field <= hovered.value,
       }
     }
   } else if (field > props.value) {
     if (field > props.max) {
       return {
         'bg-grey-lighten-2': field > hovered.value,
-        'bg-red': props.max <= hovered.value && field <= hovered.value
+        'bg-red': props.max <= hovered.value && field <= hovered.value,
       }
     } else {
-      return {
-        'bg-red': field <= hovered.value
-      }
+      return { 'bg-red': field <= hovered.value }
     }
   }
+  return {}
 }
 </script>
 
