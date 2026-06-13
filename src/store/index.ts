@@ -796,16 +796,36 @@ export const useCharacterStore = defineStore('character', {
       const isOtherCult = item.cult !== undefined && item.cult !== this.cult?.name
 
       if (isOtherCult) {
-        if (!this.hasEntrepreneur) return
-        const level = this.effectiveResourcesLevelForOtherCult
-        if (level < 1 || item.resources > level) return
+        const isExpertMode = this.editorMode === EditorMode.Free
+        if (!this.hasEntrepreneur && !isExpertMode) return
+
+        let canBuy = false
         let decrements = false
-        if (this.resourceMode === ResourceMode.A) {
-          decrements = true
-        } else if (this.resourceMode === ResourceMode.B) {
-          decrements = item.resources === level
+
+        if (isExpertMode) {
+          // Mode expert : mêmes règles que son propre culte
+          if (this.resourceMode === ResourceMode.A) {
+            canBuy = item.resources <= this.effectiveResourcesLevel
+            decrements = canBuy
+          } else if (this.resourceMode === ResourceMode.B) {
+            canBuy = item.resources <= this.effectiveResourcesLevel
+            decrements = canBuy && item.resources === this.effectiveResourcesLevel
+          } else {
+            canBuy = item.resources <= this.effectiveResourcesLevelForModeC
+            decrements = false
+          }
+        } else {
+          // Entrepreneur : malus -2
+          const level = this.effectiveResourcesLevelForOtherCult
+          canBuy = level >= 1 && item.resources <= level
+          if (this.resourceMode === ResourceMode.A) {
+            decrements = canBuy
+          } else if (this.resourceMode === ResourceMode.B) {
+            decrements = canBuy && item.resources === level
+          }
         }
-        // Mode C: decrements = false, but purchasedWithResources: true deducts advancements
+
+        if (!canBuy) return
         this.inventory.push({ itemId, purchasedWithResources: true, decrementedResources: decrements })
         return
       }
