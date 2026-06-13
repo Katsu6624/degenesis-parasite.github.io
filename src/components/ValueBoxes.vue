@@ -165,7 +165,7 @@ function boxClasses(field: number): Record<string, boolean> {
     const giftedSlot = field - props.max
     if (giftedSlot <= props.giftedPoints) return { 'gifted-filled': true }
     if (giftedSlot === props.giftedPoints + 1 && props.giftedRemaining > 0) {
-      return { 'gifted-available': field <= hovered.value }
+      return { 'gifted-available': true, 'gifted-hovering': field <= hovered.value }
     }
     return { 'bg-grey-lighten-2': true }
   }
@@ -265,9 +265,14 @@ function boxClasses(field: number): Record<string, boolean> {
 }
 
 .gifted-available {
-  background-color: #ce93d8 !important;
-  border-color: #7b1fa2 !important;
+  border: 1px dashed rgba(123, 31, 162, 0.6) !important;
+  background: transparent !important;
   cursor: pointer;
+}
+
+.gifted-hovering {
+  background-color: rgba(206, 147, 216, 0.35) !important;
+  border-color: #7b1fa2 !important;
 }
 
 .locked-x {

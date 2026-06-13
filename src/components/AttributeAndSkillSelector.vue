@@ -26,7 +26,7 @@
       :value="store.skillValue(skill)"
       :max="store.skillMax(skill) - store.legacySkillStaticBonus(skill.name)"
       :min="skillMin()"
-      :bonus="store.legacySkillBonus(skill.name)"
+      :bonus="skillDisplayBonus(skill)"
       :active="store.isActiveSkill(skill) && (!store.hasGifted || isGiftedSkill(skill))"
       :count="skillCount(skill)"
       @change="(v) => store.setSkill(skill, v)"
@@ -90,8 +90,16 @@ const isGiftedSkill = (skill: Skill): boolean =>
 const skillCount = (skill: Skill): number => {
   if (!store.hasGifted || !isGiftedSkill(skill)) return 6
   const giftedPoints = store.giftedBonuses[skill.name] || 0
-  const hasAvailableSlot = store.giftedRemaining > 0 && giftedPoints < 6
-  return 6 + giftedPoints + (hasAvailableSlot ? 1 : 0)
+  // Always show 1 available slot (dashed) if remaining points exist
+  const showSlot = store.giftedRemaining > 0 && giftedPoints < 6 ? 1 : 0
+  return 6 + giftedPoints + showSlot
+}
+
+const skillDisplayBonus = (skill: Skill): number => {
+  const total = store.legacySkillBonus(skill.name)
+  if (!store.hasGifted || !isGiftedSkill(skill)) return total
+  // Subtract gifted points from bonus prop — gifted boxes handled separately via giftedClickable
+  return total - (store.giftedBonuses[skill.name] || 0)
 }
 </script>
 
