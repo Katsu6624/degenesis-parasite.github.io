@@ -354,6 +354,16 @@
         </v-col>
       </v-row>
     </v-container>
+
+  <v-snackbar
+    :model-value="!!store.errorMessage"
+    @update:model-value="store.errorMessage = null"
+    color="red-darken-3"
+    :timeout="3500"
+    location="bottom"
+  >
+    {{ store.errorMessage }}
+  </v-snackbar>
   </div>
 </template>
 
