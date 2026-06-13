@@ -14,7 +14,7 @@
       <div class="dilemma-block">
         <v-tooltip max-width="380" location="bottom">
           <template #activator="{ props }">
-            <div v-bind="props" class="dilemma-label mb-2" style="cursor:help;border-bottom:1px dotted #666;display:inline-block">PULSIONS CONTRE CONCENTRATION</div>
+            <div class="dilemma-label mb-2"><span v-bind="props" style="cursor:help;border-bottom:1px dotted #666;display:inline-block">PULSIONS CONTRE CONCENTRATION</span></div>
           </template>
           <span>Le choix entre Pulsions et Concentration détermine dans une large mesure la façon dont le personnage résout les problèmes : avec son cœur ou avec sa tête. Il s'agit principalement d'une question d'interprétation du personnage, et non de lancers de dés. L'aspect purement technique de cette décision est qu'il sera moins cher en XP d'accéder aux attributs et aux compétences liées à Pulsions (PHY, CHA, INS) ou Concentration (INT, PSY, AGI). En outre, elle débouche sur des Potentiels qui sont uniquement prenables s'ils sont liés à Pulsions ou Concentration.</span>
         </v-tooltip>
@@ -53,7 +53,7 @@
       <div class="dilemma-block">
         <v-tooltip max-width="380" location="bottom">
           <template #activator="{ props }">
-            <div v-bind="props" class="dilemma-label mb-2" style="cursor:help;border-bottom:1px dotted #666;display:inline-block">FOI CONTRE VOLONTÉ</div>
+            <div class="dilemma-label mb-2"><span v-bind="props" style="cursor:help;border-bottom:1px dotted #666;display:inline-block">FOI CONTRE VOLONTÉ</span></div>
           </template>
           <span>Votre personnage demande-t-il une bénédiction d'une quelconque spiritualité (religion, culte ou idéologie) ou est-ce que vous comptez sur vous-même ? Attention, choisir Volonté ne veut pas dire que vous ne croyez pas en dieu. Plus de 90% de la population croit d'une manière ou une autre à une spiritualité dans Degenesis. Être athée est redevenu quelque chose d'anormal. La distinction très importante est "Est-ce que votre personnage pense que la vie des hommes est dirigée par quelque chose de plus grand qu'eux, ou est-ce qu'il pense que seule la volonté humaine décide de la voie à emprunter ?".</span>
         </v-tooltip>
