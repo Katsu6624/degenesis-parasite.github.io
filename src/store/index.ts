@@ -75,6 +75,7 @@ export type State = {
   legacyChoices: Record<string, { attributes?: string[]; skills?: string[] }>
   errorMessage: string | null
   sidewinderOldCultName: string | null
+  imposteurCultName: string | null
   mentalPowerChoice: 'primal' | 'focus' | null
   mentalResistanceChoice: 'faith' | 'willpower' | null
   giftedBonuses: Record<string, number>
@@ -109,6 +110,7 @@ export const useCharacterStore = defineStore('character', {
     legacyChoices: {},
     errorMessage: null,
     sidewinderOldCultName: null,
+    imposteurCultName: null,
     mentalPowerChoice: null,
     mentalResistanceChoice: null,
     giftedBonuses: {},
@@ -435,6 +437,7 @@ export const useCharacterStore = defineStore('character', {
         state.mentalPowerChoice,
         state.mentalResistanceChoice,
         Object.keys(state.giftedBonuses).length > 0 ? state.giftedBonuses : undefined,
+        state.imposteurCultName,
       )
     },
     maxEgo(): number {
@@ -545,6 +548,15 @@ export const useCharacterStore = defineStore('character', {
     sidewinderOldCult(): Cult | null {
       if (!this.hasSidewinder || !this.sidewinderOldCultName) return null
       return Object.values(Cults).find(c => c.name === this.sidewinderOldCultName) ?? null
+    },
+    hasImposteur(): boolean {
+      let found = false
+      this.legacies.forEach((v, legacy) => { if (v > 0 && legacy.name === 'impostor') found = true })
+      return found
+    },
+    imposteurCult(): Cult | null {
+      if (!this.hasImposteur || !this.imposteurCultName) return null
+      return Object.values(Cults).find(c => c.name === this.imposteurCultName) ?? null
     },
     effectiveResourcesLevelForOtherCult(): number {
       if (!this.hasEntrepreneur) return 0
@@ -697,6 +709,7 @@ export const useCharacterStore = defineStore('character', {
       this.mentalPowerChoice = character.mentalPowerChoice ?? null
       this.mentalResistanceChoice = character.mentalResistanceChoice ?? null
       this.giftedBonuses = character.giftedBonuses ? { ...character.giftedBonuses } : {}
+      this.imposteurCultName = character.imposteurCultName ?? null
       this.isLoading = false
     },
     adjustProperties() {
@@ -950,6 +963,9 @@ export const useCharacterStore = defineStore('character', {
         if (legacy.name === 'gifted') {
           this.giftedBonuses = {}
         }
+        if (legacy.name === 'impostor') {
+          this.imposteurCultName = null
+        }
       } else {
         this.legacies.set(legacy, newValue())
       }
@@ -1080,6 +1096,9 @@ export const useCharacterStore = defineStore('character', {
     },
     setResourceMode(mode: ResourceMode) {
       this.resourceMode = mode
+    },
+    setImposteurCult(cultName: string) {
+      this.imposteurCultName = cultName
     },
     setMentalPowerChoice(choice: 'primal' | 'focus') {
       this.mentalPowerChoice = choice
