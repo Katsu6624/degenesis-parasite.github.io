@@ -157,6 +157,27 @@
     </v-card>
   </v-dialog>
 
+  <!-- Dialog Imposteur -->
+  <v-dialog v-model="imposteurDialogOpen" max-width="480" persistent>
+    <v-card>
+      <v-card-title class="text-h6 pa-4">Imposteur</v-card-title>
+      <v-card-text class="pa-4 pt-0">
+        <v-select
+          v-model="imposteurSelectedCult"
+          label="Quel est le culte que vous avez infiltré ?"
+          :items="allCultItems.filter(c => c.value !== store.cult?.name)"
+          density="compact"
+          variant="outlined"
+        ></v-select>
+      </v-card-text>
+      <v-card-actions class="pa-4 pt-0">
+        <v-spacer></v-spacer>
+        <v-btn variant="text" @click="cancelImposteurDialog">Annuler</v-btn>
+        <v-btn variant="flat" color="primary" :disabled="!imposteurSelectedCult" @click="confirmImposteurDialog">Confirmer</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+
   <!-- Dialog Transfuge -->
   <v-dialog v-model="sidewinderDialogOpen" max-width="480" persistent>
     <v-card>
@@ -381,6 +402,28 @@ function confirmSidewinderDialog() {
   sidewinderDialogOpen.value = false
 }
 
+const imposteurDialogOpen = ref(false)
+const imposteurPendingValue = ref(0)
+const imposteurSelectedCult = ref<string>('')
+
+function openImposteurDialog(value: number) {
+  imposteurPendingValue.value = value
+  imposteurSelectedCult.value = store.imposteurCultName ?? ''
+  imposteurDialogOpen.value = true
+}
+
+function cancelImposteurDialog() {
+  imposteurDialogOpen.value = false
+}
+
+function confirmImposteurDialog() {
+  if (!imposteurSelectedCult.value) return
+  const impostor = AllLegacies.find(l => l.name === 'impostor')!
+  store.setLegacy(impostor, imposteurPendingValue.value)
+  store.setImposteurCult(imposteurSelectedCult.value)
+  imposteurDialogOpen.value = false
+}
+
 // ── Choice dialog ────────────────────────────────────────────────────────────
 
 const dialogOpen = ref(false)
@@ -440,6 +483,10 @@ function handleLegacyChange(legacy: Legacy, value: number) {
   }
   if (legacy.name === 'sidewinder' && value > 0) {
     openSidewinderDialog(value)
+    return
+  }
+  if (legacy.name === 'impostor' && value > 0) {
+    openImposteurDialog(value)
     return
   }
   if (value > 0 && hasChoiceEffects(legacy)) {

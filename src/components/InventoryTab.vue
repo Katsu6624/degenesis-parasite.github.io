@@ -326,7 +326,7 @@
                     {{ store.computedDinars?.currency ?? 'LC' }}
                   </v-btn>
                   <v-btn
-                    v-if="item.resources !== undefined && (item.cult === store.cult?.name || (item.cult !== undefined && (store.hasEntrepreneur || store.editorMode === 'free')))"
+                    v-if="item.resources !== undefined && (item.cult === store.cult?.name || item.cult === store.imposteurCult?.name || (item.cult !== undefined && (store.hasEntrepreneur || store.editorMode === 'free')))"
                     size="x-small"
                     variant="outlined"
                     color="blue-darken-2"
@@ -488,6 +488,13 @@ function canBuyWithLC(item: Item): boolean {
 function canBuyWithResources(item: Item): boolean {
   if (item.resources === undefined) return false
 
+  const isImposteurCult = item.cult !== undefined && item.cult === store.imposteurCult?.name
+  if (isImposteurCult) {
+    const mode = store.resourceMode
+    if (mode === ResourceMode.C) return item.resources <= store.effectiveResourcesLevelForModeC
+    return item.resources <= store.effectiveResourcesLevel
+  }
+
   const isOtherCult = item.cult !== undefined && item.cult !== store.cult?.name
 
   if (isOtherCult) {
@@ -522,8 +529,8 @@ function canAffordAny(item: Item): boolean {
 const visibleItems = computed(() => {
   const q = search.value.trim().toLowerCase()
   return ITEMS.filter(item => {
-    // Masquer les items d'un autre culte (sauf si "Montrez tous les équipements de Culte" est coché)
-    if (!showAllCults.value && item.cult !== undefined && item.cult !== store.cult?.name) return false
+    // Masquer les items d'un autre culte (sauf si "Montrez tous les équipements de Culte" est coché, ou Imposteur)
+    if (!showAllCults.value && item.cult !== undefined && item.cult !== store.cult?.name && item.cult !== store.imposteurCult?.name) return false
     // Filtre équipement de culte
     if (showOnlyCult.value && item.cult === undefined) return false
     // Recherche texte
