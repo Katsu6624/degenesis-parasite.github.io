@@ -8,10 +8,10 @@
             <ValueSelector
               :name="origin.name"
               :label="localizeOriginName(origin)"
-              :value="store.originValue(origin)"
-              :max="store.originMax"
-              :min="originMin()"
-              @change="(v) => store.setOrigin(origin, v)"
+              :value="store.effectiveOriginValue(origin)"
+              :max="store.originMax + store.legacyOriginBonus(origin.name)"
+              :min="originMin() + store.legacyOriginBonus(origin.name)"
+              @change="(v) => store.setOrigin(origin, v - store.legacyOriginBonus(origin.name))"
               :highlighted="store.isHighlighted(origin)"
               type="origins"
             />
