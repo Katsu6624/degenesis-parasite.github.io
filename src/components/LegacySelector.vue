@@ -28,7 +28,7 @@
           :ineligible="store.editorMode === EditorMode.SoftLimits && !store.eligibleLegacies.has(legacy)"
           :missingInfo="store.editorMode !== EditorMode.Free && !store.eligibleLegacies.has(legacy) ? missingConditionsHtml(legacy) : ''"
           :min="config.pointLimits.potentials.min"
-          @change="(v) => store.setLegacy(legacy, v)"
+          @change="(v) => handleLegacyChange(legacy, v)"
           :display-max="store.editorMode != EditorMode.Free"
           @mouseenter="store.setHighlighted(...requirements(legacy))"
           @mouseleave="store.unsetHighlighted(...requirements(legacy))"
@@ -38,14 +38,67 @@
       </v-col>
     </v-row>
   </v-container>
+
+  <!-- Dialog for choice effects -->
+  <v-dialog v-model="dialogOpen" max-width="480" persistent>
+    <v-card v-if="dialogLegacy">
+      <v-card-title class="text-h6 pa-4">
+        {{ dialogLegacyLabel }}
+      </v-card-title>
+      <v-card-text class="pa-4 pt-0">
+        <div v-for="(choiceEffect, i) in dialogChoiceEffects" :key="i" class="mb-4">
+          <div class="text-caption mb-2" style="color:#bbb">{{ choiceEffect.description }}</div>
+
+          <!-- Attribute choices -->
+          <template v-if="choiceEffect.type === 'choiceAttribute'">
+            <v-select
+              v-for="k in choiceEffect.count"
+              :key="'attr-' + i + '-' + k"
+              :label="'Attribut ' + k"
+              :items="attributeChoiceItems(i, k - 1)"
+              :model-value="pendingAttributes[i + '-' + (k-1)]"
+              @update:model-value="v => setPendingAttribute(i, k - 1, v)"
+              density="compact"
+              variant="outlined"
+              class="mb-2"
+            ></v-select>
+          </template>
+
+          <!-- Skill choices -->
+          <template v-if="choiceEffect.type === 'choiceSkill'">
+            <v-select
+              v-for="k in choiceEffect.count"
+              :key="'skill-' + i + '-' + k"
+              :label="'Compétence ' + k"
+              :items="skillChoiceItems(choiceEffect.scope)"
+              :model-value="pendingSkills[i + '-' + (k-1)]"
+              @update:model-value="v => setPendingSkill(i, k - 1, v)"
+              density="compact"
+              variant="outlined"
+              class="mb-2"
+            ></v-select>
+          </template>
+        </div>
+      </v-card-text>
+      <v-card-actions class="pa-4 pt-0">
+        <v-spacer></v-spacer>
+        <v-btn variant="text" @click="cancelDialog">Annuler</v-btn>
+        <v-btn variant="flat" color="primary" :disabled="!allChoicesMade" @click="confirmDialog">Confirmer</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script setup lang="ts">
+import { ref, computed } from 'vue'
 import ValueSelector from '@/components/ValueSelector.vue'
 import config from '@/config'
 import { EditorMode } from '@/config/modes'
 import { AllLegacies } from '@/config/legacies'
 import { useCharacterStore } from '@/store'
+import { Attributes, Skills } from '@/config/properties'
+import type { LegacyEffect } from '@/config/legacies/effects'
+import { SCOPE_SKILLS } from '@/config/legacies/effects'
 const store = useCharacterStore()
 const i18n = useI18n()
 
@@ -67,11 +120,11 @@ function legacies() {
       const value = store.legacyValue(legacy)
 
       if (i18n.locale.value == 'en') {
-        return { 
-          legacy: legacy, 
-          label: translatedLabel as string, 
-          altLabel: '' as string, 
-          value: value 
+        return {
+          legacy: legacy,
+          label: translatedLabel as string,
+          altLabel: '' as string,
+          value: value
         }
       }
       return {
@@ -120,5 +173,148 @@ function missingConditionsHtml(legacy: Legacy): string {
   if (missing.length === 0) return ''
   return `<hr style="border-color:#555;margin:10px 0"><span style="color:#ef9a9a;font-weight:bold">${tr('messages.missingConditions')}</span><br>` +
     missing.map(m => `• ${m}`).join('<br>')
+}
+
+// ── Choice dialog ────────────────────────────────────────────────────────────
+
+const dialogOpen = ref(false)
+const dialogLegacy = ref<Legacy | null>(null)
+const dialogPendingValue = ref(0)
+const pendingAttributes = ref<Record<string, string>>({})
+const pendingSkills = ref<Record<string, string>>({})
+
+const dialogLegacyLabel = computed(() => {
+  if (!dialogLegacy.value) return ''
+  return i18n.t(`legacies.${dialogLegacy.value.name}`) as string
+})
+
+const dialogChoiceEffects = computed((): LegacyEffect[] => {
+  if (!dialogLegacy.value) return []
+  return dialogLegacy.value.effects.filter(
+    e => e.type === 'choiceAttribute' || e.type === 'choiceSkill'
+  )
+})
+
+function hasChoiceEffects(legacy: Legacy): boolean {
+  return legacy.effects.some(e => e.type === 'choiceAttribute' || e.type === 'choiceSkill')
+}
+
+function handleLegacyChange(legacy: Legacy, value: number) {
+  if (value > 0 && hasChoiceEffects(legacy)) {
+    dialogLegacy.value = legacy
+    dialogPendingValue.value = value
+    // Pre-fill with existing choices if any
+    const existing = store.legacyChoices[legacy.name]
+    pendingAttributes.value = {}
+    pendingSkills.value = {}
+    if (existing) {
+      let attrIdx = 0
+      let skillIdx = 0
+      dialogChoiceEffects.value.forEach((e, i) => {
+        if (e.type === 'choiceAttribute') {
+          for (let k = 0; k < (e as any).count; k++) {
+            const val = existing.attributes?.[attrIdx++]
+            if (val) pendingAttributes.value[i + '-' + k] = val
+          }
+        }
+        if (e.type === 'choiceSkill') {
+          for (let k = 0; k < (e as any).count; k++) {
+            const val = existing.skills?.[skillIdx++]
+            if (val) pendingSkills.value[i + '-' + k] = val
+          }
+        }
+      })
+    }
+    dialogOpen.value = true
+  } else {
+    store.setLegacy(legacy, value)
+  }
+}
+
+function cancelDialog() {
+  dialogOpen.value = false
+  dialogLegacy.value = null
+}
+
+function confirmDialog() {
+  if (!dialogLegacy.value) return
+  store.setLegacy(dialogLegacy.value, dialogPendingValue.value)
+
+  const attributes: string[] = []
+  const skills: string[] = []
+  dialogChoiceEffects.value.forEach((e, i) => {
+    if (e.type === 'choiceAttribute') {
+      for (let k = 0; k < (e as any).count; k++) {
+        const v = pendingAttributes.value[i + '-' + k]
+        if (v) attributes.push(v)
+      }
+    }
+    if (e.type === 'choiceSkill') {
+      for (let k = 0; k < (e as any).count; k++) {
+        const v = pendingSkills.value[i + '-' + k]
+        if (v) skills.push(v)
+      }
+    }
+  })
+
+  store.setLegacyChoices(dialogLegacy.value.name, { attributes, skills })
+  dialogOpen.value = false
+  dialogLegacy.value = null
+}
+
+const allChoicesMade = computed(() => {
+  if (!dialogLegacy.value) return false
+  for (const [i, e] of dialogChoiceEffects.value.entries()) {
+    if (e.type === 'choiceAttribute') {
+      for (let k = 0; k < (e as any).count; k++) {
+        if (!pendingAttributes.value[i + '-' + k]) return false
+      }
+    }
+    if (e.type === 'choiceSkill') {
+      for (let k = 0; k < (e as any).count; k++) {
+        if (!pendingSkills.value[i + '-' + k]) return false
+      }
+    }
+  }
+  return true
+})
+
+function setPendingAttribute(effectIndex: number, slotIndex: number, value: string) {
+  pendingAttributes.value = { ...pendingAttributes.value, [effectIndex + '-' + slotIndex]: value }
+}
+
+function setPendingSkill(effectIndex: number, slotIndex: number, value: string) {
+  pendingSkills.value = { ...pendingSkills.value, [effectIndex + '-' + slotIndex]: value }
+}
+
+const allAttributeNames = Object.values(Attributes).map(a => a.name)
+
+function attributeChoiceItems(effectIndex: number, slotIndex: number) {
+  const alreadyPicked = Object.entries(pendingAttributes.value)
+    .filter(([k, v]) => {
+      const parts = k.split('-')
+      const ei = parseInt(parts[0])
+      const si = parseInt(parts[1])
+      return ei === effectIndex && si !== slotIndex && v
+    })
+    .map(([, v]) => v)
+
+  return allAttributeNames
+    .filter(name => !alreadyPicked.includes(name))
+    .map(name => ({
+      title: i18n.t('attributes.' + name) as string,
+      value: name,
+    }))
+}
+
+function skillChoiceItems(scope?: string) {
+  const scopeFilter = scope ? (SCOPE_SKILLS[scope] || null) : null
+  return Object.values(Skills)
+    .filter(s => !scopeFilter || scopeFilter.includes(s.name))
+    .map(s => ({
+      title: i18n.t('skills.' + s.name) as string,
+      value: s.name,
+    }))
+    .sort((a, b) => a.title.localeCompare(b.title))
 }
 </script>

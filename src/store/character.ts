@@ -27,6 +27,7 @@ export class Character {
     readonly inventory?: InventoryPurchase[],
     readonly resourceMode?: ResourceMode,
     readonly manualLC?: number | null,
+    readonly legacyChoices?: Record<string, { attributes?: string[]; skills?: string[] }>,
   ) {
     this.storageVersion = 'v1'
     const legacyEditorMode = wasCreatedWithFreeMode ? (wasCreatedWithFreeMode ? EditorMode.Free : editorMode) : editorMode
