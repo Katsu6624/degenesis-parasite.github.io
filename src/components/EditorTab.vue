@@ -449,11 +449,12 @@
     <div class="gifted-panel-hint">Cliquez sur les compétences<br>de CHA ou INT pour allouer</div>
     <v-btn
       size="small"
-      variant="outlined"
-      color="grey"
+      variant="flat"
+      color="red-darken-2"
       class="mt-2"
+      style="width:100%"
       @click="store.setLegacy(giftedLegacy!, 0)"
-    >Annuler</v-btn>
+    >Annuler l'allocation</v-btn>
   </div>
   </div>
 </template>
