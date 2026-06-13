@@ -1001,6 +1001,9 @@ export const useCharacterStore = defineStore('character', {
     removeInventoryItem(index: number) {
       this.inventory.splice(index, 1)
     },
+    addItemFree(itemId: string) {
+      this.inventory.push({ itemId, purchasedWithResources: false, decrementedResources: false })
+    },
     setResourceMode(mode: ResourceMode) {
       this.resourceMode = mode
     },
