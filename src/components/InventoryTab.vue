@@ -326,7 +326,7 @@
                     {{ store.computedDinars?.currency ?? 'LC' }}
                   </v-btn>
                   <v-btn
-                    v-if="item.resources !== undefined && (item.cult === store.cult?.name || (item.cult !== undefined && store.hasEntrepreneur))"
+                    v-if="item.resources !== undefined && (item.cult === store.cult?.name || (item.cult !== undefined && (store.hasEntrepreneur || store.editorMode === 'free')))"
                     size="x-small"
                     variant="outlined"
                     color="blue-darken-2"
@@ -491,6 +491,13 @@ function canBuyWithResources(item: Item): boolean {
   const isOtherCult = item.cult !== undefined && item.cult !== store.cult?.name
 
   if (isOtherCult) {
+    if (store.editorMode === 'free') {
+      // Mode expert : mêmes règles que son propre culte
+      const mode = store.resourceMode
+      if (mode === ResourceMode.C) return item.resources <= store.effectiveResourcesLevelForModeC
+      return item.resources <= store.effectiveResourcesLevel
+    }
+    // Entrepreneur uniquement
     const level = store.effectiveResourcesLevelForOtherCult
     return level >= 1 && item.resources <= level
   }
