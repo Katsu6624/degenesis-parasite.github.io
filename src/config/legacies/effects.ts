@@ -6,6 +6,7 @@ export type LegacyEffect =
   | { type: 'origin'; name: string; bonus: number }
   | { type: 'egoMax'; bonus: number }
   | { type: 'sporeMax'; bonus: number }
+  | { type: 'xpAttributeBonus'; points: number }
   | { type: 'xpSkillBonus'; points: number }
   | { type: 'xpOriginBonus'; points: number }
   | { type: 'xpPotentialBonus'; points: number }
