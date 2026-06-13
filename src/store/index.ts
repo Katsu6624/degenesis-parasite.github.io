@@ -189,6 +189,13 @@ export const useCharacterStore = defineStore('character', {
     legacySkillBonus(): (name: string) => number {
       return (name: string) => {
         if (this.hasSuperstitious && (name === 'science' || name === 'engineering')) return 0
+        // Don't apply legacy bonus to a skill blocked by mental dilemma choice
+        const blockedByChoice =
+          (this.mentalPowerChoice === 'primal' && name === 'focus') ||
+          (this.mentalPowerChoice === 'focus' && name === 'primal') ||
+          (this.mentalResistanceChoice === 'faith' && name === 'willpower') ||
+          (this.mentalResistanceChoice === 'willpower' && name === 'faith')
+        if (blockedByChoice) return 0
         let total = this.activeLegacyEffects
           .filter(e => e.type === 'skill' && (e as any).name === name)
           .reduce((sum, e) => sum + (e as any).bonus, 0)
@@ -322,6 +329,16 @@ export const useCharacterStore = defineStore('character', {
       // fallback legacy: infer from points
       if ((this.skillValue(Skills.primal) || 0) > 0) return Skills.primal
       return Skills.focus
+    },
+    mentalPowerSkillForEligibility(): Skill | null {
+      if (this.mentalPowerChoice === 'primal') return Skills.primal
+      if (this.mentalPowerChoice === 'focus') return Skills.focus
+      return null
+    },
+    mentalResistanceSkillForEligibility(): Skill | null {
+      if (this.mentalResistanceChoice === 'faith') return Skills.faith
+      if (this.mentalResistanceChoice === 'willpower') return Skills.willpower
+      return null
     },
     isActiveSkill(): (skill: Skill) => boolean {
       return (skill: Skill) => {
@@ -526,8 +543,8 @@ export const useCharacterStore = defineStore('character', {
         this.skillValues,
         this.originValues,
         this.rank,
-        this.mentalPowerSkill,
-        this.mentalResistanceSkill,
+        this.mentalPowerSkillForEligibility,
+        this.mentalResistanceSkillForEligibility,
         this.clan
       )
     },
@@ -536,8 +553,8 @@ export const useCharacterStore = defineStore('character', {
         this.attributeValues,
         this.skillValues,
         this.originValues,
-        this.mentalPowerSkill,
-        this.mentalResistanceSkill,
+        this.mentalPowerSkillForEligibility,
+        this.mentalResistanceSkillForEligibility,
         this.concept,
       )
       if (this.editorMode !== EditorMode.Free && this.spentPoints.origins > 1) {
@@ -662,8 +679,8 @@ export const useCharacterStore = defineStore('character', {
             this.skillValues,
             this.originValues,
             this.rank,
-            this.mentalPowerSkill,
-            this.mentalResistanceSkill,
+            this.mentalPowerSkillForEligibility,
+            this.mentalResistanceSkillForEligibility,
             this.clan
           )
         ) {

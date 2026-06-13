@@ -194,10 +194,10 @@ function missingConditionsHtml(legacy: Legacy): string {
     if (!req.check(store.attributeValues)) missing.push(req.format(tr))
   }
   if (legacy.mentalPowerSkill && legacy.mentalPowerSkill.name !== store.mentalPowerSkill.name) {
-    missing.push(legacy.mentalPowerSkill.format(tr))
+    missing.push(`Compétence Spéciale requise :${legacy.mentalPowerSkill.format(tr)}`)
   }
   if (legacy.mentalResistanceSkill && legacy.mentalResistanceSkill.name !== store.mentalResistanceSkill.name) {
-    missing.push(legacy.mentalResistanceSkill.format(tr))
+    missing.push(`Compétence Spéciale requise :${legacy.mentalResistanceSkill.format(tr)}`)
   }
 
   if (legacy.name === 'optimized' && store.spentPoints.origins > 1) {

@@ -14,8 +14,8 @@ export function eligibleLegacies(
   attributes: Array<Value<Attribute>>,
   skills: Array<Value<SkillWithAttribute>>,
   origins: Array<Value<Origin>>,
-  mentalPowerSkill: Skill,
-  mentalResistanceSkill: Skill,
+  mentalPowerSkill: Skill | null,
+  mentalResistanceSkill: Skill | null,
   concept: Concept,
 ): Set<Legacy> {
   return new Set(

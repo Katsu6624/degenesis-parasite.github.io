@@ -32,8 +32,8 @@ export function eligiblePotentials(
   skills: Array<Value<SkillWithAttribute>>,
   origins: Array<Value<Origin>>,
   rank: Rank,
-  mentalPowerSkill: Skill,
-  mentalResistanceSkill: Skill,
+  mentalPowerSkill: Skill | null,
+  mentalResistanceSkill: Skill | null,
   clan: Clan | undefined
 ): Set<Potential> {
   return new Set(
