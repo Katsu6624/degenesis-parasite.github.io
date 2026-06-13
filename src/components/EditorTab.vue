@@ -57,7 +57,7 @@
     Lien copié dans le presse-papier !
   </v-snackbar>
 
-  <div>
+  <div :style="isSharedView ? 'pointer-events: none; user-select: none' : ''">
     <v-sheet>
       <v-container class="px-8 pt-8 ma-0" fluid>
         <v-row>
@@ -527,13 +527,29 @@ const isSharedView = inject<Ref<boolean>>('isSharedView', ref(false))
 
 const shareCopied = ref(false)
 const shareCharacter = async () => {
-  const encoded = await encodeCharacter(store.asCharacter)
   const base = window.location.origin + window.location.pathname
-  const url = `${base}?view=${encoded}`
+  let url: string
+
+  try {
+    // bytebin.lucko.me : API publique conçue pour les web apps, CORS natif, clé dans le body
+    const res = await fetch('https://bytebin.lucko.me/post', {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify(store.asCharacter),
+    })
+    if (!res.ok) throw new Error(`bytebin status ${res.status}`)
+    const { key } = await res.json()
+    if (!key) throw new Error('no key returned')
+    url = `${base}#bb=${key}`
+  } catch (e) {
+    console.warn('Share upload failed:', e)
+    const encoded = await encodeCharacter(store.asCharacter)
+    url = `${base}#view=${encoded}`
+  }
+
   try {
     await navigator.clipboard.writeText(url)
   } catch {
-    // fallback: open in new tab so user can copy the URL
     window.open(url, '_blank')
   }
   shareCopied.value = true
