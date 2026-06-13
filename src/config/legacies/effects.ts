@@ -2,7 +2,7 @@ export type SkillScope = 'ins' | 'cha' | 'int' | 'psy' | 'agi' | 'body' | 'comba
 
 export type LegacyEffect =
   | { type: 'attribute'; name: string; bonus: number }
-  | { type: 'skill'; name: string; bonus: number }
+  | { type: 'skill'; name: string; bonus: number; exceedsMax?: true }
   | { type: 'origin'; name: string; bonus: number }
   | { type: 'egoMax'; bonus: number }
   | { type: 'sporeMax'; bonus: number }

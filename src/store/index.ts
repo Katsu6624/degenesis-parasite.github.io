@@ -164,7 +164,7 @@ export const useCharacterStore = defineStore('character', {
     legacySkillStaticBonus(): (name: string) => number {
       return (name: string) =>
         this.activeLegacyEffects
-          .filter(e => e.type === 'skill' && (e as any).name === name)
+          .filter(e => e.type === 'skill' && (e as any).name === name && !(e as any).exceedsMax)
           .reduce((sum, e) => sum + (e as any).bonus, 0)
     },
     legacySkillBonus(): (name: string) => number {

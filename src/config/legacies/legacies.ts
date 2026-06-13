@@ -5,6 +5,7 @@ import { atLeastAttribute, atLeastSkill, either, atLeastOrigin, atMostOrigin } f
 const m = (description: string) => ({ type: 'modifier' as const, description })
 const attr = (name: string, bonus: number) => ({ type: 'attribute' as const, name, bonus })
 const skill = (name: string, bonus: number) => ({ type: 'skill' as const, name, bonus })
+const skillEx = (name: string, bonus: number) => ({ type: 'skill' as const, name, bonus, exceedsMax: true as const })
 const origin = (name: string, bonus: number) => ({ type: 'origin' as const, name, bonus })
 const xp = (points: number) => ({ type: 'xpSkillBonus' as const, points })
 
@@ -105,12 +106,12 @@ export const Lurker = new Legacy('lurker', [], [], [atLeastOrigin(Origins.networ
   m('Si votre Historique Secrets atteint 4, ceux qui vous faisaient confiance se retournent contre vous.'),
 ])
 export const Solo = new Legacy('solo', [], [], [], undefined, undefined, [], [
-  skill('empathy', 1),
-  skill('orienteering', 1),
-  skill('perception', 1),
-  skill('primal', 1),
-  skill('survival', 1),
-  skill('taming', 1),
+  skillEx('empathy', 1),
+  skillEx('orienteering', 1),
+  skillEx('perception', 1),
+  skillEx('primal', 1),
+  skillEx('survival', 1),
+  skillEx('taming', 1),
   m('2 points d\'Égo pour agir en étroite collaboration avec quelqu\'un, sinon -1D à toutes vos actions.'),
 ])
 export const Abducted = new Legacy('abducted', [], [], [atLeastOrigin(Origins.secrets, 3)], undefined, undefined, ['abomination'], [
@@ -151,24 +152,24 @@ export const Vigilante = new Legacy('vigilante', [], [], [], undefined, undefine
   m('-2D interactions sociales avec forces de l\'ordre et entités criminelles.'),
 ])
 export const CannonFodder = new Legacy('cannonfodder', [], [], [atLeastOrigin(Origins.renown, 2)], undefined, undefined, ['martyr', 'conqueror', 'destroyer'], [
-  skill('brawl', 1),
-  skill('force', 1),
-  skill('melee', 1),
-  skill('projectiles', 1),
+  skillEx('brawl', 1),
+  skillEx('force', 1),
+  skillEx('melee', 1),
+  skillEx('projectiles', 1),
   m('+1 à toutes les compétences de combat (peut dépasser le max normal). -2D à tous les jets d\'interactions sociales pacifiques.'),
 ])
 export const Seer = new Legacy('seer', [], [], [atLeastOrigin(Origins.authority, 3)], undefined, undefined, ['healer', 'mediator', 'chosen', 'righteous'], [
-  skill('empathy', 2),
-  skill('perception', 2),
+  skillEx('empathy', 2),
+  skillEx('perception', 2),
   m('+2 aux compétences ci-dessus peut dépasser le max normal. -1D à tous les jets nécessitant d\'examiner le monde présent.'),
 ])
 export const Repugnant = new Legacy('repugnant', [], [], [], undefined, undefined, [], [
   m('PSY+Domination +2S pour intimider. -1S à toutes les compétences de CHA sauf CHA+Art.'),
 ])
 export const Taken = new Legacy('taken', [], [], [], undefined, undefined, [], [
-  skill('survival', 1),
-  skill('faith', 1),
-  skill('willpower', 1),
+  skillEx('survival', 1),
+  skillEx('faith', 1),
+  skillEx('willpower', 1),
   m('Peut dépasser le max normal pour les compétences ci-dessus. 2 points d\'Égo pour éviter de suivre une piste liée à votre passé, sinon -2D pour le reste de la journée.'),
 ])
 export const Lowlife = new Legacy('lowlife', [], [], [atLeastOrigin(Origins.renown, 2), atLeastOrigin(Origins.network, 1)], undefined, undefined, [], [
