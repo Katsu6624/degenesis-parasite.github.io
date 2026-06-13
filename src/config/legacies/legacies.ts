@@ -114,7 +114,7 @@ export const Solo = new Legacy('solo', [], [], [], undefined, undefined, [], [
   m('2 points d\'Égo pour agir en étroite collaboration avec quelqu\'un, sinon -1D à toutes vos actions.'),
 ])
 export const Abducted = new Legacy('abducted', [], [], [atLeastOrigin(Origins.secrets, 3)], undefined, undefined, ['abomination'], [
-  { type: 'choiceAttribute' as const, bonus: 1, count: 1, description: '+1 point d\'attribut au choix' },
+  { type: 'xpAttributeBonus' as const, points: 1 },
   m('Vous débutez avec 3 points de sporulation permanente.'),
 ])
 export const Veteran = new Legacy('veteran', [], [], [atLeastOrigin(Origins.renown, 2), atLeastOrigin(Origins.authority, 2)], undefined, undefined, [], [

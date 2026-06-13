@@ -192,6 +192,11 @@ export const useCharacterStore = defineStore('character', {
         .filter(e => e.type === 'sporeMax')
         .reduce((sum, e) => sum + (e as any).bonus, 0)
     },
+    legacyXPAttributeBonus(): number {
+      return this.activeLegacyEffects
+        .filter(e => e.type === 'xpAttributeBonus')
+        .reduce((sum, e) => sum + (e as any).points, 0)
+    },
     legacyXPSkillBonus(): number {
       return this.activeLegacyEffects
         .filter(e => e.type === 'xpSkillBonus')
@@ -441,7 +446,7 @@ export const useCharacterStore = defineStore('character', {
     },
     anyPointLimitExceeded(): boolean {
       return (
-        this.spentPoints.attributes > config.availablePoints.attributes ||
+        this.spentPoints.attributes > config.availablePoints.attributes + this.legacyXPAttributeBonus ||
         this.spentPoints.skills > config.availablePoints.skills + this.legacyXPSkillBonus ||
         this.spentPoints.origins > config.availablePoints.origins + this.legacyXPOriginBonus ||
         this.spentPoints.potentials > config.availablePoints.potentials + this.legacyXPPotentialBonus ||
@@ -599,7 +604,7 @@ export const useCharacterStore = defineStore('character', {
             const currentValue = this.attributeValue(attribute)
             const expectedPointSpend = boundedValue - currentValue
             const maximumPointSpend =
-              config.availablePoints.attributes - this.spentPoints.attributes
+              config.availablePoints.attributes + this.legacyXPAttributeBonus - this.spentPoints.attributes
             const boundedPointSpend = Math.min(expectedPointSpend, maximumPointSpend)
             return currentValue + boundedPointSpend
           }
