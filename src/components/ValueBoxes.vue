@@ -138,7 +138,7 @@ function boxClasses(field: number): Record<string, boolean> {
 
   // ── Gifted: display allocated points regardless of interaction mode ───────
   if (props.giftedPoints && props.giftedPoints > 0 && field > props.value && field <= props.value + props.giftedPoints) {
-    return { 'gifted-bonus': true }
+    return { 'bonus-filled': true }
   }
 
   // ── Gifted mode: intercept clicks to allocate remaining points ────────────
