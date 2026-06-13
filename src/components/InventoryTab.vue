@@ -41,6 +41,18 @@
         Base : {{ store.resourceAdvancements }} av. (Ressources {{ store.baseResourcesLevel }})
       </div>
 
+      <!-- Ressources Entrepreneur -->
+      <template v-if="store.hasEntrepreneur">
+        <v-divider vertical class="mx-2" style="height:40px"></v-divider>
+        <div class="inv-stat-chip">
+          <span class="inv-stat-label" style="color:#f9a825">Res. Entrepreneur</span>
+          <span class="inv-stat-value" :class="store.effectiveResourcesLevelForOtherCult < 1 ? 'text-red' : ''">
+            {{ store.effectiveResourcesLevelForOtherCult }}
+          </span>
+          <span class="inv-stat-sub inv-muted">/ {{ store.baseResourcesLevel }} −2</span>
+        </div>
+      </template>
+
       <v-divider vertical class="mx-2" style="height:40px"></v-divider>
 
       <!-- Encombrement -->
