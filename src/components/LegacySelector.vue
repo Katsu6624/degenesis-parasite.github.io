@@ -173,6 +173,12 @@ function missingConditionsHtml(legacy: Legacy): string {
   if (legacy.name === 'optimized' && store.spentPoints.origins > 1) {
     missing.push(`${tr('messages.origins')} ≤ 1 (actuellement : ${store.spentPoints.origins})`)
   }
+  if (legacy.name === 'superstitious') {
+    const scienceVal = store.skillValue(Skills.science)
+    const engineeringVal = store.skillValue(Skills.engineering)
+    if (scienceVal > 0) missing.push(`${tr('skills.science')} = 0 (actuellement : ${scienceVal})`)
+    if (engineeringVal > 0) missing.push(`${tr('skills.engineering')} = 0 (actuellement : ${engineeringVal})`)
+  }
 
   if (missing.length === 0) return ''
   return `<hr style="border-color:#555;margin:10px 0"><span style="color:#ef9a9a;font-weight:bold">${tr('messages.missingConditions')}</span><br>` +

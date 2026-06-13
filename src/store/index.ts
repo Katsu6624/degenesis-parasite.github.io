@@ -71,6 +71,7 @@ export type State = {
   resourceMode: ResourceMode
   manualLC: number | null
   legacyChoices: Record<string, { attributes?: string[]; skills?: string[] }>
+  errorMessage: string | null
 }
 
 export const useCharacterStore = defineStore('character', {
@@ -100,6 +101,7 @@ export const useCharacterStore = defineStore('character', {
     resourceMode: ResourceMode.A,
     manualLC: null,
     legacyChoices: {},
+    errorMessage: null,
   }),
   getters: {
     attributeValue:
@@ -160,6 +162,7 @@ export const useCharacterStore = defineStore('character', {
     },
     legacySkillBonus(): (name: string) => number {
       return (name: string) => {
+        if (this.hasSuperstitious && (name === 'science' || name === 'engineering')) return 0
         let total = this.activeLegacyEffects
           .filter(e => e.type === 'skill' && (e as any).name === name)
           .reduce((sum, e) => sum + (e as any).bonus, 0)
@@ -406,6 +409,11 @@ export const useCharacterStore = defineStore('character', {
       this.legacies.forEach((v, legacy) => { if (v > 0 && legacy.name === 'entrepreneur') found = true })
       return found
     },
+    hasSuperstitious(): boolean {
+      let found = false
+      this.legacies.forEach((v, legacy) => { if (v > 0 && legacy.name === 'superstitious') found = true })
+      return found
+    },
     effectiveResourcesLevelForOtherCult(): number {
       if (!this.hasEntrepreneur) return 0
       if (this.resourceMode === ResourceMode.C) {
@@ -466,6 +474,13 @@ export const useCharacterStore = defineStore('character', {
       )
       if (this.editorMode !== EditorMode.Free && this.spentPoints.origins > 1) {
         set.forEach(l => { if (l.name === 'optimized') set.delete(l) })
+      }
+      if (this.editorMode !== EditorMode.Free) {
+        const scienceVal = this.skills.get(Skills.science) ?? 0
+        const engineeringVal = this.skills.get(Skills.engineering) ?? 0
+        if (scienceVal > 0 || engineeringVal > 0) {
+          set.forEach(l => { if (l.name === 'superstitious') set.delete(l) })
+        }
       }
       return set
     },
@@ -640,6 +655,10 @@ export const useCharacterStore = defineStore('character', {
       this.adjustProperties()
     },
     setSkill(skill: Skill, value: number) {
+      if (this.hasSuperstitious && (skill.name === 'science' || skill.name === 'engineering') && this.editorMode !== EditorMode.Free) {
+        this.errorMessage = "L'héritage Superstitieux vous empêche de mettre des points en Sciences et Technologie."
+        return
+      }
       switch (skill) {
         case Skills.willpower:
           this.skills.set(Skills.faith, 0)
