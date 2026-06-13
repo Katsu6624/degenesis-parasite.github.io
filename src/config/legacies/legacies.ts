@@ -152,7 +152,6 @@ export const Vigilante = new Legacy('vigilante', [], [], [], undefined, undefine
 ])
 export const CannonFodder = new Legacy('cannonfodder', [], [], [atLeastOrigin(Origins.renown, 2)], undefined, undefined, ['martyr', 'conqueror', 'destroyer'], [
   skillEx('brawl', 1),
-  skillEx('force', 1),
   skillEx('melee', 1),
   skillEx('projectiles', 1),
   m('+1 à toutes les compétences de combat (peut dépasser le max normal). -2D à tous les jets d\'interactions sociales pacifiques.'),
