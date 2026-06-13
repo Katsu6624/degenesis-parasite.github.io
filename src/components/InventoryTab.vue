@@ -8,8 +8,8 @@
         <input
           v-if="store.editorMode === 'free'"
           type="number"
-          :value="store.manualLC !== null ? store.manualLC : (store.computedDinars?.value ?? 0)"
-          @change="e => { const v = (e.target as HTMLInputElement).value; store.setManualLC(v === '' ? null : Number(v)) }"
+          :value="store.remainingLC"
+          @change="e => { const v = (e.target as HTMLInputElement).value; const bonus = store.hasLandlord ? 1000 : 0; store.setManualLC(v === '' ? null : Number(v) - bonus) }"
           class="inv-lc-inline-input"
           :class="store.remainingLC < 0 ? 'text-red' : ''"
         />
@@ -17,7 +17,6 @@
           {{ store.remainingLC }}
         </span>
         <span v-if="store.editorMode !== 'free'" class="inv-stat-sub inv-muted">(base : {{ store.computedDinars?.value ?? 0 }})</span>
-        <span v-if="store.hasLandlord" class="inv-stat-sub" style="color:#81c784">+1 000 Propriétaire</span>
       </div>
 
       <v-divider vertical class="mx-2" style="height:40px"></v-divider>

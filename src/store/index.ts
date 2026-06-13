@@ -27,6 +27,7 @@ import { eligibleRanks, minimumRank, rankByName } from '@/config/ranks'
 import type { Rank } from '@/config/ranks/ranks'
 import { defineStore } from 'pinia'
 import config from '../config'
+import { Cults } from '@/config/cults/cults'
 import browserStorage from './browserStorage'
 import { Character } from './character'
 import type { Culture, Concept, Cult } from '@/config/model'
@@ -73,6 +74,7 @@ export type State = {
   manualLC: number | null
   legacyChoices: Record<string, { attributes?: string[]; skills?: string[] }>
   errorMessage: string | null
+  sidewinderOldCultName: string | null
 }
 
 export const useCharacterStore = defineStore('character', {
@@ -103,6 +105,7 @@ export const useCharacterStore = defineStore('character', {
     manualLC: null,
     legacyChoices: {},
     errorMessage: null,
+    sidewinderOldCultName: null,
   }),
   getters: {
     attributeValue:
@@ -130,7 +133,13 @@ export const useCharacterStore = defineStore('character', {
         const bonusFromConcept = state.concept.bonusSkills.includes(skill) ? 1 : 0
         const bonusFromCult = state.cult.bonusSkills.includes(skill) ? 1 : 0
         const bonusFromClan = (state.clan?.bonusSkills || []).includes(skill) ? 1 : 0
-        return limit + bonusFromCulture + bonusFromConcept + bonusFromCult + bonusFromClan
+        let hasSidewinder = false
+        state.legacies.forEach((v, l) => { if (v > 0 && l.name === 'sidewinder') hasSidewinder = true })
+        const oldCult = hasSidewinder && state.sidewinderOldCultName
+          ? Object.values(Cults).find(c => c.name === state.sidewinderOldCultName)
+          : null
+        const bonusFromOldCult = oldCult?.bonusSkills.includes(skill) ? 1 : 0
+        return limit + bonusFromCulture + bonusFromConcept + bonusFromCult + bonusFromClan + bonusFromOldCult
       },
     originMax(): number {
       return config.pointLimits.origins.max
@@ -160,6 +169,12 @@ export const useCharacterStore = defineStore('character', {
         })
         return total
       }
+    },
+    legacyAttributeExceedsMaxBonus(): (name: string) => number {
+      return (name: string) =>
+        this.activeLegacyEffects
+          .filter(e => e.type === 'attribute' && (e as any).name === name && (e as any).exceedsMax)
+          .reduce((sum, e) => sum + (e as any).bonus, 0)
     },
     legacySkillStaticBonus(): (name: string) => number {
       return (name: string) =>
@@ -348,6 +363,7 @@ export const useCharacterStore = defineStore('character', {
         state.resourceMode,
         state.manualLC,
         Object.keys(state.legacyChoices).length > 0 ? state.legacyChoices : undefined,
+        state.sidewinderOldCultName,
       )
     },
     maxEgo(): number {
@@ -449,6 +465,15 @@ export const useCharacterStore = defineStore('character', {
       let found = false
       this.legacies.forEach((v, legacy) => { if (v > 0 && legacy.name === 'journeyman') found = true })
       return found
+    },
+    hasSidewinder(): boolean {
+      let found = false
+      this.legacies.forEach((v, legacy) => { if (v > 0 && legacy.name === 'sidewinder') found = true })
+      return found
+    },
+    sidewinderOldCult(): Cult | null {
+      if (!this.hasSidewinder || !this.sidewinderOldCultName) return null
+      return Object.values(Cults).find(c => c.name === this.sidewinderOldCultName) ?? null
     },
     effectiveResourcesLevelForOtherCult(): number {
       if (!this.hasEntrepreneur) return 0
@@ -591,6 +616,7 @@ export const useCharacterStore = defineStore('character', {
       this.resourceMode = character.resourceMode ?? ResourceMode.A
       this.manualLC = character.manualLC ?? null
       this.legacyChoices = character.legacyChoices ? { ...character.legacyChoices } : {}
+      this.sidewinderOldCultName = character.sidewinderOldCultName ?? null
       this.isLoading = false
     },
     adjustProperties() {
@@ -824,6 +850,9 @@ export const useCharacterStore = defineStore('character', {
         if (legacy.name === 'entrepreneur') {
           this.inventory = this.inventory.filter(p => !p.entrepreneurResources)
         }
+        if (legacy.name === 'sidewinder') {
+          this.sidewinderOldCultName = null
+        }
       } else {
         this.legacies.set(legacy, newValue())
       }
@@ -938,6 +967,11 @@ export const useCharacterStore = defineStore('character', {
     },
     setResourceMode(mode: ResourceMode) {
       this.resourceMode = mode
+    },
+    setSidewinderCults(oldCultName: string, newCultName: string) {
+      this.sidewinderOldCultName = oldCultName
+      const newCult = Object.values(Cults).find(c => c.name === newCultName)
+      if (newCult) this.setCult(newCult)
     },
   }
 })

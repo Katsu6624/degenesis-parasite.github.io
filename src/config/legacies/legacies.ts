@@ -4,6 +4,7 @@ import { atLeastAttribute, atLeastSkill, either, atLeastOrigin, atMostOrigin } f
 
 const m = (description: string) => ({ type: 'modifier' as const, description })
 const attr = (name: string, bonus: number) => ({ type: 'attribute' as const, name, bonus })
+const attrEx = (name: string, bonus: number) => ({ type: 'attribute' as const, name, bonus, exceedsMax: true as const })
 const skill = (name: string, bonus: number) => ({ type: 'skill' as const, name, bonus })
 const skillEx = (name: string, bonus: number) => ({ type: 'skill' as const, name, bonus, exceedsMax: true as const })
 const origin = (name: string, bonus: number) => ({ type: 'origin' as const, name, bonus })
@@ -60,7 +61,7 @@ export const Assassin = new Legacy('assassin', [], [], [], undefined, undefined,
   m('Jets d\'interaction sociale avec le Culte de votre victime : -2D (Ascète), -4D (Sublime).'),
 ])
 export const Rawhide = new Legacy('rawhide', [], [], [], undefined, undefined, ['abomination', 'destroyer', 'defiler', 'visionary'], [
-  attr('psyche', 1),
+  attrEx('psyche', 1),
   m('+1D défense mentale. Chaque échec de défense mentale = perte d\'Égo égale à la difficulté du jet.'),
 ])
 export const Outlaw = new Legacy('outlaw', [], [], [atLeastOrigin(Origins.renown, 2), atLeastOrigin(Origins.authority, 2)], undefined, undefined, [], [

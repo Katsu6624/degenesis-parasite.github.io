@@ -115,13 +115,11 @@
                             <v-col cols="6" sm="2">
                               <v-text-field
                                 v-if="store.editorMode === 'free'"
-                                :model-value="store.manualLC !== null ? store.manualLC : (store.computedDinars?.value ?? 0)"
+                                :model-value="store.remainingLC"
                                 :label="$t('messages.dinars')"
                                 variant="underlined"
                                 type="number"
-                                :hint="store.hasLandlord ? `+1 000 Propriétaire → ${store.remainingLC} total` : ''"
-                                persistent-hint
-                                @update:model-value="val => store.setManualLC(val === '' || val === null ? null : Number(val))"
+@update:model-value="val => { const bonus = store.hasLandlord ? 1000 : 0; store.setManualLC(val === '' || val === null ? null : Number(val) - bonus) }"
                               ></v-text-field>
                               <v-text-field
                                 v-else
@@ -173,6 +171,9 @@
                             :descriptions="cultDescriptions()"
                             @change="store.setCult"
                           ></EditorArchetypeSelector>
+                          <div v-if="store.sidewinderOldCult" class="text-caption inv-muted mt-1" style="font-size:11px;color:#aaa">
+                            Ancien Culte : {{ $t(`culturesConceptsCults.${store.sidewinderOldCult.name}`) }}
+                          </div>
                         </v-col>
                         <v-col v-if="store.clan" cols="12" sm="3">
                           <EditorArchetypeSelector

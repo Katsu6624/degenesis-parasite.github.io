@@ -4,6 +4,7 @@
     :label="localizeAttributeName(attribute).toUpperCase()"
     :value="store.attributeValue(attribute)"
     :max="store.attributeMax(attribute)"
+    :bonus="store.legacyAttributeExceedsMaxBonus(attribute.name)"
     :min="attributeMin()"
     @change="(v) => store.setAttribute(attribute, v)"
     :highlighted="store.isHighlighted(attribute)"
