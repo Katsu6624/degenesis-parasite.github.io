@@ -47,7 +47,7 @@
       </v-card-title>
       <v-card-text class="pa-4 pt-0">
         <div v-for="(choiceEffect, i) in dialogChoiceEffects" :key="i" class="mb-4">
-          <div class="text-caption mb-2" style="color:#bbb">{{ choiceEffect.description }}</div>
+          <div class="text-caption mb-2" style="color:#bbb">{{ effectDescription(choiceEffect) }}</div>
 
           <!-- Attribute choices -->
           <template v-if="choiceEffect.type === 'choiceAttribute'">
@@ -90,7 +90,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, shallowRef } from 'vue'
 import ValueSelector from '@/components/ValueSelector.vue'
 import config from '@/config'
 import { EditorMode } from '@/config/modes'
@@ -178,7 +178,7 @@ function missingConditionsHtml(legacy: Legacy): string {
 // ── Choice dialog ────────────────────────────────────────────────────────────
 
 const dialogOpen = ref(false)
-const dialogLegacy = ref<Legacy | null>(null)
+const dialogLegacy = shallowRef<Legacy | null>(null)
 const dialogPendingValue = ref(0)
 const pendingAttributes = ref<Record<string, string>>({})
 const pendingSkills = ref<Record<string, string>>({})
@@ -305,6 +305,10 @@ function attributeChoiceItems(effectIndex: number, slotIndex: number) {
       title: i18n.t('attributes.' + name) as string,
       value: name,
     }))
+}
+
+function effectDescription(e: LegacyEffect): string {
+  return (e as any).description || ''
 }
 
 function skillChoiceItems(scope?: string) {
