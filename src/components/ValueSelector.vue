@@ -1,6 +1,6 @@
 <template>
-  <HoverTooltip :description="fullDescription">
-    <div class="valueSelector">
+  <div class="valueSelector">
+      <HoverTooltip :description="fullDescription" class="label-tooltip">
         <div
           class="label"
           :class="{
@@ -19,19 +19,19 @@
           </div>
           <slot></slot>
         </div>
-        <Boxes
-          class="float-end"
-          :count="count"
-          :min="props.min"
-          :max="props.max"
-          :displayMax="props.displayMax"
-          :value="props.value"
-          :ineligible="props.ineligible"
-          :bonus="props.bonus"
-          v-on:change="selectionChanged"
-        />
-      </div>
-  </HoverTooltip>
+      </HoverTooltip>
+      <Boxes
+        class="boxes-end"
+        :count="count"
+        :min="props.min"
+        :max="props.max"
+        :displayMax="props.displayMax"
+        :value="props.value"
+        :ineligible="props.ineligible"
+        :bonus="props.bonus"
+        v-on:change="selectionChanged"
+      />
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -85,10 +85,24 @@ const selectionChanged = (event: any) => emit('change', event)
 </script>
 
 <style scoped>
+.valueSelector {
+  display: flex;
+  align-items: center;
+}
+
+.label-tooltip {
+  flex: 1 1 0;
+  min-width: 0;
+  display: block !important;
+}
+
+.boxes-end {
+  flex-shrink: 0;
+}
+
 .label {
-  display: inline-block;
+  display: block;
   margin-bottom: 0.5em;
-  vertical-align: middle;
   text-align: left;
   transition: color 0.2s;
   text-overflow: ellipsis;
