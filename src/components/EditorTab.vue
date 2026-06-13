@@ -1,9 +1,13 @@
 <template>
   <v-toolbar class="pa-4 bg-grey-lighten-2 elevation-2" density="compact">
     <template v-slot:append>
-      <v-btn @click="downloadCharacter" stacked
+      <v-btn @click="downloadCharacter" stacked v-if="!isSharedView"
         >{{ $t('messages.exportCharacter') }}
         <v-icon :icon="mdiExport" />
+      </v-btn>
+      <v-btn @click="shareCharacter" stacked color="blue-darken-1">
+        {{ $t('messages.shareCharacter') }}
+        <v-icon :icon="mdiShareVariant" />
       </v-btn>
       <v-btn v-if="characterExists(store.characterName)" stacked>
         {{ $t('messages.deleteCharacter') }}
@@ -26,6 +30,33 @@
       </v-btn>
     </template>
   </v-toolbar>
+  <!-- Shared view banner -->
+  <v-alert
+    v-if="isSharedView"
+    type="info"
+    variant="tonal"
+    class="mx-4 mt-4"
+    title="Fiche en lecture seule"
+    text="Cette fiche est partagée en mode lecture seule. Les modifications sont désactivées."
+    closable
+  ></v-alert>
+  <v-alert
+    v-if="isSharedView && sharedViewViolations.length > 0"
+    type="warning"
+    variant="tonal"
+    class="mx-4 mt-2"
+    title="Anomalies détectées"
+  >
+    <ul class="mt-1" style="padding-left:16px">
+      <li v-for="v in sharedViewViolations" :key="v">{{ v }}</li>
+    </ul>
+  </v-alert>
+
+  <!-- Snackbar: URL copiée -->
+  <v-snackbar v-model="shareCopied" timeout="3000" color="green-darken-2">
+    Lien copié dans le presse-papier !
+  </v-snackbar>
+
   <div>
     <v-sheet>
       <v-container class="px-8 pt-8 ma-0" fluid>
@@ -478,17 +509,81 @@ mdiCogOutline,
 mdiClose,
 mdiDelete,
 mdiExport,
-mdiPencil
+mdiPencil,
+mdiShareVariant
 } from '@mdi/js'
-import { ref, computed } from 'vue'
+import { ref, computed, inject } from 'vue'
+import type { Ref } from 'vue'
 import { AllLegacies } from '@/config/legacies'
 import { useI18n } from 'vue-i18n'
+import { encodeCharacter } from '@/util/share'
 import { useDisplay } from 'vuetify'
 import EditorArchetypeSelector from './EditorArchetypeSelector.vue'
 
 const store = useCharacterStore()
 const appStore = useApplicationStore()
 const i18n = useI18n()
+const isSharedView = inject<Ref<boolean>>('isSharedView', ref(false))
+
+const shareCopied = ref(false)
+const shareCharacter = async () => {
+  const encoded = await encodeCharacter(store.asCharacter)
+  const base = window.location.origin + window.location.pathname
+  const url = `${base}?view=${encoded}`
+  try {
+    await navigator.clipboard.writeText(url)
+  } catch {
+    // fallback: open in new tab so user can copy the URL
+    window.open(url, '_blank')
+  }
+  shareCopied.value = true
+}
+
+const sharedViewViolations = computed((): string[] => {
+  if (!isSharedView.value) return []
+  if (store.editorMode === EditorMode.Free) return []
+  const t = i18n.t.bind(i18n)
+  const violations: string[] = []
+
+  // Attribute point total
+  const attrSpent = store.spentPoints.attributes + store.legacyChoiceAttributeTotalBonus
+  const attrMax = availablePoints.attributes + store.legacyXPAttributeBonus + store.legacyChoiceAttributeTotalBonus + store.legacyOffspringAttributePenalty
+  if (attrSpent > attrMax) {
+    violations.push(`Points d'attributs : ${attrSpent} dépensés pour ${attrMax} disponibles`)
+  }
+
+  // Each attribute individually
+  for (const attr of config.attributes) {
+    const val = store.attributeValue(attr)
+    const max = store.attributeMax(attr)
+    if (val > max) {
+      violations.push(`${t(`attributes.${attr.name}`)} : valeur ${val} dépasse le max ${max}`)
+    }
+  }
+
+  // Skill point total
+  const skillSpent = store.spentPoints.skills
+  const skillMax = availablePoints.skills + store.legacyXPSkillBonus
+  if (skillSpent > skillMax) {
+    violations.push(`Points de compétences : ${skillSpent} dépensés pour ${skillMax} disponibles`)
+  }
+
+  // Legacies taken without eligibility
+  store.legacies.forEach((v, legacy) => {
+    if (v > 0 && !store.eligibleLegacies.has(legacy)) {
+      violations.push(`Héritage « ${legacy.name} » pris sans remplir les conditions`)
+    }
+  })
+
+  // Potentials taken without eligibility
+  store.potentials.forEach((v, potential) => {
+    if (v > 0 && !store.eligiblePotentials.has(potential)) {
+      violations.push(`Potentiel « ${t(`potentials.${potential.name}`)} » pris sans remplir les conditions`)
+    }
+  })
+
+  return violations
+})
 
 const portraitInput = ref<HTMLInputElement | null>(null)
 const triggerPortraitUpload = () => portraitInput.value?.click()

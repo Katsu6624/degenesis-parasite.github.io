@@ -141,7 +141,7 @@
     </div>
     <v-main
       v-if="store.characterName.length > 0"
-      :class="tab == 'sheet' ? 'bg-grey-lighten-3' : ''"
+      :class="[tab == 'sheet' ? 'bg-grey-lighten-3' : '', isSharedView ? 'shared-view-mode' : '']"
     >
       <v-tabs v-model="tab" bg-color="grey-darken-3">
         <v-tab value="edit">{{ $t('messages.editCharacter') }}</v-tab>
@@ -209,16 +209,37 @@ import {
   mdiInformation,
   mdiCogOutline
 } from '@mdi/js'
-import { ref, watch } from 'vue'
+import { ref, watch, provide, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useDisplay, useTheme } from 'vuetify'
 import type { VFileInput, VForm } from 'vuetify/components'
 import Editor from './components/EditorTab.vue'
+import { decodeCharacter } from '@/util/share'
 import { useApplicationStore } from './store/application'
 import { ranksByCult } from '@/config/cults/cults'
 
 const store = useCharacterStore()
 const appStore = useApplicationStore()
+
+const isSharedView = ref(false)
+provide('isSharedView', isSharedView)
+
+onMounted(async () => {
+  const params = new URLSearchParams(window.location.search)
+  const viewParam = params.get('view')
+  if (viewParam) {
+    try {
+      const parsed = await decodeCharacter(viewParam) as Character
+      if (parsed?.storageVersion === 'v1') {
+        store.loadCharacter(parsed)
+        isSharedView.value = true
+        tab.value = 'edit'
+      }
+    } catch (e) {
+      console.error('Failed to decode shared character', e)
+    }
+  }
+})
 const i18n = useI18n()
 const theme = useTheme()
 
@@ -352,6 +373,16 @@ if (storedDisplayTranslatedLabels) {
   store.displayTranslatedLabels = storedDisplayTranslatedLabels
 }
 </script>
+<style>
+/* Block all editing in shared view — global so it reaches child components */
+.shared-view-mode .box,
+.shared-view-mode .v-field,
+.shared-view-mode .v-selection-control,
+.shared-view-mode .v-slider {
+  pointer-events: none !important;
+}
+</style>
+
 <style scoped>
 
 #app {
