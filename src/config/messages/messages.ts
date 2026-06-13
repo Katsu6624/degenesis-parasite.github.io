@@ -42,6 +42,7 @@ export const messages = {
     },
     characters: 'Charaktere',
     exportCharacter: 'Exportieren',
+    shareCharacter: 'Fiche teilen',
     importCharacter: 'Charakter importieren',
     editorModes: {
       label: 'Bearbeitungsmodus',
@@ -137,6 +138,7 @@ export const messages = {
     },
     characters: 'Characters',
     exportCharacter: 'Export',
+    shareCharacter: 'Share character',
     importCharacter: 'Import character',
     editorModes: {
       label: 'Editor mode',
@@ -237,6 +239,7 @@ export const messages = {
     },
     characters: 'Personnages',
     exportCharacter: 'Exporter la fiche',
+    shareCharacter: 'Partager votre fiche',
     importCharacter: 'Importer un personnage',
     editorModes: {
       label: 'Modes d\'édition',
