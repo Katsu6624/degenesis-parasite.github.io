@@ -147,10 +147,10 @@ function missingConditionsHtml(potential: Potential): string {
     if (!req.check([store.rank])) missing.push(req.format(tr))
   }
   if (potential.mentalPowerSkill && potential.mentalPowerSkill.name !== store.mentalPowerSkill.name) {
-    missing.push(potential.mentalPowerSkill.format(tr))
+    missing.push(`Compétence Spéciale requise :${potential.mentalPowerSkill.format(tr)}`)
   }
   if (potential.mentalResistanceSkill && potential.mentalResistanceSkill.name !== store.mentalResistanceSkill.name) {
-    missing.push(potential.mentalResistanceSkill.format(tr))
+    missing.push(`Compétence Spéciale requise :${potential.mentalResistanceSkill.format(tr)}`)
   }
 
   if (missing.length === 0) return ''

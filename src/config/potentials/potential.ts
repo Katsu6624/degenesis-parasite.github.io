@@ -23,8 +23,8 @@ export class Potential {
     skills: Array<Value<SkillWithAttribute>>,
     origins: Array<Value<Origin>>,
     rank: Rank,
-    mentalPowerSkill: Skill,
-    mentalResistanceSkill: Skill,
+    mentalPowerSkill: Skill | null,
+    mentalResistanceSkill: Skill | null,
     clan: Clan|undefined,
   ): boolean {
     return (
@@ -75,14 +75,15 @@ export class Potential {
     )
   }
 
-  private mentalPowerSkillEligible(mentalPowerSkill: Skill): boolean {
-    return this.mentalPowerSkill == undefined || this.mentalPowerSkill.name == mentalPowerSkill.name
+  private mentalPowerSkillEligible(mentalPowerSkill: Skill | null): boolean {
+    if (this.mentalPowerSkill == undefined) return true
+    if (mentalPowerSkill == null) return false
+    return this.mentalPowerSkill.name == mentalPowerSkill.name
   }
 
-  private mentalResistanceSkillEligible(mentalResistanceSkill: Skill): boolean {
-    return (
-      this.mentalResistanceSkill == undefined ||
-      this.mentalResistanceSkill.name == mentalResistanceSkill.name
-    )
+  private mentalResistanceSkillEligible(mentalResistanceSkill: Skill | null): boolean {
+    if (this.mentalResistanceSkill == undefined) return true
+    if (mentalResistanceSkill == null) return false
+    return this.mentalResistanceSkill.name == mentalResistanceSkill.name
   }
 }

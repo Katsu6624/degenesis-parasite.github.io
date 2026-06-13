@@ -19,8 +19,8 @@ export class Legacy {
     attributes: Array<Value<Attribute>>,
     skills: Array<Value<SkillWithAttribute>>,
     origins: Array<Value<Origin>>,
-    mentalPowerSkill: Skill,
-    mentalResistanceSkill: Skill,
+    mentalPowerSkill: Skill | null,
+    mentalResistanceSkill: Skill | null,
     concept: Concept,
   ): boolean {
     return (
@@ -58,14 +58,15 @@ export class Legacy {
     )
   }
 
-  private mentalPowerSkillEligible(mentalPowerSkill: Skill): boolean {
-    return this.mentalPowerSkill == undefined || this.mentalPowerSkill.name == mentalPowerSkill.name
+  private mentalPowerSkillEligible(mentalPowerSkill: Skill | null): boolean {
+    if (this.mentalPowerSkill == undefined) return true
+    if (mentalPowerSkill == null) return false
+    return this.mentalPowerSkill.name == mentalPowerSkill.name
   }
 
-  private mentalResistanceSkillEligible(mentalResistanceSkill: Skill): boolean {
-    return (
-      this.mentalResistanceSkill == undefined ||
-      this.mentalResistanceSkill.name == mentalResistanceSkill.name
-    )
+  private mentalResistanceSkillEligible(mentalResistanceSkill: Skill | null): boolean {
+    if (this.mentalResistanceSkill == undefined) return true
+    if (mentalResistanceSkill == null) return false
+    return this.mentalResistanceSkill.name == mentalResistanceSkill.name
   }
 }
