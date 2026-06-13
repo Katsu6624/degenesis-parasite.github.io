@@ -399,6 +399,9 @@ export const useCharacterStore = defineStore('character', {
     },
     effectiveResourcesLevelForOtherCult(): number {
       if (!this.hasEntrepreneur) return 0
+      if (this.resourceMode === ResourceMode.C) {
+        return Math.max(0, this.effectiveResourcesLevelForModeC - 2)
+      }
       return Math.max(0, this.effectiveResourcesLevel - 2)
     },
     remainingLC(): number {
@@ -796,7 +799,14 @@ export const useCharacterStore = defineStore('character', {
         if (!this.hasEntrepreneur) return
         const level = this.effectiveResourcesLevelForOtherCult
         if (level < 1 || item.resources > level) return
-        this.inventory.push({ itemId, purchasedWithResources: true, decrementedResources: false })
+        let decrements = false
+        if (this.resourceMode === ResourceMode.A) {
+          decrements = true
+        } else if (this.resourceMode === ResourceMode.B) {
+          decrements = item.resources === level
+        }
+        // Mode C: decrements = false, but purchasedWithResources: true deducts advancements
+        this.inventory.push({ itemId, purchasedWithResources: true, decrementedResources: decrements })
         return
       }
 

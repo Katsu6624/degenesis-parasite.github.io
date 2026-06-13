@@ -46,10 +46,18 @@
         <v-divider vertical class="mx-2" style="height:40px"></v-divider>
         <div class="inv-stat-chip">
           <span class="inv-stat-label" style="color:#f9a825">Res. Entrepreneur</span>
-          <span class="inv-stat-value" :class="store.effectiveResourcesLevelForOtherCult < 1 ? 'text-red' : ''">
-            {{ store.effectiveResourcesLevelForOtherCult }}
-          </span>
-          <span class="inv-stat-sub inv-muted">/ {{ store.baseResourcesLevel }} −2</span>
+          <template v-if="store.resourceMode !== 'C'">
+            <span class="inv-stat-value" :class="store.effectiveResourcesLevelForOtherCult < 1 ? 'text-red' : ''">
+              {{ store.effectiveResourcesLevelForOtherCult }}
+            </span>
+            <span class="inv-stat-sub inv-muted">/ {{ store.baseResourcesLevel }} −2</span>
+          </template>
+          <template v-else>
+            <span class="inv-stat-value" :class="store.effectiveResourcesLevelForOtherCult < 1 ? 'text-red' : ''">
+              {{ store.remainingAdvancements }} av.
+            </span>
+            <span class="inv-stat-sub inv-muted">(niv. {{ store.effectiveResourcesLevelForOtherCult }})</span>
+          </template>
         </div>
       </template>
 
