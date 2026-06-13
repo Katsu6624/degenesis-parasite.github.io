@@ -10,7 +10,7 @@
     :highlighted="store.isHighlighted(attribute)"
     :display-max="store.editorMode != EditorMode.Free"
     :labelStar="isPreferredAttribute(attribute)"
-    :lockedLast="store.experiencedLockedAttributes.has(attribute.name) ? 1 : 0"
+    :lockedLast="store.experiencedLockedAttributes.has(attribute.name) || (store.hasOffspring && (attribute.name === 'charisma' || attribute.name === 'intellect')) ? 1 : 0"
     :active="!store.hasGifted"
     type="attributes"
   />
