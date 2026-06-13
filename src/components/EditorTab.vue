@@ -315,6 +315,35 @@
         </v-col>
       </v-row>
       <v-row>
+        <v-col cols="12" class="pb-0">
+          <v-tooltip max-width="420" location="bottom">
+            <template #activator="{ props }">
+              <span v-bind="props" class="xp-cost-title">
+                COÛT EN XP DES AUGMENTATIONS
+                <span v-if="store.mentalPowerChoice" class="xp-cost-star">*</span>
+              </span>
+            </template>
+            <div class="xp-tooltip-content">
+              <p>Chaque augmentation coûte en XP la <strong>nouvelle valeur × un facteur</strong> selon le type :</p>
+              <table class="xp-table">
+                <tr><td>Attribut</td><td>× 12 XP</td></tr>
+                <tr><td>Attribut préféré <span class="xp-star">*</span></td><td>× 10 XP</td></tr>
+                <tr><td>Compétence</td><td>× 5 XP</td></tr>
+                <tr><td>Compétence préférée <span class="xp-star">*</span></td><td>× 4 XP</td></tr>
+              </table>
+              <p v-if="store.mentalPowerChoice" class="xp-preferred-note">
+                <span class="xp-star">*</span> Préférés pour
+                <strong>{{ store.mentalPowerChoice === 'primal' ? 'Pulsions' : 'Concentration' }}</strong> :
+                {{ store.mentalPowerChoice === 'primal' ? 'PHY, CHA, INS et leurs compétences' : 'INT, AGI, PSY et leurs compétences' }}
+              </p>
+              <p v-else class="xp-preferred-note">
+                <span class="xp-star">*</span> Choisissez Pulsions ou Concentration pour voir vos attributs et compétences préférés.
+              </p>
+            </div>
+          </v-tooltip>
+        </v-col>
+      </v-row>
+      <v-row>
         <v-col>
           <v-divider></v-divider>
         </v-col>
@@ -531,6 +560,45 @@ const renameCharacter = () => {
 }
 </script>
 <style scoped>
+.xp-cost-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #bbb;
+  cursor: help;
+  border-bottom: 1px dotted #666;
+  display: inline-block;
+  text-transform: uppercase;
+}
+.xp-cost-star {
+  color: #ef5350;
+  font-weight: bold;
+}
+.xp-tooltip-content {
+  font-size: 13px;
+  line-height: 1.6;
+}
+.xp-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 8px 0;
+}
+.xp-table td {
+  padding: 2px 8px;
+}
+.xp-table tr:nth-child(even) td {
+  color: #bbb;
+}
+.xp-star {
+  color: #ef5350;
+  font-weight: bold;
+}
+.xp-preferred-note {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #ccc;
+}
+
 #appBarIcon {
   height: 2em;
 }

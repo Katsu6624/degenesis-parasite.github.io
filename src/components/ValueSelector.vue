@@ -14,7 +14,7 @@
             <span v-if="props.label != ''" class="altLabel text-grey-darken-1 text-caption">{{ props.label }}</span>
           </div>
           <div class="wrap" v-else>
-            <span :class="{mainLabel: props.altLabel, 'text-decoration-line-through': !active}">{{ props.label }}</span>
+            <span :class="{mainLabel: props.altLabel, 'text-decoration-line-through': !active}">{{ props.label }}<span v-if="props.labelStar" class="label-star">*</span></span>
             <span v-if="props.altLabel != ''" class="altLabel text-grey-darken-1 text-caption">{{ props.altLabel }}</span>
           </div>
           <slot></slot>
@@ -55,6 +55,7 @@ export interface Props {
   ineligible?: boolean,
   missingInfo?: string,
   bonus?: number,
+  labelStar?: boolean,
 }
 const props = withDefaults(defineProps<Props>(), {
   altLabel: '',
@@ -68,6 +69,7 @@ const props = withDefaults(defineProps<Props>(), {
   ineligible: false,
   missingInfo: '',
   bonus: 0,
+  labelStar: false,
 })
 const emit = defineEmits<{
   (e: 'change', value: number): void
@@ -100,8 +102,15 @@ const selectionChanged = (event: any) => emit('change', event)
   flex-shrink: 0;
 }
 
+.label-star {
+  color: #ef5350;
+  font-weight: bold;
+  margin-left: 2px;
+}
+
 .label {
   display: block;
+  position: relative;
   margin-bottom: 0.5em;
   text-align: left;
   transition: color 0.2s;

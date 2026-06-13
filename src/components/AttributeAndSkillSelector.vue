@@ -9,6 +9,7 @@
     @change="(v) => store.setAttribute(attribute, v)"
     :highlighted="store.isHighlighted(attribute)"
     :display-max="store.editorMode != EditorMode.Free"
+    :labelStar="isPreferredAttribute(attribute)"
     type="attributes"
   />
   <v-divider class="mb-4"></v-divider>
@@ -60,4 +61,14 @@ const localizeSkillName = (skill: Skill) => {
 const skillMin = () => {
   return config.pointLimits.skills.min
 }
+
+const PRIMAL_ATTRIBUTES = ['body', 'charisma', 'instinct']
+const FOCUS_ATTRIBUTES = ['intellect', 'agility', 'psyche']
+
+const isPreferredAttribute = (attribute: Attribute): boolean => {
+  if (store.mentalPowerChoice === 'primal') return PRIMAL_ATTRIBUTES.includes(attribute.name)
+  if (store.mentalPowerChoice === 'focus') return FOCUS_ATTRIBUTES.includes(attribute.name)
+  return false
+}
 </script>
+
