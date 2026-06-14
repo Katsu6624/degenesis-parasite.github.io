@@ -1,7 +1,12 @@
 <template>
-  <div class="mb-2">
+  <div class="mb-2" style="display:flex;align-items:center;gap:16px">
     <span>{{ $t('messages.legacies').toUpperCase() }}</span>
-    <span style="font-size:12px;color:#999;margin-left:16px">{{ store.spentPoints.legacies }}/{{ config.availablePoints.legacies }}</span>
+    <span style="font-size:12px;color:#999">{{ store.spentPoints.legacies }}/{{ config.availablePoints.legacies }}</span>
+    <input
+      v-model="searchLegacy"
+      placeholder="Rechercher…"
+      style="margin-left:8px;background:transparent;border:1px solid #444;border-radius:4px;padding:2px 8px;font-size:12px;color:#ccc;outline:none;width:200px"
+    />
   </div>
   <v-divider class="mb-4"></v-divider>
 
@@ -240,6 +245,7 @@
 
 <script setup lang="ts">
 import { ref, computed, shallowRef } from 'vue'
+const searchLegacy = ref('')
 import ValueSelector from '@/components/ValueSelector.vue'
 import config from '@/config'
 import { EditorMode } from '@/config/modes'
@@ -263,7 +269,9 @@ function englishName(legacy: Legacy) {
   return englishLegaciesNames.get(legacy.name) || legacy.name
 }
 function legacies() {
+  const q = searchLegacy.value.toLowerCase()
   return AllLegacies
+    .filter((legacy: Legacy) => !q || (i18n.t(`legacies.${legacy.name}`) as string).toLowerCase().includes(q))
     .map((legacy: Legacy) => {
       const translatedLabel = i18n.t(`legacies.${legacy.name}`)
       const originalLabel = englishName(legacy)

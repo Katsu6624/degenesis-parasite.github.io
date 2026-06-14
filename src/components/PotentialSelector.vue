@@ -1,7 +1,12 @@
 <template>
-  <div class="mb-2">
+  <div class="mb-2" style="display:flex;align-items:center;gap:16px">
     <span>{{ $t('messages.potentials').toUpperCase() }}</span>
-    <span style="font-size:12px;color:#999;margin-left:16px">{{ store.spentPoints.potentials }}/{{ config.availablePoints.potentials + store.legacyXPPotentialBonus }}</span>
+    <span style="font-size:12px;color:#999">{{ store.spentPoints.potentials }}/{{ config.availablePoints.potentials + store.legacyXPPotentialBonus }}</span>
+    <input
+      v-model="search"
+      placeholder="Rechercher…"
+      style="margin-left:8px;background:transparent;border:1px solid #444;border-radius:4px;padding:2px 8px;font-size:12px;color:#ccc;outline:none;width:200px"
+    />
   </div>
   <v-divider class="mb-4"></v-divider>
 
@@ -78,6 +83,7 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
 import ValueSelector from '@/components/ValueSelector.vue'
 import config from '@/config'
 import { EditorMode } from '@/config/modes'
@@ -86,6 +92,7 @@ import { CommonPotentials } from '@/config/potentials/common'
 import { useCharacterStore } from '@/store'
 const store = useCharacterStore()
 const i18n = useI18n()
+const search = ref('')
 
 import type { Potential } from '@/config/potentials/potential'
 
@@ -114,11 +121,20 @@ function mapPotential(potential: Potential) {
 function frLabel(name: string) {
   return i18n.t(`potentials.${name}`) as string
 }
+function matchesSearch(name: string) {
+  if (!search.value) return true
+  const q = search.value.toLowerCase()
+  return frLabel(name).toLowerCase().includes(q)
+}
 function commonPotentialsList() {
-  return CommonPotentials.map(mapPotential).sort((a, b) => frLabel(a.potential.name).localeCompare(frLabel(b.potential.name), 'fr'))
+  return CommonPotentials
+    .filter(p => matchesSearch(p.name))
+    .map(mapPotential)
+    .sort((a, b) => frLabel(a.potential.name).localeCompare(frLabel(b.potential.name), 'fr'))
 }
 function cultPotentialsList() {
   return cultSpecificPotentials(store.cult, store.clan)
+    .filter(p => matchesSearch(p.name))
     .map(mapPotential)
     .sort((a, b) => frLabel(a.potential.name).localeCompare(frLabel(b.potential.name), 'fr'))
 }
