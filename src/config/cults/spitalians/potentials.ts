@@ -159,7 +159,7 @@ export const OldSchool = new Potential(
   undefined,
   undefined,
   undefined,
-  ['Maximum de Traumatismes = PHY+PSY ou PSY×2 (meilleur des deux) +1 par niveau, jusqu\'à 12 maximum.']
+  ['Maximum de Traumatismes = PHY+PSY ou PSY×2 (meilleur des deux) +1 par niveau (peut dépasser 12).']
 )
 export const RaiseDead = new Potential(
   'raiseDead',

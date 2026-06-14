@@ -499,7 +499,7 @@ export const useCharacterStore = defineStore('character', {
       const PHY = this.effectiveAttributeValue(Attributes.body)
       const PSY = this.effectiveAttributeValue(Attributes.psyche)
       if (this.oldSchoolLevel === 0) return PHY + PSY
-      return Math.min(Math.max(PHY + PSY, PSY * 2) + this.oldSchoolLevel, 12)
+      return Math.max(PHY + PSY, PSY * 2) + this.oldSchoolLevel
     },
     // Starting wealth per cult: [amount, currency]. Total = (rankLevel + resources) * amount.
     computedDinars(): { value: number; factor: number; currency: string; rankLevel: number; resources: number } | null {
