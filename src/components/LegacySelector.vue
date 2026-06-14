@@ -286,7 +286,7 @@ function legacies() {
         value: value
       }
     })
-    .sort((p1: any, p2: any) => p1.label.localeCompare(p2.label))
+    .sort((p1: any, p2: any) => (i18n.t(`legacies.${p1.legacy.name}`) as string).localeCompare(i18n.t(`legacies.${p2.legacy.name}`) as string, 'fr'))
 }
 function requirements(legacy: Legacy) {
   return [

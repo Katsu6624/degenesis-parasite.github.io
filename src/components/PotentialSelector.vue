@@ -111,13 +111,16 @@ function mapPotential(potential: Potential) {
     value
   }
 }
+function frLabel(name: string) {
+  return i18n.t(`potentials.${name}`) as string
+}
 function commonPotentialsList() {
-  return CommonPotentials.map(mapPotential).sort((a, b) => a.label.localeCompare(b.label))
+  return CommonPotentials.map(mapPotential).sort((a, b) => frLabel(a.potential.name).localeCompare(frLabel(b.potential.name), 'fr'))
 }
 function cultPotentialsList() {
   return cultSpecificPotentials(store.cult, store.clan)
     .map(mapPotential)
-    .sort((a, b) => a.label.localeCompare(b.label))
+    .sort((a, b) => frLabel(a.potential.name).localeCompare(frLabel(b.potential.name), 'fr'))
 }
 function requirements(potential: Potential) {
   return [
