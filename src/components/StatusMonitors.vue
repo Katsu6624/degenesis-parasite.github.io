@@ -22,7 +22,7 @@
   ></StatusMonitor>
   <StatusMonitor
     :label="$t('messages.trauma')"
-    :max="12"
+    :max="store.maxTrauma"
     :value="store.maxTrauma"
     :tooltip="`${Attributes.body.format($t)} + ${Attributes.psyche.format($t)}`"
     :constituents="[Attributes.body, Attributes.psyche]"
