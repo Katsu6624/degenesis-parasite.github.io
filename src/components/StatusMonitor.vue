@@ -8,7 +8,7 @@
       <ValueBoxes class="text-caption" :count="max" :value="value" :interactive="false" />
     </div>
     <div class="d-flex justify-center mb-3 text-uppercase">
-      {{ label }} <span style="opacity:0.5;margin-left:4px">({{ value }})</span>
+      {{ label }} <span style="margin-left:4px">({{ value }})</span>
     </div>
     <v-tooltip
       v-if="tooltip.length > 0"
