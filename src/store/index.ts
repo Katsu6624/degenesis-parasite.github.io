@@ -386,9 +386,17 @@ export const useCharacterStore = defineStore('character', {
         return bonus
       }
     },
+    ramsOffspringLevel(): number {
+      const p = PotentialsByName.get('ramsOffspring')
+      return p ? (this.potentials.get(p) || 0) : 0
+    },
     effectiveOriginValue(): (origin: Origin) => number {
-      return (origin: Origin) =>
-        Math.max(0, (this.originValue(origin) || 0) + this.legacyOriginBonus(origin.name) + this.potentialOriginBonus(origin.name))
+      return (origin: Origin) => {
+        let value = Math.max(0, (this.originValue(origin) || 0) + this.legacyOriginBonus(origin.name) + this.potentialOriginBonus(origin.name))
+        if (this.ramsOffspringLevel > 0 && (origin.name === 'allies' || origin.name === 'authority'))
+          value = Math.max(value, this.ramsOffspringLevel)
+        return value
+      }
     },
     spentPoints: (state): SpentPoints => {
       let spentAttributePoints = 0
@@ -654,9 +662,12 @@ export const useCharacterStore = defineStore('character', {
       )
     },
     originValues(): Value<Origin>[] {
-      return Array.from(this.origins.entries()).map(([o, v]) =>
-        o.withValue(v + this.legacyOriginBonus(o.name) + this.potentialOriginBonus(o.name))
-      )
+      return Array.from(this.origins.entries()).map(([o, v]) => {
+        let value = v + this.legacyOriginBonus(o.name) + this.potentialOriginBonus(o.name)
+        if (this.ramsOffspringLevel > 0 && (o.name === 'allies' || o.name === 'authority'))
+          value = Math.max(value, this.ramsOffspringLevel)
+        return o.withValue(value)
+      })
     },
     eligibleRanks(): Set<Rank> {
       return eligibleRanks(this.cult, this.skillValues, this.originValues, this.clan)
