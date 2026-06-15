@@ -19,8 +19,8 @@
               :model-value="musicPlayer.volume.value"
               @update:model-value="musicPlayer.setVolume"
               min="0"
-              max="1"
-              step="0.01"
+              max="0.3"
+              step="0.005"
               style="width: 80px; min-width: 80px;"
               hide-details
               density="compact"
