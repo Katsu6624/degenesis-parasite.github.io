@@ -1,6 +1,35 @@
 <template>
   <v-toolbar class="pa-4 bg-grey-lighten-2 elevation-2" density="compact">
     <template v-slot:append>
+      <!-- Music player -->
+      <v-tooltip :text="'There Is No Other - Tobias Lilja'" location="bottom">
+        <template v-slot:activator="{ props: tooltipProps }">
+          <div v-bind="tooltipProps" class="music-player d-flex align-center mr-2" style="gap: 8px;">
+            <v-btn
+              @click="musicPlayer.toggle()"
+              stacked
+              :color="musicPlayer.isPlaying.value ? 'amber-darken-2' : undefined"
+              style="min-width: 110px;"
+            >
+              Musique : {{ musicPlayer.isPlaying.value ? 'ON' : 'OFF' }}
+              <v-icon :icon="musicPlayer.isPlaying.value ? mdiVolumeHigh : mdiVolumeOff" />
+            </v-btn>
+            <v-slider
+              v-if="musicPlayer.isPlaying.value"
+              :model-value="musicPlayer.volume.value"
+              @update:model-value="musicPlayer.setVolume"
+              min="0"
+              max="1"
+              step="0.01"
+              style="width: 80px; min-width: 80px;"
+              hide-details
+              density="compact"
+              color="amber-darken-2"
+            ></v-slider>
+          </div>
+        </template>
+      </v-tooltip>
+      <v-divider vertical class="mr-2 ml-1"></v-divider>
       <v-btn @click="downloadCharacter" stacked v-if="!isSharedView"
         >{{ $t('messages.exportCharacter') }}
         <v-icon :icon="mdiExport" />
@@ -517,8 +546,11 @@ mdiClose,
 mdiDelete,
 mdiExport,
 mdiPencil,
-mdiShareVariant
+mdiShareVariant,
+mdiVolumeHigh,
+mdiVolumeOff
 } from '@mdi/js'
+import { useMusicPlayer } from '@/composables/useMusicPlayer'
 import { ref, computed, inject } from 'vue'
 import type { Ref } from 'vue'
 import { AllLegacies } from '@/config/legacies'
@@ -531,6 +563,7 @@ const store = useCharacterStore()
 const appStore = useApplicationStore()
 const i18n = useI18n()
 const isSharedView = inject<Ref<boolean>>('isSharedView', ref(false))
+const musicPlayer = useMusicPlayer()
 
 const shareCopied = ref(false)
 const shareCharacter = async () => {
