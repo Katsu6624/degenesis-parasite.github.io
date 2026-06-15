@@ -164,6 +164,11 @@ const selectionChanged = (event: any) => emit('change', event)
   opacity: 1;
 }
 
+.valueSelector:hover .label {
+  overflow: visible;
+  z-index: 1;
+}
+
 .labelWide {
   max-width: calc(100% - 4em);
 }
