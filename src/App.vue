@@ -29,9 +29,7 @@
               ></v-icon>
             </template>
             <v-list-item-subtitle>
-              {{ `${cultureLabels().get(character.culture)}` }}
-              {{ `${conceptLabels().get(character.concept)}` }}
-              {{ `${cultLabels().get(character.clan || character.cult)}` }}
+              {{ `${cultureLabels().get(character.culture)}, ${conceptLabels().get(character.concept)}, ${cultLabels().get(character.clan || character.cult)}` }}
             </v-list-item-subtitle>
           </v-list-item>
           <v-divider class="mt-2 mb-2"></v-divider>
@@ -305,7 +303,7 @@ const cultureLabels = () =>
   new Map<string, string>(cultures.map((k) => [k, i18n.t(`culturesConceptsCults.${k}`)]))
 const conceptLabels = () =>
   new Map<string, string>(
-    concepts.map((k, idx) => [k, `${romanize(idx)}. ${i18n.t(`culturesConceptsCults.${k}`)}`])
+    concepts.map((k) => [k, i18n.t(`culturesConceptsCults.${k}`)])
   )
 const cultLabels = () => {
   const cultTranslations: [string, string][] = cults.map((k) => [k, i18n.t(`culturesConceptsCults.${k}`)])
