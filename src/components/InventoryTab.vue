@@ -147,27 +147,26 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="{ purchase, index } in store.inventoryItems" :key="index">
-              <template v-if="getItem(purchase.itemId)">
+            <tr v-for="group in groupedInventory" :key="group.key">
+              <template v-if="group.item">
                 <td class="inv-img-cell">
-                  <img v-if="getItem(purchase.itemId)!.image" :src="getItem(purchase.itemId)!.image" class="inv-item-img" />
+                  <img v-if="group.item.image" :src="group.item.image" class="inv-item-img" />
                 </td>
                 <td class="font-weight-medium">
-                  <HoverTooltip :description="getItem(purchase.itemId)!.description">
-                    <span :class="getItem(purchase.itemId)!.description ? 'inv-has-tooltip' : ''">
-                      {{ getItem(purchase.itemId)!.name }}
-                    </span>
+                  <HoverTooltip :description="group.item.description">
+                    <span :class="group.item.description ? 'inv-has-tooltip' : ''">{{ group.item.name }}</span>
                   </HoverTooltip>
-                  <v-chip v-if="purchase.level" size="x-small" color="orange-darken-2" class="ml-1">Niv. {{ purchase.level }}</v-chip>
+                  <v-chip v-if="group.level" size="x-small" color="orange-darken-2" class="ml-1">Niv. {{ group.level }}</v-chip>
+                  <v-chip v-if="group.count > 1" size="x-small" color="grey-darken-1" class="ml-1">×{{ group.count }}</v-chip>
                 </td>
-                <td class="text-caption inv-muted">{{ categoryLabel(getItem(purchase.itemId)!.category) }}</td>
-                <td>{{ getItem(purchase.itemId)!.handling ?? '—' }}</td>
-                <td>{{ getItem(purchase.itemId)!.range ?? '—' }}</td>
-                <td>{{ getItem(purchase.itemId)!.damage ?? '—' }}</td>
-                <td>{{ getItem(purchase.itemId)!.magazine ?? '—' }}</td>
+                <td class="text-caption inv-muted">{{ categoryLabel(group.item.category) }}</td>
+                <td>{{ group.item.handling ?? '—' }}</td>
+                <td>{{ group.item.range ?? '—' }}</td>
+                <td>{{ group.item.damage ?? '—' }}</td>
+                <td>{{ group.item.magazine ?? '—' }}</td>
                 <td class="text-caption">
-                  <template v-if="getItem(purchase.itemId)!.properties">
-                    <div v-for="(prop, idx) in parseProperties(getItem(purchase.itemId)!.properties)" :key="idx">
+                  <template v-if="group.item.properties">
+                    <div v-for="(prop, idx) in parseProperties(group.item.properties)" :key="idx">
                       <HoverTooltip :description="getPropertyDescription(prop)">
                         <span :class="getPropertyDescription(prop) ? 'inv-has-tooltip' : ''">{{ prop }}</span>
                       </HoverTooltip>
@@ -175,16 +174,16 @@
                   </template>
                   <span v-else class="inv-muted">—</span>
                 </td>
-                <td>{{ getItem(purchase.itemId)!.encumbrance ?? '—' }}</td>
-                <td>{{ getItem(purchase.itemId)!.techLevel ?? '—' }}</td>
-                <td>{{ getItem(purchase.itemId)!.slots ?? '—' }}</td>
+                <td>{{ group.item.encumbrance ?? '—' }}</td>
+                <td>{{ group.item.techLevel ?? '—' }}</td>
+                <td>{{ group.item.slots ?? '—' }}</td>
                 <td>
-                  <v-chip size="x-small" :color="purchase.entrepreneurResources ? 'orange-darken-2' : purchase.purchasedWithResources ? 'blue-darken-1' : 'green-darken-1'" text-color="white">
-                    {{ purchase.entrepreneurResources ? 'Ress. Entrepreneur' : purchase.purchasedWithResources ? 'Ressources' : (store.computedDinars?.currency ?? 'LC') }}
+                  <v-chip size="x-small" :color="group.purchaseMethod === 'entrepreneur' ? 'orange-darken-2' : group.purchaseMethod === 'resources' ? 'blue-darken-1' : group.purchaseMethod === 'free' ? 'purple-darken-2' : 'green-darken-1'" text-color="white">
+                    {{ group.purchaseMethod === 'entrepreneur' ? 'Ress. Entrepreneur' : group.purchaseMethod === 'resources' ? 'Ressources' : group.purchaseMethod === 'free' ? 'Gratuit' : (store.computedDinars?.currency ?? 'LC') }}
                   </v-chip>
                 </td>
                 <td>
-                  <button class="inv-remove-btn" @click="store.removeInventoryItem(index)">×</button>
+                  <button class="inv-remove-btn" @click="removeOneFromGroup(group)">×</button>
                 </td>
               </template>
             </tr>
@@ -338,7 +337,7 @@
                     color="green-darken-2"
                     :disabled="!canBuyWithLC(item)"
                     class="mr-1"
-                    @click="item.levelable ? openLevelDialog(item) : store.buyItemWithLC(item.id)"
+                    @click="item.levelable ? openLevelDialog(item, false) : store.buyItemWithLC(item.id)"
                   >
                     {{ store.computedDinars?.currency ?? 'LC' }}
                   </v-btn>
@@ -348,9 +347,18 @@
                     variant="outlined"
                     color="blue-darken-2"
                     :disabled="!canBuyWithResources(item)"
+                    class="mr-1"
                     @click="store.buyItemWithResources(item.id)"
                   >
                     Res.
+                  </v-btn>
+                  <v-btn
+                    size="x-small"
+                    variant="outlined"
+                    color="purple-darken-2"
+                    @click="item.levelable ? openLevelDialog(item, true) : store.addFreeItem(item.id)"
+                  >
+                    +
                   </v-btn>
                 </td>
               </tr>
@@ -368,21 +376,22 @@
       <v-card-text>
         <p class="mb-3">
           <strong>{{ levelDialogItem.name }}</strong><br>
-          <span class="text-caption inv-muted">Prix unitaire : {{ levelDialogItem.value }} {{ store.computedDinars?.currency ?? 'LC' }}</span>
+          <span v-if="!levelDialogFree" class="text-caption inv-muted">Prix unitaire : {{ levelDialogItem.value }} {{ store.computedDinars?.currency ?? 'LC' }}</span>
+          <span v-else class="text-caption" style="color: rgb(var(--v-theme-purple-darken-2))">Ajout gratuit</span>
         </p>
         <v-btn-toggle v-model="selectedLevel" mandatory density="compact" variant="outlined" divided class="mb-3">
           <v-btn
             v-for="lvl in [1, 2, 3]"
             :key="lvl"
             :value="lvl"
-            :disabled="!canAffordLevel(levelDialogItem, lvl)"
+            :disabled="!levelDialogFree && !canAffordLevel(levelDialogItem, lvl)"
           >
             Niv. {{ lvl }}
             <br>
-            <span class="text-caption">{{ levelCost(levelDialogItem, lvl) }} {{ store.computedDinars?.currency ?? 'LC' }}</span>
+            <span v-if="!levelDialogFree" class="text-caption">{{ levelCost(levelDialogItem, lvl) }} {{ store.computedDinars?.currency ?? 'LC' }}</span>
           </v-btn>
         </v-btn-toggle>
-        <div class="text-caption inv-muted">
+        <div v-if="!levelDialogFree" class="text-caption inv-muted">
           Restant après achat : {{ store.remainingLC - levelCost(levelDialogItem, selectedLevel) }} {{ store.computedDinars?.currency ?? 'LC' }}
         </div>
       </v-card-text>
@@ -390,12 +399,12 @@
         <v-spacer></v-spacer>
         <v-btn variant="text" @click="levelDialog = false">Annuler</v-btn>
         <v-btn
-          color="green-darken-2"
+          :color="levelDialogFree ? 'purple-darken-2' : 'green-darken-2'"
           variant="flat"
-          :disabled="!canAffordLevel(levelDialogItem, selectedLevel)"
+          :disabled="!levelDialogFree && !canAffordLevel(levelDialogItem, selectedLevel)"
           @click="confirmLevelPurchase"
         >
-          Acheter
+          {{ levelDialogFree ? 'Ajouter' : 'Acheter' }}
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -449,18 +458,62 @@ const encumbrancePenalty = computed(() =>
 // ── Level dialog ──
 const levelDialog = ref(false)
 const levelDialogItem = ref<Item | null>(null)
+const levelDialogFree = ref(false)
 const selectedLevel = ref(1)
 
-function openLevelDialog(item: Item) {
+function openLevelDialog(item: Item, free = false) {
   levelDialogItem.value = item
+  levelDialogFree.value = free
   selectedLevel.value = 1
   levelDialog.value = true
 }
 
 function confirmLevelPurchase() {
   if (!levelDialogItem.value) return
-  store.buyItemWithLC(levelDialogItem.value.id, selectedLevel.value)
+  if (levelDialogFree.value) {
+    store.addFreeItem(levelDialogItem.value.id, selectedLevel.value)
+  } else {
+    store.buyItemWithLC(levelDialogItem.value.id, selectedLevel.value)
+  }
   levelDialog.value = false
+}
+
+// ── Stacking : groupe les entrées identiques (même item + niveau + source) ──
+type PurchaseMethod = 'lc' | 'resources' | 'entrepreneur' | 'free'
+
+function purchaseMethodOf(p: { purchasedWithResources: boolean; entrepreneurResources?: boolean; free?: boolean }): PurchaseMethod {
+  if (p.free) return 'free'
+  if (p.entrepreneurResources) return 'entrepreneur'
+  if (p.purchasedWithResources) return 'resources'
+  return 'lc'
+}
+
+const groupedInventory = computed(() => {
+  const map = new Map<string, { key: string; item: ReturnType<typeof getItem>; level: number | undefined; count: number; purchaseMethod: PurchaseMethod; indices: number[] }>()
+  store.inventoryItems.forEach(({ purchase, index }) => {
+    const method = purchaseMethodOf(purchase)
+    const key = `${purchase.itemId}|${purchase.level ?? 1}|${method}`
+    if (map.has(key)) {
+      const g = map.get(key)!
+      g.count++
+      g.indices.push(index)
+    } else {
+      map.set(key, {
+        key,
+        item: getItem(purchase.itemId),
+        level: purchase.level,
+        count: 1,
+        purchaseMethod: method,
+        indices: [index],
+      })
+    }
+  })
+  return [...map.values()]
+})
+
+function removeOneFromGroup(group: { indices: number[] }) {
+  const idx = group.indices[group.indices.length - 1]
+  store.removeInventoryItem(idx)
 }
 
 function levelCost(item: Item, lvl: number): number {

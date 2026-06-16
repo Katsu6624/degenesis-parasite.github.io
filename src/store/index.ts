@@ -652,7 +652,7 @@ export const useCharacterStore = defineStore('character', {
     },
     spentLC(): number {
       return this.inventory
-        .filter(p => !p.purchasedWithResources)
+        .filter(p => !p.purchasedWithResources && !p.free)
         .reduce((sum, p) => {
           const item = ITEMS.find(i => i.id === p.itemId)
           return sum + (item?.value ?? 0) * (p.level ?? 1)
@@ -1127,6 +1127,9 @@ export const useCharacterStore = defineStore('character', {
       setTimeout(() => {
         this.unsetHighlighted(...items)
       }, 3000)
+    },
+    addFreeItem(itemId: string, level = 1) {
+      this.inventory.push({ itemId, purchasedWithResources: false, decrementedResources: false, free: true, level: level > 1 ? level : undefined })
     },
     buyItemWithLC(itemId: string, level = 1) {
       const item = ITEMS.find(i => i.id === itemId)

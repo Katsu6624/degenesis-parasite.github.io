@@ -164,6 +164,7 @@ export interface InventoryPurchase {
   level?: number
   entrepreneurResources?: boolean
   fromLegacy?: string
+  free?: boolean
 }
 
 export enum ResourceMode {
