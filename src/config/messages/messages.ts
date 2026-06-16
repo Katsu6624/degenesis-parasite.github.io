@@ -51,6 +51,8 @@ export const messages = {
     exportCharacter: 'Exportieren',
     shareCharacter: 'Fiche teilen',
     importCharacter: 'Charakter importieren',
+    downloadPortrait: 'Herunterladen',
+    deletePortrait: 'Löschen',
     editorModes: {
       label: 'Bearbeitungsmodus',
       hardLimits: 'Strikt',
@@ -215,6 +217,8 @@ export const messages = {
     exportCharacter: 'Export',
     shareCharacter: 'Share character',
     importCharacter: 'Import character',
+    downloadPortrait: 'Download',
+    deletePortrait: 'Delete',
     editorModes: {
       label: 'Editor mode',
       hardLimits: 'Strict',
@@ -378,6 +382,8 @@ export const messages = {
     exportCharacter: 'Exporter la fiche',
     shareCharacter: 'Partager votre fiche',
     importCharacter: 'Importer un personnage',
+    downloadPortrait: 'Télécharger',
+    deletePortrait: 'Supprimer',
     editorModes: {
       label: 'Modes d\'édition',
       hardLimits: 'Strict',

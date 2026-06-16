@@ -288,7 +288,8 @@
                       </div>
                       <div style="display: flex; justify-content: center; gap: 8px;">
                         <v-btn v-if="!store.portrait" size="small" @click="triggerPortraitUpload">Choisir</v-btn>
-                        <v-btn v-if="store.portrait" size="small" @click="store.portrait = ''">Supprimer</v-btn>
+                        <v-btn v-if="store.portrait" size="small" @click="downloadPortrait">{{ $t('messages.downloadPortrait') }}</v-btn>
+                        <v-btn v-if="store.portrait" size="small" @click="store.portrait = ''">{{ $t('messages.deletePortrait') }}</v-btn>
                       </div>
                     </div>
                   </div>
@@ -660,6 +661,12 @@ const sharedViewViolations = computed((): string[] => {
 
 const portraitInput = ref<HTMLInputElement | null>(null)
 const triggerPortraitUpload = () => portraitInput.value?.click()
+const downloadPortrait = () => {
+  const a = document.createElement('a')
+  a.href = store.portrait
+  a.download = `${store.characterName || 'portrait'}.png`
+  a.click()
+}
 const onPortraitChange = (ev: Event) => {
   const input = ev.target as HTMLInputElement
   const file = input.files?.[0]
