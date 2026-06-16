@@ -30,7 +30,7 @@
         </template>
       </v-tooltip>
       <v-divider vertical class="mr-2 ml-1"></v-divider>
-      <v-btn @click="downloadCharacter" stacked v-if="!isSharedView"
+      <v-btn @click="downloadCharacter" stacked v-if="!isSharedView && currentTab === 'sheet'"
         >{{ $t('messages.exportCharacter') }}
         <v-icon :icon="mdiExport" />
       </v-btn>
@@ -585,6 +585,7 @@ const store = useCharacterStore()
 const appStore = useApplicationStore()
 const i18n = useI18n()
 const isSharedView = inject<Ref<boolean>>('isSharedView', ref(false))
+const currentTab = inject<Ref<string>>('currentTab', ref(''))
 const musicPlayer = useMusicPlayer()
 
 const pluralSuffix = (count: number): string => {

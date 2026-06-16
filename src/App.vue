@@ -344,6 +344,7 @@ const cultLabels = () => {
 
 const tab = ref('')
 ;(window as any).__currentTab = tab
+provide('currentTab', tab)
 
 // persist state whenever it changes
 watch(
