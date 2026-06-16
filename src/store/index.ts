@@ -636,18 +636,20 @@ export const useCharacterStore = defineStore('character', {
       }
       return Math.max(0, this.effectiveResourcesLevel - 2)
     },
-    remainingLC(): number {
-      const base = (this.editorMode === EditorMode.Free && this.manualLC !== null)
-        ? this.manualLC
-        : (this.computedDinars?.value ?? 0)
-      const landlordBonus = this.hasLandlord ? 1000 : 0
-      const spent = this.inventory
+    spentLC(): number {
+      return this.inventory
         .filter(p => !p.purchasedWithResources)
         .reduce((sum, p) => {
           const item = ITEMS.find(i => i.id === p.itemId)
           return sum + (item?.value ?? 0) * (p.level ?? 1)
         }, 0)
-      return base + landlordBonus - spent
+    },
+    remainingLC(): number {
+      const base = (this.editorMode === EditorMode.Free && this.manualLC !== null)
+        ? this.manualLC
+        : (this.computedDinars?.value ?? 0)
+      const landlordBonus = this.hasLandlord ? 1000 : 0
+      return base + landlordBonus - this.spentLC
     },
     inventoryItems(): Array<{ purchase: InventoryPurchase; index: number }> {
       return this.inventory.map((purchase, index) => ({ purchase, index }))

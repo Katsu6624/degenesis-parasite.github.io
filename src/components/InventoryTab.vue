@@ -9,7 +9,7 @@
           v-if="store.editorMode === 'free'"
           type="number"
           :value="store.remainingLC"
-          @change="e => { const v = (e.target as HTMLInputElement).value; const bonus = store.hasLandlord ? 1000 : 0; store.setManualLC(v === '' ? null : Number(v) - bonus) }"
+          @change="e => { const v = (e.target as HTMLInputElement).value; const bonus = store.hasLandlord ? 1000 : 0; store.setManualLC(v === '' ? null : Number(v) - bonus + store.spentLC) }"
           class="inv-lc-inline-input"
           :class="store.remainingLC < 0 ? 'text-red' : ''"
         />

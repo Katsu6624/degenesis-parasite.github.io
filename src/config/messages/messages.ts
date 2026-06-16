@@ -63,9 +63,24 @@ export const messages = {
       },
       hintHardLimitModeImpossible: 'Der strikte Bearbeitungsmodus kann nicht gewählt werden, wenn bereits eines der Punktelimits überschritten wurde.'
     },
+    mentalDilemma: {
+      title: 'Spezialfertigkeiten',
+      titleTooltip: 'Bei der Erstellung müssen zwei Dilemmata entschieden werden, die die Seele deines Charakters definieren.<br><br>In Degenesis gibt es zwei Paare von Spezialfertigkeiten, von denen du jeweils nur eine wählen musst.',
+      primalFocus: {
+        label: 'PRIMAL GEGEN FOKUS',
+        tooltip: 'Die Wahl zwischen Primal und Fokus bestimmt weitgehend, wie dein Charakter Probleme löst: mit dem Herzen oder mit dem Kopf. Es handelt sich hauptsächlich um eine Frage der Charakterinterpretation, nicht um Würfelwürfe. Der rein technische Aspekt dieser Entscheidung ist, dass es im XP günstiger ist, Zugang zu den Attributen und Fertigkeiten zu erhalten, die mit Primal (KÖR, CHA, INS) oder Fokus (INT, PSY, GEW) verbunden sind. Außerdem eröffnet sie Potenziale, die nur gewählt werden können, wenn sie mit Primal oder Fokus verknüpft sind.'
+      },
+      faithWillpower: {
+        label: 'GLAUBE GEGEN WILLE',
+        tooltip: 'Sucht dein Charakter den Segen einer Spiritualität (Religion, Kult oder Ideologie), oder verlässt er sich auf sich selbst? Achtung: Die Wahl von Wille bedeutet nicht, dass du nicht an Gott glaubst. Über 90% der Bevölkerung glauben in Degenesis auf irgendeine Weise an eine Spiritualität. Atheist zu sein, ist wieder etwas Ungewöhnliches geworden. Die entscheidende Unterscheidung ist: »Glaubt dein Charakter, dass das Leben der Menschen von etwas Größerem als ihnen selbst gelenkt wird, oder glaubt er, dass allein der menschliche Wille über den einzuschlagenden Weg entscheidet?«'
+      },
+      choiceRequired: '⚠ Auswahl erforderlich',
+      blocked: '{name} blockiert'
+    },
     hint: 'Hinweis',
     buildPoints: 'Generierungspunkte',
     buildOptions: 'Generierungsoptionen',
+    music: 'Musik',
     editCharacter: 'Akte',
     createNewCharacter: 'Neuer Charakter',
     cancel: 'Abbrechen',
@@ -168,9 +183,24 @@ export const messages = {
       },
       hintHardLimitModeImpossible: 'The strict editor mode cannot be selected if any point limit has already been exceeded.'
     },
+    mentalDilemma: {
+      title: 'Special Skills',
+      titleTooltip: 'During creation, you must settle two dilemmas that define your character\'s soul.<br><br>There are two pairs of special skills in Degenesis, and you must choose only one from each pair.',
+      primalFocus: {
+        label: 'PRIMAL VS FOCUS',
+        tooltip: 'The choice between Primal and Focus largely determines how your character solves problems: with their heart or their head. This is mainly a matter of character interpretation, not dice rolls. The purely technical aspect of this decision is that it will be cheaper in XP to access the attributes and skills linked to Primal (PHY, CHA, INS) or Focus (INT, PSY, AGI). It also unlocks Potentials that can only be taken if they are linked to Primal or Focus.'
+      },
+      faithWillpower: {
+        label: 'FAITH VS WILLPOWER',
+        tooltip: 'Does your character seek a blessing from some form of spirituality (religion, cult, or ideology), or do they rely on themselves? Be careful, choosing Willpower doesn\'t mean your character doesn\'t believe in god. Over 90% of the population believes in some form of spirituality in Degenesis. Being an atheist has become unusual again. The crucial distinction is: "Does your character think human life is guided by something greater than themselves, or do they think only human will decides the path to take?"'
+      },
+      choiceRequired: '⚠ Choice required',
+      blocked: '{name} blocked'
+    },
     hint: 'Hint',
     buildPoints: 'Build points',
     buildOptions: 'Build options',
+    music: 'Music',
     editCharacter: 'Sheet',
     createNewCharacter: 'Create New',
     cancel: 'Cancel',
@@ -272,9 +302,24 @@ export const messages = {
       },
       hintHardLimitModeImpossible: 'Le mode d\'édition strict ne peut pas être sélectionné si une limite de points a déjà été dépassée.',
     },
+    mentalDilemma: {
+      title: 'Compétences Spéciales',
+      titleTooltip: 'Lors de la création, vous devez trancher deux dilemmes qui définissent l\'âme de votre personnage.<br><br>Il existe deux couples de compétences spéciales dans Degenesis et vous devez en choisir une seule à chaque fois.',
+      primalFocus: {
+        label: 'PULSIONS CONTRE CONCENTRATION',
+        tooltip: 'Le choix entre Pulsions et Concentration détermine dans une large mesure la façon dont le personnage résout les problèmes : avec son cœur ou avec sa tête. Il s\'agit principalement d\'une question d\'interprétation du personnage, et non de lancers de dés. L\'aspect purement technique de cette décision est qu\'il sera moins cher en XP d\'accéder aux attributs et aux compétences liées à Pulsions (PHY, CHA, INS) ou Concentration (INT, PSY, AGI). En outre, elle débouche sur des Potentiels qui sont uniquement prenables s\'ils sont liés à Pulsions ou Concentration.'
+      },
+      faithWillpower: {
+        label: 'FOI CONTRE VOLONTÉ',
+        tooltip: 'Votre personnage demande-t-il une bénédiction d\'une quelconque spiritualité (religion, culte ou idéologie) ou est-ce que vous comptez sur vous-même ? Attention, choisir Volonté ne veut pas dire que vous ne croyez pas en dieu. Plus de 90% de la population croit d\'une manière ou une autre à une spiritualité dans Degenesis. Être athée est redevenu quelque chose d\'anormal. La distinction très importante est "Est-ce que votre personnage pense que la vie des hommes est dirigée par quelque chose de plus grand qu\'eux, ou est-ce qu\'il pense que seule la volonté humaine décide de la voie à emprunter ?".'
+      },
+      choiceRequired: '⚠ Choix requis',
+      blocked: '{name} bloquée'
+    },
     hint: 'Indice',
     buildPoints: 'Répartition des Points',
     buildOptions: 'Modes de Création',
+    music: 'Musique',
     editCharacter: 'Fiche',
     createNewCharacter: 'Nouveau Personnage',
     cancel: 'Annuler',

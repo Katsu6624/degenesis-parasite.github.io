@@ -11,7 +11,7 @@
               :color="musicPlayer.isPlaying.value ? 'red-darken-1' : undefined"
               style="min-width: 110px;"
             >
-              Musique : {{ musicPlayer.isPlaying.value ? 'ON' : 'OFF' }}
+              {{ $t('messages.music') }} : {{ musicPlayer.isPlaying.value ? 'ON' : 'OFF' }}
               <v-icon :icon="musicPlayer.isPlaying.value ? mdiVolumeHigh : mdiVolumeOff" />
             </v-btn>
             <v-slider
@@ -179,7 +179,7 @@
                                 :label="$t('messages.dinars')"
                                 variant="underlined"
                                 type="number"
-@update:model-value="val => { const bonus = store.hasLandlord ? 1000 : 0; store.setManualLC(val === '' || val === null ? null : Number(val) - bonus) }"
+@update:model-value="val => { const bonus = store.hasLandlord ? 1000 : 0; store.setManualLC(val === '' || val === null ? null : Number(val) - bonus + store.spentLC) }"
                               ></v-text-field>
                               <v-text-field
                                 v-else

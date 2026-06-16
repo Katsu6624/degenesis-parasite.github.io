@@ -3,20 +3,20 @@
     <div class="dilemma-header">
       <v-tooltip max-width="360" location="bottom">
         <template #activator="{ props }">
-          <span v-bind="props" class="dilemma-title text-uppercase font-weight-bold" style="cursor:help;border-bottom:1px dotted #666">Compétences Spéciales</span>
+          <span v-bind="props" class="dilemma-title text-uppercase font-weight-bold" style="cursor:help;border-bottom:1px dotted #666">{{ $t('messages.mentalDilemma.title') }}</span>
         </template>
-        <span>Lors de la création, vous devez trancher deux dilemmes qui définissent l'âme de votre personnage.<br><br>Il existe deux couples de compétences spéciales dans Degenesis et vous devez en choisir une seule à chaque fois.</span>
+        <span v-html="$t('messages.mentalDilemma.titleTooltip')"></span>
       </v-tooltip>
     </div>
 
     <div class="dilemma-row">
-      <!-- Pulsions vs Concentration -->
+      <!-- Primal vs Focus -->
       <div class="dilemma-block">
         <v-tooltip max-width="380" location="bottom">
           <template #activator="{ props }">
-            <div class="dilemma-label mb-2"><span v-bind="props" style="cursor:help;border-bottom:1px dotted #666;display:inline-block">PULSIONS CONTRE CONCENTRATION</span></div>
+            <div class="dilemma-label mb-2"><span v-bind="props" style="cursor:help;border-bottom:1px dotted #666;display:inline-block">{{ $t('messages.mentalDilemma.primalFocus.label') }}</span></div>
           </template>
-          <span>Le choix entre Pulsions et Concentration détermine dans une large mesure la façon dont le personnage résout les problèmes : avec son cœur ou avec sa tête. Il s'agit principalement d'une question d'interprétation du personnage, et non de lancers de dés. L'aspect purement technique de cette décision est qu'il sera moins cher en XP d'accéder aux attributs et aux compétences liées à Pulsions (PHY, CHA, INS) ou Concentration (INT, PSY, AGI). En outre, elle débouche sur des Potentiels qui sont uniquement prenables s'ils sont liés à Pulsions ou Concentration.</span>
+          <span>{{ $t('messages.mentalDilemma.primalFocus.tooltip') }}</span>
         </v-tooltip>
         <v-btn-toggle
           :model-value="store.mentalPowerChoice"
@@ -28,34 +28,34 @@
         >
           <v-btn value="primal" :color="store.mentalPowerChoice === 'primal' ? 'red-darken-2' : ''" size="small">
             <div class="dilemma-btn-content">
-              <span class="dilemma-skill-name">Pulsions</span>
+              <span class="dilemma-skill-name">{{ $t('skills.primal') }}</span>
               <span class="dilemma-skill-attr">INS</span>
             </div>
           </v-btn>
           <v-btn value="focus" :color="store.mentalPowerChoice === 'focus' ? 'red-darken-2' : ''" size="small">
             <div class="dilemma-btn-content">
-              <span class="dilemma-skill-name">Concentration</span>
+              <span class="dilemma-skill-name">{{ $t('skills.focus') }}</span>
               <span class="dilemma-skill-attr">INT</span>
             </div>
           </v-btn>
         </v-btn-toggle>
         <div v-if="!store.mentalPowerChoice" class="dilemma-warning mt-1">
-          ⚠ Choix requis
+          {{ $t('messages.mentalDilemma.choiceRequired') }}
         </div>
         <div v-else class="dilemma-blocked mt-1">
-          {{ store.mentalPowerChoice === 'primal' ? 'Concentration' : 'Pulsions' }} bloquée
+          {{ $t('messages.mentalDilemma.blocked', { name: store.mentalPowerChoice === 'primal' ? $t('skills.focus') : $t('skills.primal') }) }}
         </div>
       </div>
 
       <div class="dilemma-separator"></div>
 
-      <!-- Foi vs Volonté -->
+      <!-- Faith vs Willpower -->
       <div class="dilemma-block">
         <v-tooltip max-width="380" location="bottom">
           <template #activator="{ props }">
-            <div class="dilemma-label mb-2"><span v-bind="props" style="cursor:help;border-bottom:1px dotted #666;display:inline-block">FOI CONTRE VOLONTÉ</span></div>
+            <div class="dilemma-label mb-2"><span v-bind="props" style="cursor:help;border-bottom:1px dotted #666;display:inline-block">{{ $t('messages.mentalDilemma.faithWillpower.label') }}</span></div>
           </template>
-          <span>Votre personnage demande-t-il une bénédiction d'une quelconque spiritualité (religion, culte ou idéologie) ou est-ce que vous comptez sur vous-même ? Attention, choisir Volonté ne veut pas dire que vous ne croyez pas en dieu. Plus de 90% de la population croit d'une manière ou une autre à une spiritualité dans Degenesis. Être athée est redevenu quelque chose d'anormal. La distinction très importante est "Est-ce que votre personnage pense que la vie des hommes est dirigée par quelque chose de plus grand qu'eux, ou est-ce qu'il pense que seule la volonté humaine décide de la voie à emprunter ?".</span>
+          <span>{{ $t('messages.mentalDilemma.faithWillpower.tooltip') }}</span>
         </v-tooltip>
         <v-btn-toggle
           :model-value="store.mentalResistanceChoice"
@@ -67,22 +67,22 @@
         >
           <v-btn value="faith" :color="store.mentalResistanceChoice === 'faith' ? 'red-darken-2' : ''" size="small">
             <div class="dilemma-btn-content">
-              <span class="dilemma-skill-name">Foi</span>
+              <span class="dilemma-skill-name">{{ $t('skills.faith') }}</span>
               <span class="dilemma-skill-attr">PSY</span>
             </div>
           </v-btn>
           <v-btn value="willpower" :color="store.mentalResistanceChoice === 'willpower' ? 'red-darken-2' : ''" size="small">
             <div class="dilemma-btn-content">
-              <span class="dilemma-skill-name">Volonté</span>
+              <span class="dilemma-skill-name">{{ $t('skills.willpower') }}</span>
               <span class="dilemma-skill-attr">PSY</span>
             </div>
           </v-btn>
         </v-btn-toggle>
         <div v-if="!store.mentalResistanceChoice" class="dilemma-warning mt-1">
-          ⚠ Choix requis
+          {{ $t('messages.mentalDilemma.choiceRequired') }}
         </div>
         <div v-else class="dilemma-blocked mt-1">
-          {{ store.mentalResistanceChoice === 'faith' ? 'Volonté' : 'Foi' }} bloquée
+          {{ $t('messages.mentalDilemma.blocked', { name: store.mentalResistanceChoice === 'faith' ? $t('skills.willpower') : $t('skills.faith') }) }}
         </div>
       </div>
     </div>
