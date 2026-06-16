@@ -26,7 +26,6 @@
         v-for="character in characters"
         :key="character.name"
         class="char-card"
-        :class="{ 'char-card--active': character.name === activeCharacterName }"
         @click="emit('load', character.name)"
       >
         <!-- Portrait -->
@@ -38,17 +37,12 @@
               <ellipse cx="50" cy="85" rx="34" ry="28" fill="#555" />
             </svg>
           </div>
-          <div v-if="character.name === activeCharacterName" class="char-card-active-badge">
-            <v-icon size="14" icon="mdi-check-circle"></v-icon> Actif
-          </div>
         </div>
 
         <!-- Info -->
         <div class="char-card-body">
           <div class="char-card-name">{{ character.name }}</div>
-          <div class="char-card-rank">
-            {{ rankLabel(character) }}
-          </div>
+          <div class="char-card-rank">{{ rankLabel(character) }}</div>
 
           <!-- Logotypes -->
           <div class="char-card-icons">
@@ -56,24 +50,28 @@
               v-if="character.culture"
               :src="`${baseUrl}logotypes/cultures/${character.culture}.svg`"
               class="char-logotype"
+              :class="isDark ? 'char-logotype--dark' : 'char-logotype--light'"
               :title="t(`culturesConceptsCults.${character.culture}`)"
             />
             <img
               v-if="character.concept"
               :src="`${baseUrl}logotypes/concepts/${character.concept}.svg`"
               class="char-logotype"
+              :class="isDark ? 'char-logotype--dark' : 'char-logotype--light'"
               :title="t(`culturesConceptsCults.${character.concept}`)"
             />
             <img
               v-if="character.clan"
               :src="`${baseUrl}logotypes/clans/${character.clan}.svg`"
               class="char-logotype"
+              :class="isDark ? 'char-logotype--dark' : 'char-logotype--light'"
               :title="t(`clans.${character.clan}`)"
             />
             <img
               v-else-if="character.cult"
               :src="`${baseUrl}logotypes/cults/${character.cult}.svg`"
               class="char-logotype"
+              :class="isDark ? 'char-logotype--dark' : 'char-logotype--light'"
               :title="t(`culturesConceptsCults.${character.cult}`)"
             />
           </div>
@@ -88,14 +86,26 @@
             class="char-card-open-btn"
             @click="emit('load', character.name)"
           >
-            {{ character.name === activeCharacterName ? 'Continuer' : 'Ouvrir' }}
+            Ouvrir
           </v-btn>
-          <button class="char-card-delete-btn" @click="confirmDelete(character.name)">
-            Supprimer
-          </button>
+          <div class="char-card-secondary-actions">
+            <button class="char-card-action-link" @click="shareChar(character)" :disabled="sharing === character.name">
+              <v-icon size="13" icon="mdi-share-variant"></v-icon>
+              {{ sharing === character.name ? '...' : $t('messages.shareCharacter') }}
+            </button>
+            <span class="char-card-action-sep">·</span>
+            <button class="char-card-action-link char-card-action-link--danger" @click="confirmDelete(character.name)">
+              Supprimer
+            </button>
+          </div>
         </div>
       </div>
     </div>
+
+    <!-- Share snackbar -->
+    <v-snackbar v-model="shareCopied" timeout="3000" color="green-darken-2">
+      {{ $t('messages.shareCopied') }}
+    </v-snackbar>
 
     <!-- Confirm delete dialog -->
     <v-dialog v-model="deleteDialog" max-width="400">
@@ -114,9 +124,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useTheme } from 'vuetify'
 import type { Character } from '@/store/character'
+import { encodeCharacter } from '@/util/share'
 
 const props = defineProps<{
   characters: Character[]
@@ -131,27 +143,59 @@ const emit = defineEmits<{
 }>()
 
 const { t } = useI18n()
+const theme = useTheme()
+const isDark = computed(() => theme.global.current.value.dark)
 const baseUrl = import.meta.env.BASE_URL
 
+// Delete
 const deleteDialog = ref(false)
 const pendingDeleteName = ref('')
-
 function confirmDelete(name: string) {
   pendingDeleteName.value = name
   deleteDialog.value = true
 }
-
 function doDelete() {
   emit('delete', pendingDeleteName.value)
   deleteDialog.value = false
 }
 
+// Share
+const sharing = ref<string | null>(null)
+const shareCopied = ref(false)
+async function shareChar(character: Character) {
+  sharing.value = character.name
+  const base = window.location.origin + window.location.pathname
+  let url: string
+  try {
+    const res = await fetch('https://bytebin.lucko.me/post', {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify(character),
+    })
+    if (!res.ok) throw new Error(`bytebin status ${res.status}`)
+    const { key } = await res.json()
+    if (!key) throw new Error('no key returned')
+    url = `${base}#bb=${key}`
+  } catch {
+    const encoded = await encodeCharacter(character)
+    url = `${base}#view=${encoded}`
+  }
+  try {
+    await navigator.clipboard.writeText(url)
+  } catch {
+    window.open(url, '_blank')
+  }
+  sharing.value = null
+  shareCopied.value = true
+}
+
+// Rank label
 function rankLabel(character: Character): string {
   const cult = character.clan
     ? t(`clans.${character.clan}`)
     : t(`culturesConceptsCults.${character.cult}`)
   const rank = character.rank ? t(`ranks.${character.rank}`) : ''
-  return rank ? `${cult} — ${rank}` : cult
+  return rank ? `${cult} (${rank})` : cult
 }
 </script>
 
@@ -218,10 +262,6 @@ function rankLabel(character: Character): string {
   box-shadow: 0 6px 20px rgba(0,0,0,0.35);
 }
 
-.char-card--active {
-  border-color: rgb(var(--v-theme-primary));
-}
-
 .char-card-portrait {
   position: relative;
   aspect-ratio: 3 / 4;
@@ -251,25 +291,13 @@ function rankLabel(character: Character): string {
   opacity: 0.5;
 }
 
-.char-card-active-badge {
-  position: absolute;
-  top: 6px;
-  right: 6px;
-  background: rgb(var(--v-theme-primary));
-  color: white;
-  font-size: 0.65rem;
-  font-weight: 700;
-  padding: 2px 6px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  gap: 3px;
-  letter-spacing: 0.05em;
-}
-
 .char-card-body {
   padding: 12px 12px 8px;
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
 }
 
 .char-card-name {
@@ -282,6 +310,7 @@ function rankLabel(character: Character): string {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  max-width: 100%;
 }
 
 .char-card-rank {
@@ -291,20 +320,29 @@ function rankLabel(character: Character): string {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  max-width: 100%;
 }
 
 .char-card-icons {
   display: flex;
   gap: 8px;
   align-items: center;
+  justify-content: center;
 }
 
 .char-logotype {
   width: 28px;
   height: 28px;
   object-fit: contain;
-  filter: invert(1) brightness(0.75);
   flex-shrink: 0;
+}
+
+.char-logotype--dark {
+  filter: invert(1) brightness(0.75);
+}
+
+.char-logotype--light {
+  filter: brightness(0);
 }
 
 .char-card-actions {
@@ -319,18 +357,36 @@ function rankLabel(character: Character): string {
   letter-spacing: 0.08em !important;
 }
 
-.char-card-delete-btn {
+.char-card-secondary-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.char-card-action-link {
   background: none;
   border: none;
-  color: rgba(var(--v-theme-on-surface), 0.35);
-  font-size: 0.7rem;
+  color: rgba(var(--v-theme-on-surface), 0.4);
+  font-size: 0.68rem;
   cursor: pointer;
-  text-align: center;
-  padding: 2px 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  gap: 3px;
   transition: color 0.15s;
 }
 
-.char-card-delete-btn:hover {
+.char-card-action-link:hover {
+  color: rgba(var(--v-theme-on-surface), 0.75);
+}
+
+.char-card-action-link--danger:hover {
   color: #ef5350;
+}
+
+.char-card-action-sep {
+  color: rgba(var(--v-theme-on-surface), 0.25);
+  font-size: 0.7rem;
 }
 </style>

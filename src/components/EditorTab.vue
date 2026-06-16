@@ -288,9 +288,17 @@
                       </div>
                       <div style="display: flex; justify-content: center; gap: 8px; pointer-events: auto">
                         <v-btn v-if="!store.portrait" size="small" @click="triggerPortraitUpload">Choisir</v-btn>
+                        <v-btn v-if="store.portrait && !isSharedView" size="small" @click="triggerPortraitUpload">
+                          <v-icon size="14" class="mr-1">mdi-crop</v-icon>{{ $t('messages.editPortrait') }}
+                        </v-btn>
                         <v-btn v-if="store.portrait" size="small" @click="downloadPortrait">{{ $t('messages.downloadPortrait') }}</v-btn>
                         <v-btn v-if="store.portrait && !isSharedView" size="small" @click="store.portrait = ''; store.portraitOriginal = ''">{{ $t('messages.deletePortrait') }}</v-btn>
                       </div>
+                      <ImageCropperDialog
+                        v-model="showCropDialog"
+                        :src="cropSrc"
+                        @crop="onCropConfirm"
+                      />
                     </div>
                   </div>
                   <v-row>
@@ -571,6 +579,7 @@ import { useI18n } from 'vue-i18n'
 import { encodeCharacter } from '@/util/share'
 import { useDisplay } from 'vuetify'
 import EditorArchetypeSelector from './EditorArchetypeSelector.vue'
+import ImageCropperDialog from './ImageCropperDialog.vue'
 
 const store = useCharacterStore()
 const appStore = useApplicationStore()
@@ -660,6 +669,8 @@ const sharedViewViolations = computed((): string[] => {
 })
 
 const portraitInput = ref<HTMLInputElement | null>(null)
+const showCropDialog = ref(false)
+const cropSrc = ref('')
 
 const triggerPortraitUpload = () => portraitInput.value?.click()
 
@@ -674,16 +685,18 @@ const onPortraitChange = (ev: Event) => {
   const input = ev.target as HTMLInputElement
   const file = input.files?.[0]
   if (!file) return
-
-  // Lire l'original en base64 pour le partage et le téléchargement
   const reader = new FileReader()
   reader.onload = (e) => {
-    store.portraitOriginal = (e.target?.result as string) ?? ''
+    cropSrc.value = (e.target?.result as string) ?? ''
+    showCropDialog.value = true
   }
   reader.readAsDataURL(file)
+  input.value = ''
+}
 
-  // Générer une miniature pour l'affichage
-  const objectUrl = URL.createObjectURL(file)
+const onCropConfirm = (croppedDataUrl: string, originalDataUrl: string) => {
+  store.portraitOriginal = originalDataUrl
+  // Génère une miniature 400px pour l'affichage
   const img = new Image()
   img.onload = () => {
     const canvas = document.createElement('canvas')
@@ -699,10 +712,8 @@ const onPortraitChange = (ev: Event) => {
     canvas.height = h
     canvas.getContext('2d')?.drawImage(img, 0, 0, w, h)
     store.portrait = canvas.toDataURL('image/png')
-    URL.revokeObjectURL(objectUrl)
   }
-  img.src = objectUrl
-  input.value = ''
+  img.src = croppedDataUrl
 }
 
 const { attributes, availablePoints } = config

@@ -53,6 +53,7 @@ export const messages = {
     importCharacter: 'Charakter importieren',
     downloadPortrait: 'Herunterladen',
     deletePortrait: 'Löschen',
+    editPortrait: 'Zuschneiden',
     editorModes: {
       label: 'Bearbeitungsmodus',
       hardLimits: 'Strikt',
@@ -219,6 +220,7 @@ export const messages = {
     importCharacter: 'Import character',
     downloadPortrait: 'Download',
     deletePortrait: 'Delete',
+    editPortrait: 'Crop',
     editorModes: {
       label: 'Editor mode',
       hardLimits: 'Strict',
@@ -384,6 +386,7 @@ export const messages = {
     importCharacter: 'Importer un personnage',
     downloadPortrait: 'Télécharger',
     deletePortrait: 'Supprimer',
+    editPortrait: 'Recadrer',
     editorModes: {
       label: 'Modes d\'édition',
       hardLimits: 'Strict',
