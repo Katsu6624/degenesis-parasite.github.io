@@ -28,7 +28,7 @@
           :label="label"
           :altLabel="altLabel"
           :value="value"
-          :max="1"
+          :max="maxForPotential(value)"
           :count="3"
           :active="store.editorMode === EditorMode.HardLimits ? store.eligiblePotentials.has(potential) : true"
           :ineligible="store.editorMode === EditorMode.SoftLimits && !store.eligiblePotentials.has(potential)"
@@ -64,7 +64,7 @@
             :label="label"
             :altLabel="altLabel"
             :value="value"
-            :max="1"
+            :max="maxForPotential(value)"
             :count="3"
             :active="store.editorMode === EditorMode.HardLimits ? store.eligiblePotentials.has(potential) : true"
             :ineligible="store.editorMode === EditorMode.SoftLimits && !store.eligiblePotentials.has(potential)"
@@ -83,7 +83,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import ValueSelector from '@/components/ValueSelector.vue'
 import config from '@/config'
 import { EditorMode } from '@/config/modes'
@@ -91,6 +91,16 @@ import { cultSpecificPotentials } from '@/config/potentials'
 import { CommonPotentials } from '@/config/potentials/common'
 import { useCharacterStore } from '@/store'
 const store = useCharacterStore()
+
+const remainingPotentialPoints = computed(() => {
+  if (store.editorMode === EditorMode.Free) return Infinity
+  return config.availablePoints.potentials + store.legacyXPPotentialBonus - store.spentPoints.potentials
+})
+
+function maxForPotential(value: number): number {
+  if (store.editorMode === EditorMode.Free) return 3
+  return Math.min(3, value + remainingPotentialPoints.value)
+}
 const i18n = useI18n()
 const search = ref('')
 
