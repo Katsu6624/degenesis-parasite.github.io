@@ -17,6 +17,11 @@
                 <p class="mt-0">{{ $t('messages.introduction.credits.diskordanz') }}</p>
                 <p class="mt-0">{{ $t('messages.introduction.credits.miokido') }}</p>
                 <p class="mt-0">{{ $t('messages.introduction.credits.katsu') }}</p>
+                <img
+                  :src="`${baseUrl}intro-banner.png`"
+                  alt="Degenesis"
+                  class="intro-banner mt-4"
+                />
               </div>
             </v-card-text>
           </v-card>
@@ -28,6 +33,7 @@
 
 <script setup lang="ts">
 import config from '@/config'
+const baseUrl = import.meta.env.BASE_URL
 </script>
 
 <style scoped>
@@ -41,5 +47,12 @@ import config from '@/config'
 
 p {
     margin-top: 1em;
+}
+
+.intro-banner {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  border-radius: 8px;
 }
 </style>
