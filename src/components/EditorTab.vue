@@ -267,7 +267,7 @@
                       <div style="position: relative; flex: 1; min-height: 200px; overflow: hidden;">
                         <img
                           v-if="store.portrait"
-                          :src="store.portrait"
+                          :src="store.portraitOriginal || store.portrait"
                           style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; cursor: pointer;"
                           @click="triggerPortraitUpload"
                         />

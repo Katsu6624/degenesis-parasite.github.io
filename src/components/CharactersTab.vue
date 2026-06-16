@@ -185,13 +185,12 @@ function openCrop(character: Character) {
   showCropDialog.value = true
 }
 
-function onCropConfirm(croppedDataUrl: string, originalDataUrl: string) {
+function onCropConfirm(croppedDataUrl: string) {
   const char = browserStorage.loadCharacter(cropTargetName)
   if (!char) return
-  // Patch portrait fields on the raw JSON object and re-store
+  // Seul le portrait de la carte (miniature) est modifié — portraitOriginal reste intact
   const raw = char as any
   raw.portrait = croppedDataUrl
-  raw.portraitOriginal = originalDataUrl
   browserStorage.storeCharacter(raw)
   appStore.refresh()
 }
