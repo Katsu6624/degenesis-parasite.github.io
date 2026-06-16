@@ -660,17 +660,23 @@ const sharedViewViolations = computed((): string[] => {
 })
 
 const portraitInput = ref<HTMLInputElement | null>(null)
+const originalPortraitUrl = ref<string | null>(null)
+
 const triggerPortraitUpload = () => portraitInput.value?.click()
+
 const downloadPortrait = () => {
   const a = document.createElement('a')
-  a.href = store.portrait
+  a.href = originalPortraitUrl.value ?? store.portrait
   a.download = `${store.characterName || 'portrait'}.png`
   a.click()
 }
+
 const onPortraitChange = (ev: Event) => {
   const input = ev.target as HTMLInputElement
   const file = input.files?.[0]
   if (!file) return
+  const objectUrl = URL.createObjectURL(file)
+  originalPortraitUrl.value = objectUrl
   const img = new Image()
   img.onload = () => {
     const canvas = document.createElement('canvas')
@@ -687,7 +693,7 @@ const onPortraitChange = (ev: Event) => {
     canvas.getContext('2d')?.drawImage(img, 0, 0, w, h)
     store.portrait = canvas.toDataURL('image/png')
   }
-  img.src = URL.createObjectURL(file)
+  img.src = objectUrl
   input.value = ''
 }
 
