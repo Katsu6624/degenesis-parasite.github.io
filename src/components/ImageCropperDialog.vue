@@ -82,8 +82,7 @@ watch(() => props.src, async (src) => {
   rotation = 0
   img = new Image()
   img.onload = () => {
-    await nextTick()
-    initCanvas()
+    nextTick().then(() => initCanvas())
   }
   img.src = src
 }, { immediate: true })
