@@ -289,7 +289,7 @@
                       <div style="display: flex; justify-content: center; gap: 8px;">
                         <v-btn v-if="!store.portrait" size="small" @click="triggerPortraitUpload">Choisir</v-btn>
                         <v-btn v-if="store.portrait" size="small" @click="downloadPortrait">{{ $t('messages.downloadPortrait') }}</v-btn>
-                        <v-btn v-if="store.portrait" size="small" @click="store.portrait = ''">{{ $t('messages.deletePortrait') }}</v-btn>
+                        <v-btn v-if="store.portrait" size="small" @click="store.portrait = ''; store.portraitOriginal = ''">{{ $t('messages.deletePortrait') }}</v-btn>
                       </div>
                     </div>
                   </div>
@@ -660,13 +660,12 @@ const sharedViewViolations = computed((): string[] => {
 })
 
 const portraitInput = ref<HTMLInputElement | null>(null)
-const originalPortraitUrl = ref<string | null>(null)
 
 const triggerPortraitUpload = () => portraitInput.value?.click()
 
 const downloadPortrait = () => {
   const a = document.createElement('a')
-  a.href = originalPortraitUrl.value ?? store.portrait
+  a.href = store.portraitOriginal || store.portrait
   a.download = `${store.characterName || 'portrait'}.png`
   a.click()
 }
@@ -675,8 +674,16 @@ const onPortraitChange = (ev: Event) => {
   const input = ev.target as HTMLInputElement
   const file = input.files?.[0]
   if (!file) return
+
+  // Lire l'original en base64 pour le partage et le téléchargement
+  const reader = new FileReader()
+  reader.onload = (e) => {
+    store.portraitOriginal = (e.target?.result as string) ?? ''
+  }
+  reader.readAsDataURL(file)
+
+  // Générer une miniature pour l'affichage
   const objectUrl = URL.createObjectURL(file)
-  originalPortraitUrl.value = objectUrl
   const img = new Image()
   img.onload = () => {
     const canvas = document.createElement('canvas')
@@ -692,6 +699,7 @@ const onPortraitChange = (ev: Event) => {
     canvas.height = h
     canvas.getContext('2d')?.drawImage(img, 0, 0, w, h)
     store.portrait = canvas.toDataURL('image/png')
+    URL.revokeObjectURL(objectUrl)
   }
   img.src = objectUrl
   input.value = ''

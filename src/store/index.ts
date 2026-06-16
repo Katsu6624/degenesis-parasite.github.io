@@ -78,6 +78,7 @@ export type State = {
   weight: string
   experience: string
   portrait: string
+  portraitOriginal: string
   isLoading: boolean
   inventory: InventoryPurchase[]
   resourceMode: ResourceMode
@@ -116,6 +117,7 @@ export const useCharacterStore = defineStore('character', {
     weight: '',
     experience: '',
     portrait: '',
+    portraitOriginal: '',
     isLoading: false,
     inventory: [],
     resourceMode: ResourceMode.A,
@@ -499,6 +501,7 @@ export const useCharacterStore = defineStore('character', {
         state.clan?.name,
         state.experience,
         state.portrait,
+        state.portraitOriginal || undefined,
         state.inventory,
         state.resourceMode,
         state.manualLC,
@@ -793,6 +796,7 @@ export const useCharacterStore = defineStore('character', {
       this.weight = character.weight || ''
       this.experience = character.experience || ''
       this.portrait = character.portrait || ''
+      this.portraitOriginal = character.portraitOriginal || ''
       this.inventory = character.inventory ? [...character.inventory] : []
       this.resourceMode = character.resourceMode ?? ResourceMode.A
       this.manualLC = character.manualLC ?? null
