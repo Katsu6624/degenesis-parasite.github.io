@@ -1,5 +1,16 @@
 <template>
   <div class="inventory-root">
+    <v-dialog v-model="showNotTranslatedDialog" max-width="420">
+      <v-card>
+        <v-card-text class="pt-4">
+          {{ $t('messages.inventoryNotTranslated') }}
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn @click="showNotTranslatedDialog = false">OK</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     <!-- ── Header : budget + ressources + mode ── -->
     <div class="inv-header elevation-2 pa-4 d-flex flex-wrap align-center gap-4">
       <!-- Budget LC/Dinars -->
@@ -392,7 +403,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, nextTick } from 'vue'
+import { computed, ref, nextTick, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useCharacterStore } from '@/store'
 import {
   ITEMS,
@@ -408,6 +420,15 @@ import { Attributes, Skills } from '@/config/properties'
 import HoverTooltip from '@/components/HoverTooltip.vue'
 
 const store = useCharacterStore()
+const i18n = useI18n()
+
+// ── Avertissement traduction (EN/DE) ──
+const showNotTranslatedDialog = ref(false)
+onMounted(() => {
+  if (i18n.locale.value === 'en' || i18n.locale.value === 'de') {
+    showNotTranslatedDialog.value = true
+  }
+})
 
 // ── Encombrement ──
 const totalEncumbrance = computed(() =>
