@@ -38,8 +38,9 @@
             </svg>
           </div>
           <!-- Crop overlay button -->
-          <button v-if="character.portrait" class="char-portrait-crop-btn" @click.stop="openCrop(character)" title="Recadrer">
-            <v-icon size="16" icon="mdi-crop"></v-icon>
+          <button v-if="character.portrait" class="char-portrait-crop-btn" @click.stop="openCrop(character)">
+            <v-icon size="14" icon="mdi-crop"></v-icon>
+            <span>Recadrer</span>
           </button>
         </div>
 
@@ -87,21 +88,23 @@
             block
             variant="flat"
             color="red-darken-3"
-            class="char-card-open-btn"
-            @click="emit('load', character.name)"
+            class="char-card-action-btn"
+            :loading="sharing === character.name"
+            prepend-icon="mdi-share-variant"
+            @click="shareChar(character)"
           >
-            Ouvrir
+            {{ $t('messages.shareCharacter') }}
           </v-btn>
-          <div class="char-card-secondary-actions">
-            <button class="char-card-action-link" @click="shareChar(character)" :disabled="sharing === character.name">
-              <v-icon size="13" icon="mdi-share-variant"></v-icon>
-              {{ sharing === character.name ? '...' : $t('messages.shareCharacter') }}
-            </button>
-            <span class="char-card-action-sep">·</span>
-            <button class="char-card-action-link char-card-action-link--danger" @click="confirmDelete(character.name)">
-              Supprimer
-            </button>
-          </div>
+          <v-btn
+            block
+            variant="outlined"
+            color="red-darken-3"
+            class="char-card-action-btn"
+            prepend-icon="mdi-delete-outline"
+            @click="confirmDelete(character.name)"
+          >
+            Supprimer
+          </v-btn>
         </div>
       </div>
     </div>
@@ -331,16 +334,20 @@ function rankLabel(character: Character): string {
   position: absolute;
   bottom: 6px;
   right: 6px;
-  background: rgba(0,0,0,0.55);
-  border: 1px solid rgba(255,255,255,0.25);
+  background: rgba(0,0,0,0.62);
+  border: 1px solid rgba(255,255,255,0.3);
   color: #fff;
   border-radius: 4px;
-  padding: 4px 6px;
+  padding: 4px 8px;
   cursor: pointer;
   opacity: 0;
   transition: opacity 0.15s;
   display: flex;
   align-items: center;
+  gap: 4px;
+  font-size: 0.7rem;
+  font-family: inherit;
+  white-space: nowrap;
 }
 
 .char-card-portrait:hover .char-portrait-crop-btn {
@@ -408,41 +415,8 @@ function rankLabel(character: Character): string {
   gap: 6px;
 }
 
-.char-card-open-btn {
-  font-size: 0.75rem !important;
-  letter-spacing: 0.08em !important;
-}
-
-.char-card-secondary-actions {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-}
-
-.char-card-action-link {
-  background: none;
-  border: none;
-  color: rgba(var(--v-theme-on-surface), 0.4);
-  font-size: 0.68rem;
-  cursor: pointer;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  gap: 3px;
-  transition: color 0.15s;
-}
-
-.char-card-action-link:hover {
-  color: rgba(var(--v-theme-on-surface), 0.75);
-}
-
-.char-card-action-link--danger:hover {
-  color: #ef5350;
-}
-
-.char-card-action-sep {
-  color: rgba(var(--v-theme-on-surface), 0.25);
-  font-size: 0.7rem;
+.char-card-action-btn {
+  font-size: 0.73rem !important;
+  letter-spacing: 0.06em !important;
 }
 </style>
