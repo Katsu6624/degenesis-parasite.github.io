@@ -51,8 +51,11 @@ p {
 
 .intro-banner {
   display: block;
-  width: 100%;
+  width: auto;
   max-width: 100%;
+  max-height: 220px;
   border-radius: 8px;
+  margin-left: auto;
+  margin-right: auto;
 }
 </style>
