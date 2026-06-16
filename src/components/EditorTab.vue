@@ -288,7 +288,7 @@
                       </div>
                       <div style="display: flex; justify-content: center; gap: 8px; pointer-events: auto">
                         <v-btn v-if="!store.portrait" size="small" @click="triggerPortraitUpload">Choisir</v-btn>
-                        <v-btn v-if="store.portrait && !isSharedView" size="small" @click="triggerPortraitUpload">
+                        <v-btn v-if="store.portrait && !isSharedView" size="small" @click="openCropExisting">
                           <v-icon size="14" class="mr-1">mdi-crop</v-icon>{{ $t('messages.editPortrait') }}
                         </v-btn>
                         <v-btn v-if="store.portrait" size="small" @click="downloadPortrait">{{ $t('messages.downloadPortrait') }}</v-btn>
@@ -693,6 +693,11 @@ const onPortraitChange = (ev: Event) => {
   }
   reader.readAsDataURL(file)
   input.value = ''
+}
+
+const openCropExisting = () => {
+  cropSrc.value = store.portraitOriginal || store.portrait
+  showCropDialog.value = true
 }
 
 const onCropConfirm = (croppedDataUrl: string, originalDataUrl: string) => {
