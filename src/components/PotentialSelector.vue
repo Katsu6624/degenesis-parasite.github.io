@@ -124,7 +124,8 @@ function frLabel(name: string) {
 function matchesSearch(name: string) {
   if (!search.value) return true
   const q = search.value.toLowerCase()
-  return frLabel(name).toLowerCase().includes(q)
+  const en = englishPotentialNames.get(name) || ''
+  return frLabel(name).toLowerCase().includes(q) || en.toLowerCase().includes(q)
 }
 function commonPotentialsList() {
   return CommonPotentials

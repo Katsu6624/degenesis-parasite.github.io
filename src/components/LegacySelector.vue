@@ -264,14 +264,19 @@ import { Legacy } from '@/config/legacies/legacy'
 
 import messages from '@/config/messages'
 import { useI18n } from 'vue-i18n'
-const englishLegaciesNames = new Map(Object.entries(messages.en.potentials))
+const englishLegaciesNames = new Map(Object.entries(messages.en.legacies))
 function englishName(legacy: Legacy) {
   return englishLegaciesNames.get(legacy.name) || legacy.name
 }
 function legacies() {
   const q = searchLegacy.value.toLowerCase()
   return AllLegacies
-    .filter((legacy: Legacy) => !q || (i18n.t(`legacies.${legacy.name}`) as string).toLowerCase().includes(q))
+    .filter((legacy: Legacy) => {
+      if (!q) return true
+      const fr = (i18n.t(`legacies.${legacy.name}`) as string).toLowerCase()
+      const en = (englishLegaciesNames.get(legacy.name) || '').toLowerCase()
+      return fr.includes(q) || en.includes(q)
+    })
     .map((legacy: Legacy) => {
       const translatedLabel = i18n.t(`legacies.${legacy.name}`)
       const originalLabel = englishName(legacy)
