@@ -31,6 +31,16 @@ import { Cults } from '@/config/cults/cults'
 import browserStorage from './browserStorage'
 import { Character } from './character'
 import type { Culture, Concept, Cult } from '@/config/model'
+import { i18n } from '@/i18n'
+import { modifierTranslations } from '@/config/messages/modifiers'
+
+function translateModifier(text: string): string {
+  const locale = i18n.global.locale.value
+  if (locale === 'fr') return text
+  const translated = modifierTranslations[text]
+  if (!translated) return text
+  return locale === 'de' ? translated.de : translated.en
+}
 
 const attributeMinValue = config.pointLimits.attributes.min
 const skillMinValue = config.pointLimits.skills.min
@@ -354,12 +364,12 @@ export const useCharacterStore = defineStore('character', {
     legacyModifiers(): string[] {
       return this.activeLegacyEffects
         .filter(e => e.type === 'modifier')
-        .map(e => (e as any).description)
+        .map(e => translateModifier((e as any).description))
     },
     potentialModifiers(): string[] {
       const mods: string[] = []
       this.potentials.forEach((v, potential) => {
-        if (v > 0) mods.push(...potential.modifiers)
+        if (v > 0) mods.push(...potential.modifiers.map(translateModifier))
       })
       return mods
     },

@@ -1,16 +1,9 @@
 import { createApp } from 'vue'
-import { createI18n } from 'vue-i18n'
 import App from '@/App.vue'
 //import router from '@/router'
-import messages from './config/messages'
 import { createPinia, setMapStoreSuffix } from 'pinia'
 import { aliases, mdi } from "vuetify/iconsets/mdi-svg";
-const i18n = createI18n({
-  legacy: false,
-  locale: 'fr',
-  fallbackWarn: false,
-  messages
-})
+import { i18n } from './i18n'
 
 // Expose the i18n instance (has .global.t) for the standalone rank-tree.js script
 ;(window as any).__i18n = i18n

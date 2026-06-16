@@ -485,7 +485,7 @@
               <v-list-item
                 v-for="({ cultKey, count }) in store.entrepreneurSocialPenalties"
                 :key="'entr-' + cultKey"
-                :subtitle="`Entrepreneur : -${count}D interactions sociales avec les ${$t('culturesConceptsCults.' + cultKey)} (${count} utilisation${count > 1 ? 's' : ''})`"
+                :subtitle="$t('messages.entrepreneurPenalty', { count, cult: $t('culturesConceptsCults.' + cultKey), plural: pluralSuffix(count) })"
                 class="modifier-item"
               ></v-list-item>
             </v-list>
@@ -564,6 +564,11 @@ const appStore = useApplicationStore()
 const i18n = useI18n()
 const isSharedView = inject<Ref<boolean>>('isSharedView', ref(false))
 const musicPlayer = useMusicPlayer()
+
+const pluralSuffix = (count: number): string => {
+  if (count <= 1) return ''
+  return i18n.locale.value === 'de' ? 'en' : 's'
+}
 
 const shareCopied = ref(false)
 const shareCharacter = async () => {
