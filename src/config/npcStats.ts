@@ -18,6 +18,8 @@ export const NPC_VALUE_TABLES = {
   // instead of 1/3/5/7/9/11, since most NPCs sit at "average" (2) while standing and active.
   passiveDefense: [1, 2, 3, 4, 5, 6],
   mentalDefense: [1, 3, 5, 7, 9, 11],
+  // Attaque/Esquive: same 1-6 factor as attributes/skills, doubled.
+  attackDodge: [2, 4, 6, 8, 10, 12],
 } as const
 
 export type NpcValueCategory = keyof typeof NPC_VALUE_TABLES

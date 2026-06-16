@@ -144,10 +144,18 @@
       </v-app-bar>
     </div>
     <v-main v-if="npcGeneratorMode" class="bg-grey-lighten-3">
-      <v-tabs model-value="npc" bg-color="grey-darken-3">
-        <v-tab value="npc">{{ $t('messages.npcGenerator.title') }}</v-tab>
+      <v-tabs v-model="npcTab" bg-color="grey-darken-3">
+        <v-tab value="detailed">{{ $t('messages.npcGenerator.detailedTitle') }}</v-tab>
+        <v-tab value="simple">{{ $t('messages.npcGenerator.simpleTitle') }}</v-tab>
       </v-tabs>
-      <NpcGeneratorTab></NpcGeneratorTab>
+      <v-window v-model="npcTab">
+        <v-window-item value="detailed">
+          <NpcGeneratorTab></NpcGeneratorTab>
+        </v-window-item>
+        <v-window-item value="simple">
+          <NpcSimpleGeneratorTab></NpcSimpleGeneratorTab>
+        </v-window-item>
+      </v-window>
     </v-main>
     <v-main
       v-else-if="store.characterName.length > 0"
@@ -209,6 +217,7 @@ import IntroPage from '@/components/IntroPage.vue'
 import AppPreferences from '@/components/AppPreferences.vue'
 import Sheet from '@/components/InventoryTab.vue'
 import NpcGeneratorTab from '@/components/NpcGeneratorTab.vue'
+import NpcSimpleGeneratorTab from '@/components/NpcSimpleGeneratorTab.vue'
 import config from '@/config'
 import { useCharacterStore } from '@/store'
 import type { Character } from '@/store/character'
@@ -376,6 +385,7 @@ const loadCharacter = (characterName: string) => {
 }
 
 const npcGeneratorMode = ref(false)
+const npcTab = ref('detailed')
 const openNpcGenerator = () => {
   npcGeneratorMode.value = true
   showNavigationDrawer.value = !mobile.value
