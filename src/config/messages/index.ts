@@ -17,6 +17,7 @@ export default {
     sheet: sheet.de,
     potentials: potentials.de,
     clans: clanNames.de,
+    legacies: legacies.de,
   },
   en: {
     messages: messages.en,
@@ -26,6 +27,7 @@ export default {
     sheet: sheet.en,
     potentials: potentials.en,
     clans: clanNames.en,
+    legacies: legacies.en,
   },
   fr: {
     messages: messages.fr,
