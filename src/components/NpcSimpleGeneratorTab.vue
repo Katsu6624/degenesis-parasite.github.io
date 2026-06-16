@@ -26,38 +26,6 @@
               :label="$t('messages.npcGenerator.npcName')"
               variant="underlined"
             ></v-text-field>
-            <v-row>
-              <v-col cols="12" sm="4">
-                <v-select
-                  v-model="culture"
-                  :label="$t('messages.chooseCulture')"
-                  :items="cultureItems"
-                  item-title="label"
-                  item-value="value"
-                  clearable
-                ></v-select>
-              </v-col>
-              <v-col cols="12" sm="4">
-                <v-select
-                  v-model="concept"
-                  :label="$t('messages.chooseConcept')"
-                  :items="conceptItems"
-                  item-title="label"
-                  item-value="value"
-                  clearable
-                ></v-select>
-              </v-col>
-              <v-col cols="12" sm="4">
-                <v-select
-                  v-model="cult"
-                  :label="$t('messages.chooseCult')"
-                  :items="cultItems"
-                  item-title="label"
-                  item-value="value"
-                  clearable
-                ></v-select>
-              </v-col>
-            </v-row>
           </v-card>
 
           <v-card class="pa-4 mb-4">
@@ -180,7 +148,6 @@
         <v-col cols="12" lg="6">
           <div id="npcSimpleSheet" class="npc-sheet pa-6">
             <div class="npc-sheet-title">{{ npcName.trim() || $t('messages.npcGenerator.title') }}</div>
-            <div class="npc-sheet-subtitle">{{ archetypeLine }}</div>
             <v-divider class="my-3"></v-divider>
 
             <div class="npc-sheet-section-title">{{ $t('messages.npcGenerator.otherStatsSection') }}</div>
@@ -255,30 +222,10 @@ import HoverTooltip from '@/components/HoverTooltip.vue'
 const i18n = useI18n()
 
 const npcName = ref('')
-const culture = ref<string | null>(null)
-const concept = ref<string | null>(null)
-const cult = ref<string | null>(null)
-
-const cultureItems = computed(() =>
-  [...config.culturesByName.keys()].map((name) => ({ value: name, label: i18n.t(`culturesConceptsCults.${name}`) }))
-)
-const conceptItems = computed(() =>
-  [...config.conceptsByName.keys()].map((name) => ({ value: name, label: i18n.t(`culturesConceptsCults.${name}`) }))
-)
-const cultItems = computed(() =>
-  [...config.cultsByName.keys()].map((name) => ({ value: name, label: i18n.t(`culturesConceptsCults.${name}`) }))
-)
 
 const qualityItems = computed(() =>
   QUALITY_LEVELS.map((key, index) => ({ value: index, label: i18n.t(`messages.npcGenerator.qualityLevels.${key}`) }))
 )
-
-const archetypeLine = computed(() => {
-  const parts = [culture.value, concept.value, cult.value]
-    .filter((v): v is string => !!v)
-    .map((name) => i18n.t(`culturesConceptsCults.${name}`))
-  return parts.join(', ')
-})
 
 const initiativeQuality = ref(DEFAULT_QUALITY_INDEX)
 const egoQuality = ref(DEFAULT_QUALITY_INDEX)
