@@ -55,7 +55,7 @@ p {
   max-width: 100%;
   max-height: 380px;
   border-radius: 8px;
-  margin-left: auto;
+  margin-left: 0;
   margin-right: auto;
 }
 </style>
