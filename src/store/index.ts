@@ -82,6 +82,8 @@ export type State = {
   inventory: InventoryPurchase[]
   resourceMode: ResourceMode
   manualLC: number | null
+  expertLCModified: boolean
+  ignoreAutoLC: boolean
   legacyChoices: Record<string, { attributes?: string[]; skills?: string[] }>
   errorMessage: string | null
   sidewinderOldCultName: string | null
@@ -118,6 +120,8 @@ export const useCharacterStore = defineStore('character', {
     inventory: [],
     resourceMode: ResourceMode.A,
     manualLC: null,
+    expertLCModified: false,
+    ignoreAutoLC: false,
     legacyChoices: {},
     errorMessage: null,
     sidewinderOldCultName: null,
@@ -655,7 +659,7 @@ export const useCharacterStore = defineStore('character', {
         }, 0)
     },
     remainingLC(): number {
-      const base = (this.editorMode === EditorMode.Free && this.manualLC !== null)
+      const base = ((this.editorMode === EditorMode.Free || this.ignoreAutoLC) && this.manualLC !== null)
         ? this.manualLC
         : (this.computedDinars?.value ?? 0)
       const landlordBonus = this.hasLandlord ? 1000 : 0
@@ -1074,13 +1078,27 @@ export const useCharacterStore = defineStore('character', {
     },
     setManualLC(value: number | null) {
       this.manualLC = value
+      if (this.editorMode === EditorMode.Free) {
+        this.expertLCModified = true
+      }
     },
     setEditorMode(mode: EditorMode) {
       // We can't switch to HardLimits if any point limit is exceeded, because we can't decide what to truncate
       if (!(mode == EditorMode.HardLimits && this.anyPointLimitExceeded)) {
+        if (mode === EditorMode.Free) {
+          this.expertLCModified = false
+        }
         this.editorMode = mode
         this.adjustProperties()
       }
+    },
+    resolveExpertLCDialog(keepManual: boolean) {
+      if (keepManual) {
+        this.ignoreAutoLC = true
+      } else {
+        this.ignoreAutoLC = false
+      }
+      this.expertLCModified = false
     },
     adjustRank() {
       if (!this.rank.isEligible(this.cult, this.skillValues, this.originValues, this.clan)) {

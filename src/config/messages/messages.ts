@@ -63,6 +63,13 @@ export const messages = {
       },
       hintHardLimitModeImpossible: 'Der strikte Bearbeitungsmodus kann nicht gewählt werden, wenn bereits eines der Punktelimits überschritten wurde.'
     },
+    lcNegativeTooltip: 'Sie haben mehr ausgegeben als Ihr Startkapital. Sie sind verschuldet.',
+    expertLCDialog: {
+      title: 'Manuelle LC/Dinar-Änderung erkannt',
+      body: 'Sie haben Ihre LC/Dinare im Expertenmodus manuell geändert. Möchten Sie die automatische Berechnung ignorieren und Ihren manuellen Wert behalten?',
+      yes: 'Ja, Wert behalten',
+      no: 'Nein, automatisch berechnen',
+    },
     mentalDilemma: {
       title: 'Spezialfertigkeiten',
       titleTooltip: 'Bei der Erstellung müssen zwei Dilemmata entschieden werden, die die Seele deines Charakters definieren.<br><br>In Degenesis gibt es zwei Paare von Spezialfertigkeiten, von denen du jeweils nur eine wählen musst.',
@@ -220,6 +227,13 @@ export const messages = {
       },
       hintHardLimitModeImpossible: 'The strict editor mode cannot be selected if any point limit has already been exceeded.'
     },
+    lcNegativeTooltip: 'You have spent more than your starting capital. You are in debt.',
+    expertLCDialog: {
+      title: 'Manual LC/Dinars change detected',
+      body: 'You have manually modified your LC/Dinars in Expert mode. Do you want to ignore the automatic calculation and keep your manual value?',
+      yes: 'Yes, keep my value',
+      no: 'No, use auto-calculation',
+    },
     mentalDilemma: {
       title: 'Special Skills',
       titleTooltip: 'During creation, you must settle two dilemmas that define your character\'s soul.<br><br>There are two pairs of special skills in Degenesis, and you must choose only one from each pair.',
@@ -375,6 +389,13 @@ export const messages = {
         free: 'Aucune limite de points, aucune condition requise pour les Potentiels et Héritages. Le total de Dinars peut être saisi manuellement.',
       },
       hintHardLimitModeImpossible: 'Le mode d\'édition strict ne peut pas être sélectionné si une limite de points a déjà été dépassée.',
+    },
+    lcNegativeTooltip: 'Vous avez dépensé plus que votre capital de départ. Vous êtes endetté.',
+    expertLCDialog: {
+      title: 'Modification des LC/Dinars détectée',
+      body: 'Vous avez modifié vos LC/Dinars manuellement en mode Expert. Voulez-vous ignorer le calcul automatique des LC/Dinars et conserver votre valeur manuelle ?',
+      yes: 'Oui, conserver ma valeur',
+      no: 'Non, utiliser le calcul auto',
     },
     mentalDilemma: {
       title: 'Compétences Spéciales',

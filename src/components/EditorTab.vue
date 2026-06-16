@@ -173,21 +173,33 @@
                               ></v-text-field>
                             </v-col>
                             <v-col cols="6" sm="2">
-                              <v-text-field
-                                v-if="store.editorMode === 'free'"
-                                :model-value="store.remainingLC"
-                                :label="$t('messages.dinars')"
-                                variant="underlined"
-                                type="number"
+                              <v-tooltip
+                                :text="$t('messages.lcNegativeTooltip')"
+                                :disabled="store.remainingLC >= 0"
+                                location="bottom"
+                              >
+                                <template v-slot:activator="{ props }">
+                                  <v-text-field
+                                    v-if="store.editorMode === 'free'"
+                                    v-bind="props"
+                                    :model-value="store.remainingLC"
+                                    :label="$t('messages.dinars')"
+                                    variant="underlined"
+                                    type="number"
+                                    :error="store.remainingLC < 0"
 @update:model-value="val => { const bonus = store.hasLandlord ? 1000 : 0; store.setManualLC(val === '' || val === null ? null : Number(val) - bonus + store.spentLC) }"
-                              ></v-text-field>
-                              <v-text-field
-                                v-else
-                                :model-value="store.computedDinars ? `${store.remainingLC} ${store.computedDinars.currency}` : ''"
-                                :label="$t('messages.dinars')"
-                                variant="underlined"
-                                readonly
-                              ></v-text-field>
+                                  ></v-text-field>
+                                  <v-text-field
+                                    v-else
+                                    v-bind="props"
+                                    :model-value="store.computedDinars ? `${store.remainingLC} ${store.computedDinars.currency}` : ''"
+                                    :label="$t('messages.dinars')"
+                                    variant="underlined"
+                                    :error="store.remainingLC < 0"
+                                    readonly
+                                  ></v-text-field>
+                                </template>
+                              </v-tooltip>
                             </v-col>
                           </v-row>
                         </v-container>
