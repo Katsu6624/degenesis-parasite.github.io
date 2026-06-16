@@ -210,7 +210,7 @@ import {
   mdiInformation,
   mdiCogOutline
 } from '@mdi/js'
-import { ref, watch, provide, onMounted } from 'vue'
+import { ref, computed, watch, provide, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useDisplay, useTheme } from 'vuetify'
 import type { VFileInput, VForm } from 'vuetify/components'
@@ -292,7 +292,12 @@ const checkPassword = (e: any) => {
   }
 }
 
-const { appTagLine } = config
+const tagLineIndex = Math.floor(Math.random() * config.appTagLinesByLocale.fr.length)
+const appTagLine = computed(() => {
+  const locale = i18n.locale.value as keyof typeof config.appTagLinesByLocale
+  const lines = config.appTagLinesByLocale[locale] || config.appTagLinesByLocale.fr
+  return lines[tagLineIndex] ?? lines[0]
+})
 
 const cultures = ([] as string[]).concat(...config.culturesByName.keys())
 const concepts = ([] as string[]).concat(...config.conceptsByName.keys())

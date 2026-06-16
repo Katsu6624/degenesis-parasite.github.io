@@ -3,10 +3,11 @@ import { Cults } from './cults/cults'
 import { Concept, Culture } from './model'
 import { Attributes as A, Origins, Skills as S, Skills } from './properties'
 
-const possiblesTagLines = ['2148 WAS A VERY GOOD YEAR.', 'ARGYRE DID NOTHING WRONG!', 'TRIGLAW MALWARE DETECTED', '7 CORRESPONDERS', '8 EST LE NOMBRE DU CRÉATEUR', '12 EST LE NOMBRE DU CHACAL', '16 EST LE NOMBRE DE L\'ÉTRANGER', '51° 1\' 37.938\'\' N ; 9° 56\' 55.8564\'\' E', 'AMORCE ∞ STREAM', 'DESTINATION FINALE : BAÏKONOUR', 'OCTUS N\'EST PAS TOMBÉ POUR RIEN', 'BEAUCOUP DE RELIGIONS ONT BESOIN DE BEAUCOUP DE DIABLES', 'LE PIAST EST INTRONISÉ POUR L\'ÉTERNITÉ', 'LE CLUSTER PARLE', 'PER ASPERA AD ASTRA', 'C H E R N O B O G', 'T R I S Z Y K L I O N', 'IL N\'Y A PAS DE DORMEURS PARMI LES ANABAPTISTES', 'MARKURANT VIT !!!', 'IRIDIUM / CHROMIUM / PROMETHIUM / BISMUTH', 'Vous connaissez la procédure, agent MacGrath ?', 'Le Temps est un amant vilain', 'PROJET TANNHÄUSER', 'PROJET FREE SPIRIT', 'PROJET TRIGLAW', 'PROJET ASPERA', 'CE QU\'IL Y A À NORET RESTE À NORET', 'Qui est la Sorcière en Haillons ?', 'Des mèmes dans des mèmes dans des mèmes.', 'Souvenez-vous de Gilgamesh ?', 'RENDEZ-MOI MON TESTAMENT !!!', 'CAR JE SUIS LA VIE ET JE SUIS LA MORT', 'La mort est le chemin vers l\'émerveillement']
+const possiblesTagLinesFr = ['2148 WAS A VERY GOOD YEAR.', 'ARGYRE DID NOTHING WRONG!', 'TRIGLAW MALWARE DETECTED', '7 CORRESPONDERS', '8 EST LE NOMBRE DU CRÉATEUR', '12 EST LE NOMBRE DU CHACAL', '16 EST LE NOMBRE DE L\'ÉTRANGER', '51° 1\' 37.938\'\' N ; 9° 56\' 55.8564\'\' E', 'AMORCE ∞ STREAM', 'DESTINATION FINALE : BAÏKONOUR', 'OCTUS N\'EST PAS TOMBÉ POUR RIEN', 'BEAUCOUP DE RELIGIONS ONT BESOIN DE BEAUCOUP DE DIABLES', 'LE PIAST EST INTRONISÉ POUR L\'ÉTERNITÉ', 'LE CLUSTER PARLE', 'PER ASPERA AD ASTRA', 'C H E R N O B O G', 'T R I S Z Y K L I O N', 'IL N\'Y A PAS DE DORMEURS PARMI LES ANABAPTISTES', 'MARKURANT VIT !!!', 'IRIDIUM / CHROMIUM / PROMETHIUM / BISMUTH', 'Vous connaissez la procédure, agent MacGrath ?', 'Le Temps est un amant vilain', 'PROJET TANNHÄUSER', 'PROJET FREE SPIRIT', 'PROJET TRIGLAW', 'PROJET ASPERA', 'CE QU\'IL Y A À NORET RESTE À NORET', 'Qui est la Sorcière en Haillons ?', 'Des mèmes dans des mèmes dans des mèmes.', 'Souvenez-vous de Gilgamesh ?', 'RENDEZ-MOI MON TESTAMENT !!!', 'CAR JE SUIS LA VIE ET JE SUIS LA MORT', 'La mort est le chemin vers l\'émerveillement']
+
+const possiblesTagLinesEn = ['2148 WAS A VERY GOOD YEAR.', 'ARGYRE DID NOTHING WRONG!', 'TRIGLAW MALWARE DETECTED', '7 CORRESPONDERS', '8 IS THE NUMBER OF THE CREATOR', '12 IS THE NUMBER OF THE JACKAL', '16 IS THE NUMBER OF THE STRANGER', '51° 1\' 37.938\'\' N ; 9° 56\' 55.8564\'\' E', 'PRIMER ∞ STREAM', 'FINAL DESTINATION: BAIKONUR', 'OCTUS DID NOT FALL IN VAIN', 'MANY RELIGIONS NEED MANY DEVILS', 'THE PIAST IS ENTHRONED FOR ETERNITY', 'THE CLUSTER SPEAKS', 'PER ASPERA AD ASTRA', 'C H E R N O B O G', 'T R I S Z Y K L I O N', 'THERE ARE NO SLEEPERS AMONG THE ANABAPTISTS', 'MARKURANT LIVES !!!', 'IRIDIUM / CHROMIUM / PROMETHIUM / BISMUTH', 'You know the procedure, agent MacGrath?', 'Time is a wicked lover', 'PROJECT TANNHÄUSER', 'PROJECT FREE SPIRIT', 'PROJECT TRIGLAW', 'PROJECT ASPERA', 'WHAT HAPPENS IN NORET STAYS IN NORET', 'Who is the Wretched Hag?', 'Memes within memes within memes.', 'Remember Gilgamesh?', 'GIVE ME BACK MY WILL !!!', 'FOR I AM LIFE AND I AM DEATH', 'Death is the path to wonder']
 
 const AppName = 'PARASITE'
-const AppTagLine = possiblesTagLines[Math.floor(Math.random() * possiblesTagLines.length)]
 const SourceCodeRepo = 'https://github.com/Miokido/degenesis-parasite'
 const SourceCodeGitlab = 'https://gitlab.com/diskordanz/noret'
 
@@ -76,7 +77,11 @@ const Concepts = {
 const allAttributes = [A.body, A.agility, A.charisma, A.intellect, A.psyche, A.instinct]
 export default {
   appName: AppName,
-  appTagLine: AppTagLine,
+  appTagLinesByLocale: {
+    fr: possiblesTagLinesFr,
+    en: possiblesTagLinesEn,
+    de: possiblesTagLinesEn,
+  },
   sourceCodeRepo: SourceCodeRepo,
   sourceCodeGitlab: SourceCodeGitlab,
   // password, just used for primitive access control to the beta
