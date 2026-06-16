@@ -701,26 +701,10 @@ const openCropExisting = () => {
   showCropDialog.value = true
 }
 
-const onCropConfirm = (croppedDataUrl: string, originalDataUrl: string) => {
-  store.portraitOriginal = originalDataUrl
-  // Génère une miniature 400px pour l'affichage
-  const img = new Image()
-  img.onload = () => {
-    const canvas = document.createElement('canvas')
-    const MAX = 400
-    let w = img.width
-    let h = img.height
-    if (w > MAX || h > MAX) {
-      const s = Math.min(MAX / w, MAX / h)
-      w = Math.round(w * s)
-      h = Math.round(h * s)
-    }
-    canvas.width = w
-    canvas.height = h
-    canvas.getContext('2d')?.drawImage(img, 0, 0, w, h)
-    store.portrait = canvas.toDataURL('image/png')
-  }
-  img.src = croppedDataUrl
+const onCropConfirm = (croppedDataUrl: string) => {
+  // Le crop éditeur ne touche que portraitOriginal (affiché dans FICHE + téléchargement)
+  // portrait (miniature galerie) reste inchangé
+  store.portraitOriginal = croppedDataUrl
 }
 
 const { attributes, availablePoints } = config
