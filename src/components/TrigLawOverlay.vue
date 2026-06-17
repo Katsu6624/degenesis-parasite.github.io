@@ -24,6 +24,8 @@ function trigger() {
 
   hackingAudio = new Audio(`${baseUrl}prank/hacking-alert.mp3`)
   trigAudio = new Audio(`${baseUrl}prank/triglaw-malware.mp3`)
+  hackingAudio.volume = 0.4
+  trigAudio.volume = 1.0
 
   hackingAudio.play()
 
@@ -37,10 +39,11 @@ function trigger() {
   })
 }
 
-const PATTERNS = ['65536', '2^16', '2¹⁶']
+const PATTERNS = ['65536', '2^16', '2¹⁶', 'triglaw']
 
 function checkText(text: string): boolean {
-  return PATTERNS.some(p => text.includes(p))
+  const lower = text.toLowerCase()
+  return PATTERNS.some(p => lower.includes(p.toLowerCase()))
 }
 
 let observer: MutationObserver | null = null
