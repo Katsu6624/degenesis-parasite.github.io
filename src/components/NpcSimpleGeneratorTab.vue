@@ -73,7 +73,7 @@
                 <v-select
                   v-model.number="passiveDefenseQuality"
                   :label="$t('messages.npcGenerator.passiveDefense')"
-                  :items="qualityItems"
+                  :items="passiveDefenseItems"
                   item-title="label"
                   item-value="value"
                 ></v-select>
@@ -226,6 +226,8 @@ const npcName = ref('')
 const qualityItems = computed(() =>
   QUALITY_LEVELS.map((key, index) => ({ value: index, label: i18n.t(`messages.npcGenerator.qualityLevels.${key}`) }))
 )
+
+const passiveDefenseItems = QUALITY_LEVELS.map((_, index) => ({ value: index, label: String(index + 1) }))
 
 const initiativeQuality = ref(DEFAULT_QUALITY_INDEX)
 const egoQuality = ref(DEFAULT_QUALITY_INDEX)
