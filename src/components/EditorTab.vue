@@ -683,32 +683,36 @@ const downloadPortrait = () => {
   a.click()
 }
 
+function compressImage(src: string, maxPx: number, quality: number): Promise<string> {
+  return new Promise((resolve) => {
+    const img = new Image()
+    img.onload = () => {
+      const canvas = document.createElement('canvas')
+      let w = img.width, h = img.height
+      if (w > maxPx || h > maxPx) {
+        const s = Math.min(maxPx / w, maxPx / h)
+        w = Math.round(w * s); h = Math.round(h * s)
+      }
+      canvas.width = w; canvas.height = h
+      canvas.getContext('2d')?.drawImage(img, 0, 0, w, h)
+      resolve(canvas.toDataURL('image/jpeg', quality))
+    }
+    img.src = src
+  })
+}
+
 const onPortraitChange = (ev: Event) => {
   const input = ev.target as HTMLInputElement
   const file = input.files?.[0]
   if (!file) return
   const reader = new FileReader()
-  reader.onload = (e) => {
-    const original = (e.target?.result as string) ?? ''
-    store.portraitOriginal = original
+  reader.onload = async (e) => {
+    const raw = (e.target?.result as string) ?? ''
     store.portraitFiche = ''
-    // Génère une miniature 400px pour la galerie
-    const objectUrl = URL.createObjectURL(file)
-    const img = new Image()
-    img.onload = () => {
-      const canvas = document.createElement('canvas')
-      const MAX = 400
-      let w = img.width, h = img.height
-      if (w > MAX || h > MAX) {
-        const s = Math.min(MAX / w, MAX / h)
-        w = Math.round(w * s); h = Math.round(h * s)
-      }
-      canvas.width = w; canvas.height = h
-      canvas.getContext('2d')?.drawImage(img, 0, 0, w, h)
-      store.portrait = canvas.toDataURL('image/png')
-      URL.revokeObjectURL(objectUrl)
-    }
-    img.src = objectUrl
+    // Compresse l'original à 1200px JPEG pour économiser le localStorage
+    store.portraitOriginal = await compressImage(raw, 1200, 0.85)
+    // Miniature 400px pour la galerie
+    store.portrait = await compressImage(raw, 400, 0.82)
   }
   reader.readAsDataURL(file)
   input.value = ''
