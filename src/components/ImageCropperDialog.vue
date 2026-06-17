@@ -4,6 +4,7 @@
       <v-card-title class="d-flex align-center justify-space-between flex-wrap gap-2">
         <span>Recadrer le portrait</span>
         <v-btn-toggle v-model="aspectMode" density="compact" variant="outlined" mandatory>
+          <v-btn value="full" size="small">Full</v-btn>
           <v-btn value="free" size="small">Libre</v-btn>
           <v-btn value="portrait" size="small">3:4</v-btn>
           <v-btn value="square" size="small">1:1</v-btn>
@@ -59,8 +60,8 @@ watch(() => props.modelValue, v => { open.value = v })
 watch(open, v => emit('update:modelValue', v))
 
 const canvas = ref<HTMLCanvasElement | null>(null)
-const aspectMode = ref<'free' | 'portrait' | 'square'>('portrait')
-const ASPECT: Record<string, number | null> = { free: null, portrait: 3 / 4, square: 1 }
+const aspectMode = ref<'full' | 'free' | 'portrait' | 'square'>('portrait')
+const ASPECT: Record<string, number | null> = { full: null, free: null, portrait: 3 / 4, square: 1 }
 
 // --- State ---
 let img = new Image()
@@ -114,7 +115,7 @@ function initCanvas() {
 function resetCrop() {
   const { w: iw, h: ih } = rotatedSize()
   const ar = ASPECT[aspectMode.value]
-  if (ar === null) {
+  if (ar === null || aspectMode.value === 'full') {
     crop = { x: 0, y: 0, w: iw, h: ih }
   } else {
     const imgAr = iw / ih
@@ -203,6 +204,7 @@ function toImgCoords(ex: number, ey: number) {
 }
 
 function hitHandle(ex: number, ey: number): DragMode {
+  if (aspectMode.value === 'full') return null
   const c = canvas.value!
   const rect = c.getBoundingClientRect()
   const px = (ex - rect.left) * (c.width / rect.width)
