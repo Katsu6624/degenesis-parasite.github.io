@@ -352,7 +352,7 @@ const navGlitch = ref(false)
 setInterval(() => {
   navGlitch.value = true
   setTimeout(() => { navGlitch.value = false }, 600)
-}, 10000)
+}, 60000)
 ;(window as any).__currentTab = tab
 provide('currentTab', tab)
 
