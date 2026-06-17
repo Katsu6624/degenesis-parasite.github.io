@@ -17,7 +17,7 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 
 const baseUrl = import.meta.env.BASE_URL
-const visible = ref(localStorage.getItem('parasite-skip-splash') !== 'true')
+const visible = ref(localStorage.getItem('parasite-splash-seen') !== 'true')
 const videoEl = ref<HTMLVideoElement | null>(null)
 const started = ref(false)
 
@@ -49,6 +49,7 @@ function dismiss() {
   if (!visible.value) return
   visible.value = false
   videoEl.value?.pause()
+  localStorage.setItem('parasite-splash-seen', 'true')
 }
 
 onMounted(() => window.addEventListener('keydown', onKey))

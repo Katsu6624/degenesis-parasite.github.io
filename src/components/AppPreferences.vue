@@ -43,13 +43,13 @@
   <v-divider class="my-4"></v-divider>
   <div class="pa-1">
     <div class="pa-1 text-subtitle-2">Vidéo d'introduction</div>
-    <v-checkbox
-      v-model="skipSplash"
-      label="Ne plus lancer la vidéo au lancement du site"
-      density="compact"
-      hide-details
-      @update:model-value="onSkipSplashChange"
-    ></v-checkbox>
+    <v-btn
+      variant="outlined"
+      density="comfortable"
+      class="mt-1"
+      @click="relaunchSplash"
+    >Relancer la vidéo d'introduction</v-btn>
+    <div v-if="splashReset" class="text-caption text-green mt-1 pl-1">Sera jouée au prochain chargement.</div>
   </div>
   <v-divider class="my-4"></v-divider>
   <v-form>
@@ -78,10 +78,11 @@ const i18n = useI18n()
 const theme = useTheme()
 
 const currentTheme = ref(theme.global.name.value)
-const skipSplash = ref(localStorage.getItem('parasite-skip-splash') === 'true')
+const splashReset = ref(false)
 
-function onSkipSplashChange(value: boolean) {
-  localStorage.setItem('parasite-skip-splash', String(value))
+function relaunchSplash() {
+  localStorage.removeItem('parasite-splash-seen')
+  splashReset.value = true
 }
 
 function setTheme(value: string) {
