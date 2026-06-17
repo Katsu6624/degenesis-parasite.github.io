@@ -45,7 +45,15 @@ function checkText(text: string): boolean {
 
 let observer: MutationObserver | null = null
 
+function onInput(e: Event) {
+  if (triggered) return
+  const target = e.target as HTMLInputElement | HTMLTextAreaElement | null
+  if (target && checkText(target.value)) trigger()
+}
+
 onMounted(() => {
+  document.addEventListener('input', onInput, true)
+
   observer = new MutationObserver(() => {
     if (!triggered && checkText(document.body.innerText)) {
       trigger()
@@ -59,6 +67,7 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
+  document.removeEventListener('input', onInput, true)
   observer?.disconnect()
   if (trigTimer !== null) clearTimeout(trigTimer)
   hackingAudio?.pause()
