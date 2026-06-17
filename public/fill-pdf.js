@@ -672,8 +672,11 @@
       var locale = localStorage.getItem("locale");
       var hasName = s && s.characterName && s.characterName.length > 0;
       var onInventoryTab = window.__currentTab && window.__currentTab.value === "sheet";
-      btnFR.style.display = (hasName && !onInventoryTab && (locale === "fr" || locale === null)) ? "block" : "none";
-      btnEN.style.display = (hasName && !onInventoryTab && locale === "en") ? "block" : "none";
+      var inGallery = window.__charactersGalleryMode && window.__charactersGalleryMode.value;
+      var inNpc = window.__npcGeneratorMode && window.__npcGeneratorMode.value;
+      var show = hasName && !onInventoryTab && !inGallery && !inNpc;
+      btnFR.style.display = (show && (locale === "fr" || locale === null)) ? "block" : "none";
+      btnEN.style.display = (show && locale === "en") ? "block" : "none";
     }, 500);
   }
 
