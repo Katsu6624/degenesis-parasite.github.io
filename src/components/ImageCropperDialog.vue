@@ -204,7 +204,6 @@ function toImgCoords(ex: number, ey: number) {
 }
 
 function hitHandle(ex: number, ey: number): DragMode {
-  if (aspectMode.value === 'full') return null
   const c = canvas.value!
   const rect = c.getBoundingClientRect()
   const px = (ex - rect.left) * (c.width / rect.width)
