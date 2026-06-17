@@ -1,7 +1,7 @@
 <template>
   <v-app id="app">
     <div id="mainNavigation" class="doNotPrint">
-      <v-navigation-drawer v-model="showNavigationDrawer" color="grey-darken-4" width="320">
+      <v-navigation-drawer v-model="showNavigationDrawer" color="grey-darken-4" width="320" :class="{ 'nav-glitching': navGlitch }">
         <v-sheet v-if="!mobile" color="grey-darken-4" class="pa-4">
           <div class="logo">
             <v-img src="./logo_parasite.png" alt="Logo" class="logo-img" />
@@ -347,6 +347,12 @@ const cultLabels = () => {
 }
 
 const tab = ref('')
+
+const navGlitch = ref(false)
+setInterval(() => {
+  navGlitch.value = true
+  setTimeout(() => { navGlitch.value = false }, 600)
+}, 10000)
 ;(window as any).__currentTab = tab
 provide('currentTab', tab)
 
@@ -516,5 +522,23 @@ a {
 .v-theme--dark .v-overlay__scrim {
   background: #000000 !important;
   opacity: 0.72 !important;
+}
+
+.nav-glitching {
+  animation: nav-glitch 0.6s steps(1) forwards !important;
+}
+
+@keyframes nav-glitch {
+  0%   { transform: translate(0, 0);    filter: none; }
+  10%  { transform: translate(-4px, 0); filter: hue-rotate(90deg) brightness(1.4); clip-path: inset(15% 0 70% 0); }
+  20%  { transform: translate(3px, 0);  filter: none; clip-path: inset(0); }
+  30%  { transform: translate(-6px, 2px); filter: hue-rotate(180deg) brightness(1.6); clip-path: inset(55% 0 20% 0); }
+  40%  { transform: translate(0, 0);    filter: none; clip-path: inset(0); }
+  50%  { transform: translate(5px, -2px); filter: hue-rotate(270deg) saturate(3); clip-path: inset(30% 0 50% 0); }
+  60%  { transform: translate(-3px, 0); filter: none; clip-path: inset(0); }
+  70%  { transform: translate(4px, 1px);  filter: brightness(1.8) contrast(1.5); clip-path: inset(80% 0 5% 0); }
+  80%  { transform: translate(0, 0);    filter: none; clip-path: inset(0); }
+  90%  { transform: translate(-2px, 0); filter: hue-rotate(45deg); }
+  100% { transform: translate(0, 0);    filter: none; clip-path: inset(0); }
 }
 </style>
