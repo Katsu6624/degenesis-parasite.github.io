@@ -27,7 +27,7 @@ function onInteract() {
   if (!started.value) {
     started.value = true
     prompt.value = 'APPUYER SUR UNE TOUCHE POUR CONTINUER'
-    videoEl.value!.volume = 0.3
+    videoEl.value!.volume = 0.1
     videoEl.value!.play()
   } else {
     dismiss()
@@ -38,7 +38,7 @@ function onKey() {
   if (!started.value) {
     started.value = true
     prompt.value = 'APPUYER SUR UNE TOUCHE POUR CONTINUER'
-    videoEl.value!.volume = 0.3
+    videoEl.value!.volume = 0.1
     videoEl.value!.play()
   } else {
     dismiss()
