@@ -321,11 +321,11 @@ const checkPassword = (e: any) => {
   }
 }
 
-const tagLineIndex = Math.floor(Math.random() * config.appTagLinesByLocale.fr.length)
+const tagLineIndex = ref(Math.floor(Math.random() * config.appTagLinesByLocale.fr.length))
 const appTagLine = computed(() => {
   const locale = i18n.locale.value as keyof typeof config.appTagLinesByLocale
   const lines = config.appTagLinesByLocale[locale] || config.appTagLinesByLocale.fr
-  return lines[tagLineIndex] ?? lines[0]
+  return lines[tagLineIndex.value] ?? lines[0]
 })
 
 const cultures = ([] as string[]).concat(...config.culturesByName.keys())
@@ -351,7 +351,10 @@ const tab = ref('')
 const navGlitch = ref(false)
 setInterval(() => {
   navGlitch.value = true
-  setTimeout(() => { navGlitch.value = false }, 600)
+  setTimeout(() => {
+    tagLineIndex.value = Math.floor(Math.random() * config.appTagLinesByLocale.fr.length)
+    navGlitch.value = false
+  }, 600)
 }, 60000)
 ;(window as any).__currentTab = tab
 provide('currentTab', tab)
