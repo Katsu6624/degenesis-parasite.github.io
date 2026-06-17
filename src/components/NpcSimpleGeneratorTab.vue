@@ -2,15 +2,15 @@
   <div class="npc-generator">
     <v-toolbar class="pa-4 bg-grey-lighten-2 elevation-2" density="compact">
       <template v-slot:append>
-        <div class="rand-range mr-3">
-          <label class="rand-range-label">Stat min</label>
-          <input v-model.number="randMin" type="number" min="1" max="6" class="rand-range-input" />
-          <label class="rand-range-label">Stat max</label>
-          <input v-model.number="randMax" type="number" min="1" max="6" class="rand-range-input" />
-        </div>
-        <v-btn @click="randomizeStats" stacked color="grey-darken-2" class="mr-2">
+        <v-btn @click="randomizeStats" stacked color="grey-darken-2" class="mr-2 rand-btn">
           Générer Aléatoirement
           <v-icon :icon="mdiDice6Outline" />
+          <div class="rand-range" @click.stop>
+            <label class="rand-range-label">Min</label>
+            <input v-model.number="randMin" type="number" min="1" max="6" class="rand-range-input" />
+            <label class="rand-range-label">Max</label>
+            <input v-model.number="randMax" type="number" min="1" max="6" class="rand-range-input" />
+          </div>
         </v-btn>
         <v-btn @click="generateNpc" stacked color="red-darken-2">
           {{ $t('messages.npcGenerator.generateButton') }}
@@ -353,14 +353,18 @@ const generateNpc = () => {
 </script>
 
 <style scoped>
+.rand-btn {
+  height: auto !important;
+  padding-bottom: 8px !important;
+}
+
 .rand-range {
   display: flex;
   align-items: center;
   gap: 6px;
-  background: rgba(255,255,255,0.07);
-  border: 1px solid rgba(255,255,255,0.15);
-  border-radius: 6px;
-  padding: 4px 10px;
+  border-top: 1px solid rgba(255,255,255,0.2);
+  padding-top: 4px;
+  margin-top: 4px;
 }
 
 .rand-range-label {
