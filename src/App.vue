@@ -348,8 +348,6 @@ const cultLabels = () => {
 
 const tab = ref('')
 ;(window as any).__currentTab = tab
-;(window as any).__charactersGalleryMode = charactersGalleryMode
-;(window as any).__npcGeneratorMode = npcGeneratorMode
 provide('currentTab', tab)
 
 // persist state whenever it changes
@@ -404,6 +402,8 @@ const openNpcGenerator = () => {
 }
 
 const charactersGalleryMode = ref(false)
+;(window as any).__charactersGalleryMode = charactersGalleryMode
+;(window as any).__npcGeneratorMode = npcGeneratorMode
 const openCharactersGallery = () => {
   charactersGalleryMode.value = true
   npcGeneratorMode.value = false
