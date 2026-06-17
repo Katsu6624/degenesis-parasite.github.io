@@ -6,6 +6,7 @@ const numbers = ref<{ id: number; style: Record<string, string> }[]>([])
 let triggered = false
 let spawnInterval: ReturnType<typeof setInterval> | null = null
 let idCounter = 0
+let spawnStartTime = 0
 
 const POOL = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]
 
@@ -18,7 +19,11 @@ function spawnOne() {
   const dist = 40 + Math.random() * 60
   const dx = Math.cos(rad) * dist
   const dy = Math.sin(rad) * dist
-  const size = 3.5 + Math.random() * 5.5 // big: 3.5–9rem
+  // Size grows over time: starts small, reaches massive at ~20s
+  const elapsed = (Date.now() - spawnStartTime) / 1000
+  const progress = Math.min(elapsed / 20, 1)
+  const baseSize = 2 + progress * 14 // 2rem → 16rem
+  const size = baseSize + Math.random() * 2
   const duration = 2.0 + Math.random() * 2.5
   const id = idCounter++
 
@@ -56,7 +61,7 @@ export function triggerMesmerized(baseUrl: string) {
   // Start spawning after 1.5s
   setTimeout(() => {
     active.value = true
-    // Spawn a burst immediately then keep spawning
+    spawnStartTime = Date.now()
     for (let i = 0; i < 6; i++) setTimeout(spawnOne, i * 80)
     spawnInterval = setInterval(spawnOne, 180)
   }, 1500)
