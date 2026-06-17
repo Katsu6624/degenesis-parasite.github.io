@@ -7,9 +7,13 @@
           <v-icon :icon="mdiDice6Outline" />
           <div class="rand-range" @click.stop>
             <label class="rand-range-label">Min</label>
-            <input v-model.number="randMin" type="number" min="1" max="6" class="rand-range-input" />
+            <select v-model.number="randMin" class="rand-range-select">
+              <option v-for="item in qualityItems" :key="item.value" :value="item.value">{{ item.label }}</option>
+            </select>
             <label class="rand-range-label">Max</label>
-            <input v-model.number="randMax" type="number" min="1" max="6" class="rand-range-input" />
+            <select v-model.number="randMax" class="rand-range-select">
+              <option v-for="item in qualityItems" :key="item.value" :value="item.value">{{ item.label }}</option>
+            </select>
           </div>
         </v-btn>
         <v-btn @click="generateNpc" stacked color="red-darken-2">
@@ -282,12 +286,12 @@ watch(selectedSpecialSkills, (newVal) => {
   })
 })
 
-const randMin = ref(1)
-const randMax = ref(6)
+const randMin = ref(0)
+const randMax = ref(5)
 
 function randQuality(): number {
-  const lo = Math.max(0, Math.min(5, randMin.value - 1))
-  const hi = Math.max(lo, Math.min(5, randMax.value - 1))
+  const lo = Math.min(randMin.value, randMax.value)
+  const hi = Math.max(randMin.value, randMax.value)
   return lo + Math.floor(Math.random() * (hi - lo + 1))
 }
 
@@ -373,20 +377,21 @@ const generateNpc = () => {
   white-space: nowrap;
 }
 
-.rand-range-input {
-  width: 38px;
-  background: transparent;
-  border: none;
-  border-bottom: 1px solid rgba(255,255,255,0.35);
+.rand-range-select {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 4px;
   color: #fff;
-  font-size: 0.85rem;
-  font-weight: 700;
-  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 2px 4px;
   outline: none;
-  -moz-appearance: textfield;
+  cursor: pointer;
 }
-.rand-range-input::-webkit-inner-spin-button,
-.rand-range-input::-webkit-outer-spin-button { -webkit-appearance: none; }
+.rand-range-select option {
+  background: #333;
+  color: #fff;
+}
 
 .npc-section-title {
   display: inline-block;
