@@ -4,7 +4,6 @@
       <template v-slot:append>
         <v-btn @click="randomizeStats" stacked color="grey-darken-2" class="mr-2 rand-btn">
           Générer Aléatoirement
-          <v-icon :icon="mdiDice6Outline" />
           <div class="rand-range" @click.stop>
             <label class="rand-range-label">Min</label>
             <select v-model.number="randMin" class="rand-range-select">
