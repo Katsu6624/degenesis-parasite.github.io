@@ -79,15 +79,23 @@ let drag: DragMode = null
 let dragStart = { mx: 0, my: 0, cx: 0, cy: 0, cw: 0, ch: 0 }
 
 // --- Image loading ---
-watch(() => props.src, async (src) => {
+watch(() => props.src, (src) => {
   if (!src) return
   rotation = 0
   img = new Image()
   img.onload = () => {
-    nextTick().then(() => initCanvas())
+    // Attendre que le dialog soit pleinement rendu (animation Vuetify ~300ms)
+    setTimeout(() => initCanvas(), 320)
   }
   img.src = src
 }, { immediate: true })
+
+// Si le dialog réouvre avec la même src (ex: re-clic sur recadrer), réinitialiser
+watch(open, (v) => {
+  if (v && img.naturalWidth) {
+    setTimeout(() => initCanvas(), 320)
+  }
+})
 
 watch(aspectMode, (m) => m === 'full' ? resetCrop() : enforceAspect())
 
