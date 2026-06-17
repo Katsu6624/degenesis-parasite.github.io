@@ -2,7 +2,7 @@
   <v-main class="intro mb-0">
     <v-container>
       <v-row>
-        <v-col class="float-left">
+        <v-col cols="12" lg="7">
           <v-card class="introCard">
             <v-card-title class="d-flex align-center">
               {{ $t('messages.welcome') }}
@@ -29,6 +29,11 @@
             </v-card-text>
           </v-card>
         </v-col>
+        <v-col cols="12" lg="5">
+          <v-card class="pa-5 changelog-card">
+            <Changelog />
+          </v-card>
+        </v-col>
       </v-row>
     </v-container>
   </v-main>
@@ -36,6 +41,7 @@
 
 <script setup lang="ts">
 import config from '@/config'
+import Changelog from '@/components/Changelog.vue'
 const baseUrl = import.meta.env.BASE_URL
 </script>
 
@@ -55,6 +61,14 @@ p {
 .welcome-logo {
   height: 1.4em;
   width: auto;
+}
+
+.changelog-card {
+  background: rgba(10, 10, 10, 0.85) !important;
+  border-left: 2px solid #cc0000 !important;
+  height: 100%;
+  overflow-y: auto;
+  max-height: 600px;
 }
 
 .intro-banner {
