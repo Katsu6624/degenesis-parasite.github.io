@@ -674,7 +674,8 @@
       var onInventoryTab = window.__currentTab && window.__currentTab.value === "sheet";
       var inGallery = window.__charactersGalleryMode && window.__charactersGalleryMode.value;
       var inNpc = window.__npcGeneratorMode && window.__npcGeneratorMode.value;
-      var show = hasName && !onInventoryTab && !inGallery && !inNpc;
+      var inNameGen = window.__nameGeneratorMode && window.__nameGeneratorMode.value;
+      var show = hasName && !onInventoryTab && !inGallery && !inNpc && !inNameGen;
       btnFR.style.display = (show && (locale === "fr" || locale === null)) ? "block" : "none";
       btnEN.style.display = (show && locale === "en") ? "block" : "none";
     }, 500);

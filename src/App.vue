@@ -90,6 +90,12 @@
               <v-icon :icon="mdiAccountQuestionOutline"></v-icon>
             </template>
           </v-list-item>
+          <v-list-item role="button" link @click="openNameGenerator">
+            {{ $t('messages.nameGenerator.navButton') }}
+            <template v-slot:prepend>
+              <v-icon :icon="mdiTagTextOutline"></v-icon>
+            </template>
+          </v-list-item>
         </v-list>
         <template v-slot:append>
           <v-list-item :title="$t('messages.preferences.label')" role="button" link class="py-4">
@@ -143,6 +149,9 @@
         @import="triggerCharacterImport"
       />
     </v-main>
+    <v-main v-else-if="nameGeneratorMode" class="bg-grey-darken-4">
+      <NameGeneratorTab />
+    </v-main>
     <v-main v-else-if="npcGeneratorMode" class="bg-grey-lighten-3">
       <v-tabs v-model="npcTab" bg-color="grey-darken-3">
         <v-tab value="detailed">{{ $t('messages.npcGenerator.detailedTitle') }}</v-tab>
@@ -158,7 +167,7 @@
       </v-window>
     </v-main>
     <v-main
-      v-else-if="!charactersGalleryMode && store.characterName.length > 0"
+      v-else-if="!charactersGalleryMode && !nameGeneratorMode && store.characterName.length > 0"
       :class="[tab == 'sheet' ? 'bg-grey-lighten-3' : '', isSharedView ? 'shared-view-mode' : '']"
     >
       <v-tabs v-model="tab" bg-color="grey-darken-3">
@@ -176,7 +185,7 @@
         </v-window-item>
       </v-window>
     </v-main>
-    <div v-if="!charactersGalleryMode && !npcGeneratorMode && store.characterName.length == 0" class="bg-grey-darken-4">
+    <div v-if="!charactersGalleryMode && !npcGeneratorMode && !nameGeneratorMode && store.characterName.length == 0" class="bg-grey-darken-4">
       <IntroPage></IntroPage>
     </div>
     <v-snackbar v-model="ownCharSnackbar" timeout="6000" color="blue-darken-2">
@@ -224,6 +233,7 @@ import AppPreferences from '@/components/AppPreferences.vue'
 import Sheet from '@/components/InventoryTab.vue'
 import NpcGeneratorTab from '@/components/NpcGeneratorTab.vue'
 import NpcSimpleGeneratorTab from '@/components/NpcSimpleGeneratorTab.vue'
+import NameGeneratorTab from '@/components/NameGeneratorTab.vue'
 import CharactersTab from '@/components/CharactersTab.vue'
 import config from '@/config'
 import { useCharacterStore } from '@/store'
@@ -239,7 +249,8 @@ import {
   mdiAccountGroup,
   mdiImport,
   mdiInformation,
-  mdiCogOutline
+  mdiCogOutline,
+  mdiTagTextOutline
 } from '@mdi/js'
 import { ref, computed, watch, provide, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -381,6 +392,7 @@ const createNewCharacter = () => {
   if (!characterExists(newName)) {
     npcGeneratorMode.value = false
     charactersGalleryMode.value = false
+    nameGeneratorMode.value = false
     store.$reset()
     store.setCharacterName(newName)
     browserStorage.storeCharacter(store.asCharacter)
@@ -396,6 +408,7 @@ const characterExists = browserStorage.characterIsStored
 const loadCharacter = (characterName: string) => {
   npcGeneratorMode.value = false
   charactersGalleryMode.value = false
+  nameGeneratorMode.value = false
   const character = browserStorage.loadCharacter(characterName)
   if (character) {
     store.loadCharacter(character)
@@ -409,15 +422,26 @@ const npcTab = ref('detailed')
 const openNpcGenerator = () => {
   npcGeneratorMode.value = true
   charactersGalleryMode.value = false
+  nameGeneratorMode.value = false
+  showNavigationDrawer.value = !mobile.value
+}
+
+const nameGeneratorMode = ref(false)
+const openNameGenerator = () => {
+  nameGeneratorMode.value = true
+  npcGeneratorMode.value = false
+  charactersGalleryMode.value = false
   showNavigationDrawer.value = !mobile.value
 }
 
 const charactersGalleryMode = ref(false)
 ;(window as any).__charactersGalleryMode = charactersGalleryMode
 ;(window as any).__npcGeneratorMode = npcGeneratorMode
+;(window as any).__nameGeneratorMode = nameGeneratorMode
 const openCharactersGallery = () => {
   charactersGalleryMode.value = true
   npcGeneratorMode.value = false
+  nameGeneratorMode.value = false
   showNavigationDrawer.value = !mobile.value
 }
 
