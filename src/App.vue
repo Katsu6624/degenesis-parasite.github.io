@@ -210,6 +210,7 @@
       </v-card>
     </v-overlay>
   </v-app>
+  <SplashScreen />
   <TrigLawOverlay />
   <MesmerizedOverlay />
 </template>
@@ -218,6 +219,7 @@
 import IntroPage from '@/components/IntroPage.vue'
 import TrigLawOverlay from '@/components/TrigLawOverlay.vue'
 import MesmerizedOverlay from '@/components/MesmerizedOverlay.vue'
+import SplashScreen from '@/components/SplashScreen.vue'
 import AppPreferences from '@/components/AppPreferences.vue'
 import Sheet from '@/components/InventoryTab.vue'
 import NpcGeneratorTab from '@/components/NpcGeneratorTab.vue'

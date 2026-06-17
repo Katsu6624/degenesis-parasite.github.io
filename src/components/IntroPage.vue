@@ -1,15 +1,6 @@
 <template>
   <v-main class="intro mb-0">
-    <video
-      class="intro-video-bg"
-      :src="`${baseUrl}stream.mp4`"
-      autoplay
-      loop
-      muted
-      playsinline
-    ></video>
-    <div class="intro-video-overlay"></div>
-    <v-container class="intro-content">
+    <v-container>
       <v-row>
         <v-col class="float-left">
           <v-card class="introCard">
@@ -50,40 +41,15 @@ const baseUrl = import.meta.env.BASE_URL
 
 <style scoped>
 .intro {
-  position: relative;
   height: 100vh;
-  overflow: hidden;
-}
-
-.intro-video-bg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  z-index: 0;
-}
-
-.intro-video-overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.55);
-  z-index: 1;
-}
-
-.intro-content {
-  position: relative;
-  z-index: 2;
 }
 
 .introCard {
   max-width: 80em;
-  background: rgba(30, 30, 30, 0.82) !important;
-  backdrop-filter: blur(6px);
 }
 
 p {
-  margin-top: 1em;
+    margin-top: 1em;
 }
 
 .welcome-logo {
