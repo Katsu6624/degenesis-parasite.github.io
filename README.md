@@ -8,13 +8,38 @@ Available in **French, English and German**.
 
 ## Features
 
+### Character Management
 - Full character creation flow (Culture / Concept / Cult / Clan, attributes, skills, origins, Potentials, Legacies, ranks…)
-- Three editor modes: Strict, Normal, and Expert (no limits, manual Dinars entry)
-- Inventory management with PDF/PDF-A weapon, armor and equipment catalog
-- Character sheet preview, printable & editable PDF export
-- Share a character with a read-only link
+- Three editor modes: Strict, Normal, and Expert (no limits, manual Dinars/LC entry)
+- Character gallery page with portrait cards, quick share, and delete
 - Characters are saved locally in your browser (no account, no server-side storage)
+
+### Portrait
+- Upload a portrait image (auto-compressed to save storage space)
+- Built-in crop tool with Free, Full, 3:4 and 1:1 modes, rotation and reset
+- Independent crops for the gallery card and the character sheet
+- Download the portrait at full quality
+
+### Inventory & Economy
+- Inventory management with an in-game weapon, armor and equipment catalog
+- Purchase items with Dinars (LC) or Resources, or add them for free
+- Stacked display for duplicate items (×2, ×3…)
+
+### Character Sheet & Export
+- Character sheet preview
+- Printable & editable PDF export (available only on the Sheet tab)
+- Share a character with a read-only link (via Bytebin or encoded URL fallback)
+
+### NPC Tools
+- Detailed NPC generator (attributes, skills, rank)
+- Simplified NPC generator (quick stats with culture/concept/cult presets)
+
+### Other
+- Hover tooltips explaining attribute and skill quality scales
+- Warning tooltip when LC/Dinars balance is negative
+- Dialog when leaving Expert mode after manually editing LC
 - Optional ambient background music
+- Light and dark theme
 
 ## Development
 
