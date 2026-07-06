@@ -55,14 +55,20 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
     properties: `5 D in Afrika`,
   },
   'bracelet-poignard': {
+    name: `Blade Bracelet`,
   },
   'gant-de-diffuseur': {
+    name: `Diffuser Glove`,
   },
   'poings-de-fer': {
+    name: `Iron Fists`,
+    properties: `Blunt`,
   },
   'pistol-9mm': {
+    name: `Pistol`,
   },
   'knife': {
+    name: `Knife`,
   },
   'broyeur': {
     name: `Crusher`,
@@ -75,6 +81,7 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
     description: `<b>Ram Staff</b><br>Symbol of the Cult\\'s power and unity of spirit. Before an important battle, the Iconide entrusts this staff to the Isaaki who will lead the Swords of Jehammet to victory.<br><br><b>SPECIALTY:</b> During combat, Jehammedans rallied around the staff feel inspired: within 20 paces, they gain +1D to their attack rolls.`,
   },
   'baton-d-ibis': {
+    name: `Ibis Staff`,
     properties: `Fragile`,
   },
   'beche': {
@@ -124,6 +131,7 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
     name: `Sword`,
   },
   'faucille-d-ammout': {
+    name: `Ammout's Sickle`,
     properties: `Special damage (Aberrants, +3)`,
   },
   'flissa': {
@@ -403,6 +411,7 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
     magazine: `1`,
   },
   'mousquet-de-juge': {
+    name: `Judge's Musket`,
     properties: `Muzzle-loaded`,
     description: `<b>Judge\\'s Musket</b><br>This muzzle-loading rifle, manufactured in the Steel Masters\\' workshops in Justitia, is an exact replica of 17th and 18th century muskets from the old era. It is loaded with powder and a lead ball, the charge then rammed down. The weapon can only fire once and must be reloaded. Each musket is adorned with standard decorations indicating the year of manufacture and the Steel Master who crafted it. The stock flap containing spare parts and maintenance equipment is also standard.<br><br><b>SPECIALTY:</b> A few double-barreled muskets exist, each barrel with its own trigger. If both barrels are fired simultaneously, accuracy drops by 2D but base damage is doubled. Loading a Judge\\'s Musket takes 2 actions (per barrel).`,
     caliber: `Lead Bullet`,
@@ -567,17 +576,21 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
     name: `Hat and Coat`,
   },
   'combinaison-chroniqueur': {
+    name: `Chronicler's Suit`,
     properties: `First impression (+1D)`,
     description: `<b>Chronicler\\'s Suit</b><br>A Chronicler\\'s suit is packed with technological devices. Cables connect E-Cube blocks to velcro mounts on the back, arms, and legs. Sensors record every movement and transmit them to microcontrollers beneath the vocoder. Through programmed movement sequences repeated many times, pulses are sent to connections to control the various modules attached to the suit.<br><br><b>SPECIALTY:</b> A Chronicler\\'s suit is always fitted with light applications they call "splinters," impressive to behold. Many Clanners step back at the sight. The Chronicler gains +1D on their first social interaction with a target (the "First impression" property).`,
   },
   'combinaison-preserviste': {
+    name: `Preservist's Suit`,
     properties: `Airtight (+4S)`,
   },
   'combinaison-hygieniste': {
+    name: `Hygienist's Suit`,
     properties: `Airtight (+6S)`,
     description: `<b>Hygienist\\'s Suit</b><br>More imposing than the Preservist\\'s suit, the Hygienist\\'s suit is equipped with a fully sealed helmet and an oxygen tank. It is particularly suited for missions in heavily contaminated zones.<br><br>The oxygen tank is equivalent to a Level III gas mask.`,
   },
   'combinaison-spitaliere': {
+    name: `Spitalian Suit`,
     properties: `Airtight (+4S), Respected (Patients, +1D)`,
     description: `<b>Spitalian Suit</b><br>This neoprene suit is airtight, letting no bacteria through. It gives doctors fairly comprehensive protection against infected environments.<br><br>This suit transforms an ordinary person into a true savior in a patient\\'s eyes. The wearer gains +1D on social interaction rolls. The Spitalian suit includes a Level II gas mask.`,
   },
@@ -607,6 +620,7 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
     description: `<b>Heavy-Duty Harness</b><br>The heavy-duty harness is an exoskeleton covered in plates, customized for each mission.<br><br><b>SPECIALTY:</b> An exoskeleton grants Might +3D. All active attacks and defenses, as well as any action based on fine motor control, suffer a -2D penalty. Modules can be combined provided they fit within the armor\\'s Slot count.`,
   },
   'harnais-eclaireur': {
+    name: `Scout Harness`,
     properties: `Camouflage (5)`,
     description: `<b>Scout Harness</b><br>On this variant designed for recon and infiltration missions, the normal harness\\'s ceramic plates are replaced by a more flexible reinforced fiber mesh. This much lighter, thinner armor allows a camouflage suit to be worn over it.<br><br><b>SPECIALTY:</b> Attempting to spot the camouflage requires an INS+Perception (5) action roll (see the "Camouflage" property).`,
   },
@@ -768,6 +782,7 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
     properties: `Reduces darkness penalty by 1, 30 min`,
   },
   'oeil-cyclope': {
+    name: `Cyclops Eye`,
     properties: `No darkness penalty (Paler night vision), otherwise -2 penalty`,
   },
   'astrolabe': {
@@ -1624,6 +1639,7 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
     magazine: `2`,
   },
   'fusil-canon-scie-corneille': {
+    name: `Corneille Sawn-Off Rifle`,
     properties: `Scatter, Double Barrel`,
     caliber: `12 mm`,
     magazine: `2`,
@@ -1711,6 +1727,7 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
     magazine: `4`,
   },
   'tribut-nullpellia': {
+    name: `Nullpellia Tribute`,
     properties: `Thunder, Explosive, Terrifying (5), Lethal, Special`,
     caliber: `E-Cube`,
     magazine: `1`,
@@ -1796,6 +1813,7 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
     properties: `Cloud (4m), Deviation, Incendiary`,
   },
   'reste-dard-menthu': {
+    name: `Menthu's Stinger`,
     properties: `Damages Psychonaut Sporulation; Level 1 to 3`,
   },
   'reste-lotus': {
@@ -1838,15 +1856,19 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
     properties: `Stealth 4, Explosive (Damage 14), Thunder; Detonates when a Psychonaut in their primary phase enters within (2)m`,
   },
   'bile-de-gendo': {
+    name: `Gendo's Bile`,
     properties: `The drinker ignores Trauma penalties and the Ego spending limit. Then they die`,
   },
   'lait-de-mammouth': {
+    name: `Mammoth Milk`,
     properties: `The XP cost of the PHY attribute is reduced. Cult: Garganti`,
   },
   'cosse-de-pandora': {
+    name: `Pandora Pod`,
     properties: `Pandoran offspring with various effects`,
   },
   'tete-d-hydre': {
+    name: `Hydra Head`,
     properties: `Detects the nearest discordant spore field (2km)`,
   },
   'filet-byssus': {
@@ -1904,6 +1926,7 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
     magazine: `4`,
   },
   'art-larmes-orphelin': {
+    name: `Orphan's Tears`,
     properties: `Cloud (5m, 10), Stun (4), Deviation, Terrifying (4). Storage: Internal cell (200Qt)`,
     magazine: `1`,
   },
