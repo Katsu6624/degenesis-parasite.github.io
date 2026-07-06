@@ -447,6 +447,10 @@ function tItem(item: Item): Item {
 
 const showNotTranslatedDialog = ref(false)
 
+onMounted(() => {
+  if (i18n.locale.value === 'de') showNotTranslatedDialog.value = true
+})
+
 function currencyDisplay(raw?: string): string {
   const c = raw ?? 'LC'
   if (c === 'LC') return i18n.t('inventory.lcLabel')
