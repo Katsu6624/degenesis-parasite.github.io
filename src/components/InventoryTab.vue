@@ -153,8 +153,8 @@
                   <img v-if="group.item.image" :src="group.item.image" class="inv-item-img" />
                 </td>
                 <td class="font-weight-medium">
-                  <HoverTooltip :description="group.item.description">
-                    <span :class="group.item.description ? 'inv-has-tooltip' : ''">{{ group.item.name }}</span>
+                  <HoverTooltip :description="tItem(group.item).description">
+                    <span :class="tItem(group.item).description ? 'inv-has-tooltip' : ''">{{ tItem(group.item).name }}</span>
                   </HoverTooltip>
                   <v-chip v-if="group.level" size="x-small" color="orange-darken-2" class="ml-1">Niv. {{ group.level }}</v-chip>
                   <v-chip v-if="group.count > 1" size="x-small" color="grey-darken-1" class="ml-1">×{{ group.count }}</v-chip>
@@ -163,10 +163,10 @@
                 <td>{{ group.item.handling ?? '—' }}</td>
                 <td>{{ group.item.range ?? '—' }}</td>
                 <td>{{ group.item.damage ?? '—' }}</td>
-                <td>{{ group.item.magazine ?? '—' }}</td>
+                <td>{{ tItem(group.item).magazine ?? '—' }}</td>
                 <td class="text-caption">
-                  <template v-if="group.item.properties">
-                    <div v-for="(prop, idx) in parseProperties(group.item.properties)" :key="idx">
+                  <template v-if="tItem(group.item).properties">
+                    <div v-for="(prop, idx) in parseProperties(tItem(group.item).properties!)" :key="idx">
                       <HoverTooltip :description="getPropertyDescription(prop)">
                         <span :class="getPropertyDescription(prop) ? 'inv-has-tooltip' : ''">{{ prop }}</span>
                       </HoverTooltip>
@@ -294,19 +294,19 @@
                   <img v-if="item.image" :src="item.image" class="inv-item-img" />
                 </td>
                 <td class="font-weight-medium">
-                  <HoverTooltip :description="item.description">
-                    <span :class="item.description ? 'inv-has-tooltip' : ''">{{ item.name }}</span>
+                  <HoverTooltip :description="tItem(item).description">
+                    <span :class="tItem(item).description ? 'inv-has-tooltip' : ''">{{ tItem(item).name }}</span>
                   </HoverTooltip>
                 </td>
-                <td v-if="hasCaliber(group.items)">{{ item.caliber ?? '—' }}</td>
+                <td v-if="hasCaliber(group.items)">{{ tItem(item).caliber ?? '—' }}</td>
                 <td v-if="hasArmorValue(group.items)">{{ item.armorValue ?? '—' }}</td>
                 <td>{{ item.handling ?? '—' }}</td>
                 <td>{{ item.range ?? '—' }}</td>
                 <td>{{ item.damage ?? '—' }}</td>
-                <td>{{ item.magazine ?? '—' }}</td>
+                <td>{{ tItem(item).magazine ?? '—' }}</td>
                 <td class="text-caption">
-                  <template v-if="item.properties">
-                    <div v-for="(prop, idx) in parseProperties(item.properties)" :key="idx">
+                  <template v-if="tItem(item).properties">
+                    <div v-for="(prop, idx) in parseProperties(tItem(item).properties!)" :key="idx">
                       <HoverTooltip :description="getPropertyDescription(prop)">
                         <span :class="getPropertyDescription(prop) ? 'inv-has-tooltip' : ''">{{ prop }}</span>
                       </HoverTooltip>
@@ -425,19 +425,27 @@ import {
 } from '@/config/items'
 import { ResourceMode } from '@/config/items'
 import { getPropertyDescription, parseProperties } from '@/config/items/properties'
+import { getItemTranslation } from '@/config/items/i18n'
 import { Attributes, Skills } from '@/config/properties'
 import HoverTooltip from '@/components/HoverTooltip.vue'
 
 const store = useCharacterStore()
 const i18n = useI18n()
 
-// ── Avertissement traduction (EN/DE) ──
-const showNotTranslatedDialog = ref(false)
-onMounted(() => {
-  if (i18n.locale.value === 'en' || i18n.locale.value === 'de') {
-    showNotTranslatedDialog.value = true
+function tItem(item: Item): Item {
+  const t = getItemTranslation(item.id, i18n.locale.value)
+  if (!t) return item
+  return {
+    ...item,
+    name: t.name ?? item.name,
+    ...(t.properties !== undefined && { properties: t.properties }),
+    ...(t.description !== undefined && { description: t.description }),
+    ...(t.caliber !== undefined && { caliber: t.caliber }),
+    ...(t.magazine !== undefined && { magazine: t.magazine }),
   }
-})
+}
+
+const showNotTranslatedDialog = ref(false)
 
 // ── Encombrement ──
 const totalEncumbrance = computed(() =>
@@ -625,7 +633,7 @@ const visibleItems = computed(() => {
     // Filtre équipement de culte
     if (showOnlyCult.value && item.cult === undefined) return false
     // Recherche texte
-    if (q && !item.name.toLowerCase().includes(q)) return false
+    if (q && !tItem(item).name.toLowerCase().includes(q)) return false
     // Filtre catégorie
     if (selectedCategory.value && item.category !== selectedCategory.value) return false
     // Filtre abordable
