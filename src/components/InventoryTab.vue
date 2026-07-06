@@ -27,36 +27,36 @@
         <span v-else class="inv-stat-value" :class="store.remainingLC < 0 ? 'text-red' : ''">
           {{ store.remainingLC }}
         </span>
-        <span v-if="store.editorMode !== 'free'" class="inv-stat-sub inv-muted">(base : {{ store.computedDinars?.value ?? 0 }})</span>
+        <span v-if="store.editorMode !== 'free'" class="inv-stat-sub inv-muted">({{ $t('inventory.baseLabel') }} : {{ store.computedDinars?.value ?? 0 }})</span>
       </div>
 
       <v-divider vertical class="mx-2" style="height:40px"></v-divider>
 
       <!-- Ressources -->
       <div class="inv-stat-chip">
-        <span class="inv-stat-label">Ressources</span>
+        <span class="inv-stat-label">{{ $t('inventory.resourcesLabel') }}</span>
         <span class="inv-stat-value">
           <template v-if="store.resourceMode !== 'C'">
             {{ store.effectiveResourcesLevel }}
             <span class="inv-stat-sub inv-muted">/ {{ store.baseResourcesLevel }}</span>
           </template>
           <template v-else>
-            {{ store.remainingAdvancements }} av.
-            <span class="inv-stat-sub inv-muted">(niv. {{ store.effectiveResourcesLevelForModeC }})</span>
+            {{ store.remainingAdvancements }} {{ $t('inventory.advancementsAbbr') }}
+            <span class="inv-stat-sub inv-muted">({{ $t('inventory.levelAbbr') }} {{ store.effectiveResourcesLevelForModeC }})</span>
           </template>
         </span>
       </div>
 
       <!-- Info avancements (mode C uniquement) -->
       <div v-if="store.resourceMode === 'C'" class="text-caption inv-muted">
-        Base : {{ store.resourceAdvancements }} av. (Ressources {{ store.baseResourcesLevel }})
+        {{ $t('inventory.baseLabel') }} : {{ store.resourceAdvancements }} {{ $t('inventory.advancementsAbbr') }} ({{ $t('inventory.resourcesLabel') }} {{ store.baseResourcesLevel }})
       </div>
 
       <!-- Ressources Entrepreneur -->
       <template v-if="store.hasEntrepreneur">
         <v-divider vertical class="mx-2" style="height:40px"></v-divider>
         <div class="inv-stat-chip">
-          <span class="inv-stat-label" style="color:#f9a825">Res. Entrepreneur</span>
+          <span class="inv-stat-label" style="color:#f9a825">{{ $t('inventory.entrepreneurResources') }}</span>
           <template v-if="store.resourceMode !== 'C'">
             <span class="inv-stat-value" :class="store.effectiveResourcesLevelForOtherCult < 1 ? 'text-red' : ''">
               {{ store.effectiveResourcesLevelForOtherCult }}
@@ -65,9 +65,9 @@
           </template>
           <template v-else>
             <span class="inv-stat-value" :class="store.effectiveResourcesLevelForOtherCult < 1 ? 'text-red' : ''">
-              {{ store.remainingAdvancements }} av.
+              {{ store.remainingAdvancements }} {{ $t('inventory.advancementsAbbr') }}
             </span>
-            <span class="inv-stat-sub inv-muted">(niv. {{ store.effectiveResourcesLevelForOtherCult }})</span>
+            <span class="inv-stat-sub inv-muted">({{ $t('inventory.levelAbbr') }} {{ store.effectiveResourcesLevelForOtherCult }})</span>
           </template>
         </div>
       </template>
@@ -76,13 +76,13 @@
 
       <!-- Encombrement -->
       <div class="inv-stat-chip">
-        <span class="inv-stat-label">Encombrement</span>
+        <span class="inv-stat-label">{{ $t('inventory.encumbranceLabel') }}</span>
         <span class="inv-stat-value" :class="encumbrancePenalty > 0 ? 'text-red' : 'text-green'">
           {{ totalEncumbrance }}
         </span>
-        <span class="inv-stat-sub inv-muted">/ {{ phyPlusForce }} (PHY+Force)</span>
+        <span class="inv-stat-sub inv-muted">/ {{ phyPlusForce }} ({{ $t('inventory.phyForce') }})</span>
         <span v-if="encumbrancePenalty > 0" class="inv-stat-sub text-red font-weight-bold">
-          Malus −{{ encumbrancePenalty }}D
+          {{ $t('inventory.encumbrancePenalty', { n: encumbrancePenalty }) }}
         </span>
       </div>
 
@@ -90,26 +90,26 @@
 
       <!-- Sélecteur de mode -->
       <div class="d-flex align-center gap-2">
-        <span class="text-caption text-uppercase inv-muted mr-1">Mode Ressources</span>
+        <span class="text-caption text-uppercase inv-muted mr-1">{{ $t('inventory.resourceMode') }}</span>
         <v-btn-toggle v-model="store.resourceMode" density="compact" variant="outlined" divided mandatory>
           <v-btn value="A" size="small">
             <v-tooltip activator="parent" location="bottom" max-width="300">
-              <strong>Mode A — PDF FR</strong><br>
-              Peut acquérir si valeur ≤ Ressources. La valeur de Ressources est réduite de 1 à chaque achat.
+              <strong>{{ $t('inventory.resourceModeATitle') }}</strong><br>
+              {{ $t('inventory.resourceModeADesc') }}
             </v-tooltip>
             A
           </v-btn>
           <v-btn value="B" size="small">
             <v-tooltip activator="parent" location="bottom" max-width="300">
-              <strong>Mode B — Officiel</strong><br>
-              Peut acquérir si valeur ≤ Ressources. La valeur n'est réduite de 1 que si l'objet est <em>égal</em> aux Ressources.
+              <strong>{{ $t('inventory.resourceModeBTitle') }}</strong><br>
+              {{ $t('inventory.resourceModeBDesc') }}
             </v-tooltip>
             B
           </v-btn>
           <v-btn value="C" size="small">
             <v-tooltip activator="parent" location="bottom" max-width="300">
-              <strong>Mode C — Katsu</strong><br>
-              Chaque objet coûte sa valeur en avancements. Perdre trop d'avancements réduit le niveau de Ressources.
+              <strong>{{ $t('inventory.resourceModeCTitle') }}</strong><br>
+              {{ $t('inventory.resourceModeCDesc') }}
             </v-tooltip>
             C
           </v-btn>
@@ -120,29 +120,29 @@
     <div class="inv-body">
       <!-- ── Inventaire actuel ── -->
       <div class="inv-section">
-        <div class="inv-section-title">Inventaire
-          <span class="text-caption inv-muted ml-1">({{ store.inventory.length }} objet{{ store.inventory.length !== 1 ? 's' : '' }})</span>
+        <div class="inv-section-title">{{ $t('inventory.title') }}
+          <span class="text-caption inv-muted ml-1">({{ store.inventory.length }} {{ store.inventory.length !== 1 ? $t('inventory.items') : $t('inventory.item') }})</span>
         </div>
 
         <div v-if="store.inventory.length === 0" class="inv-muted text-body-2 pa-2">
-          Aucun objet acquis.
+          {{ $t('inventory.emptyInventory') }}
         </div>
 
         <v-table v-else density="compact" class="inv-table">
           <thead>
             <tr>
               <th></th>
-              <th>Nom</th>
-              <th>Cat.</th>
-              <th>Maniab.</th>
-              <th>Portée</th>
-              <th>Dégâts</th>
-              <th>Charg.</th>
-              <th>Propriétés</th>
-              <th>Encomb.</th>
-              <th>Tech.</th>
-              <th>Empl.</th>
-              <th>Acquis via</th>
+              <th>{{ $t('inventory.colName') }}</th>
+              <th>{{ $t('inventory.colCategory') }}</th>
+              <th>{{ $t('inventory.colHandling') }}</th>
+              <th>{{ $t('inventory.colRange') }}</th>
+              <th>{{ $t('inventory.colDamage') }}</th>
+              <th>{{ $t('inventory.colMagazine') }}</th>
+              <th>{{ $t('inventory.colProperties') }}</th>
+              <th>{{ $t('inventory.colEncumbrance') }}</th>
+              <th>{{ $t('inventory.colTechLevel') }}</th>
+              <th>{{ $t('inventory.colSlots') }}</th>
+              <th>{{ $t('inventory.colAcquiredVia') }}</th>
               <th></th>
             </tr>
           </thead>
@@ -156,7 +156,7 @@
                   <HoverTooltip :description="tItem(group.item).description">
                     <span :class="tItem(group.item).description ? 'inv-has-tooltip' : ''">{{ tItem(group.item).name }}</span>
                   </HoverTooltip>
-                  <v-chip v-if="group.level" size="x-small" color="orange-darken-2" class="ml-1">Niv. {{ group.level }}</v-chip>
+                  <v-chip v-if="group.level" size="x-small" color="orange-darken-2" class="ml-1">{{ $t('inventory.level') }} {{ group.level }}</v-chip>
                   <v-chip v-if="group.count > 1" size="x-small" color="grey-darken-1" class="ml-1">×{{ group.count }}</v-chip>
                 </td>
                 <td class="text-caption inv-muted">{{ categoryLabel(group.item.category) }}</td>
@@ -179,7 +179,7 @@
                 <td>{{ group.item.slots ?? '—' }}</td>
                 <td>
                   <v-chip size="x-small" :color="group.purchaseMethod === 'entrepreneur' ? 'orange-darken-2' : group.purchaseMethod === 'resources' ? 'blue-darken-1' : group.purchaseMethod === 'free' ? 'purple-darken-2' : 'green-darken-1'" text-color="white">
-                    {{ group.purchaseMethod === 'entrepreneur' ? 'Ress. Entrepreneur' : group.purchaseMethod === 'resources' ? 'Ressources' : group.purchaseMethod === 'free' ? 'Gratuit' : (store.computedDinars?.currency ?? 'LC') }}
+                    {{ group.purchaseMethod === 'entrepreneur' ? $t('inventory.purchaseEntrepreneur') : group.purchaseMethod === 'resources' ? $t('inventory.purchaseResources') : group.purchaseMethod === 'free' ? $t('inventory.purchaseFree') : (store.computedDinars?.currency ?? 'LC') }}
                   </v-chip>
                 </td>
                 <td>
@@ -193,13 +193,13 @@
 
       <!-- ── Catalogue ── -->
       <div class="inv-section">
-        <div class="inv-section-title">Catalogue</div>
+        <div class="inv-section-title">{{ $t('inventory.catalogTitle') }}</div>
 
         <!-- Filtres -->
         <div class="d-flex flex-wrap gap-3 mb-3">
           <v-text-field
             v-model="search"
-            placeholder="Rechercher..."
+            :placeholder="$t('inventory.searchPlaceholder')"
             variant="outlined"
             density="compact"
             hide-details
@@ -212,7 +212,7 @@
             :items="availableCategoryOptions"
             item-title="label"
             item-value="value"
-            placeholder="Toutes les catégories"
+            :placeholder="$t('inventory.allCategories')"
             variant="outlined"
             density="compact"
             hide-details
@@ -226,7 +226,7 @@
             class="mt-1"
           >
             <template #label>
-              <span class="inv-checkbox-label">Accessibles seulement</span>
+              <span class="inv-checkbox-label">{{ $t('inventory.affordableOnly') }}</span>
             </template>
           </v-checkbox>
           <v-checkbox
@@ -236,8 +236,8 @@
             class="mt-1"
           >
             <template #label>
-              <HoverTooltip description="Seuls les équipements du culte auquel vous appartenez sont montrés. Cochez cette case pour filtrer uniquement les équipements de culte.">
-                <span class="inv-checkbox-label inv-has-tooltip">Équipement de Culte</span>
+              <HoverTooltip :description="$t('inventory.cultEquipmentTooltip')">
+                <span class="inv-checkbox-label inv-has-tooltip">{{ $t('inventory.cultEquipment') }}</span>
               </HoverTooltip>
             </template>
           </v-checkbox>
@@ -248,14 +248,14 @@
             class="mt-1"
           >
             <template #label>
-              <span class="inv-checkbox-label">Montrez tous les équipements de Culte</span>
+              <span class="inv-checkbox-label">{{ $t('inventory.showAllCults') }}</span>
             </template>
           </v-checkbox>
         </div>
 
         <!-- Groupes par catégorie -->
         <div v-if="filteredCatalogGroups.length === 0" class="inv-muted text-body-2 pa-2">
-          Aucun objet disponible pour les filtres sélectionnés.
+          {{ $t('inventory.noCatalogItems') }}
         </div>
 
         <div v-for="group in filteredCatalogGroups" :key="group.category" class="mb-4">
@@ -267,21 +267,21 @@
             <thead>
               <tr>
                 <th></th>
-                <th>Nom</th>
-                <th v-if="hasCaliber(group.items)">Calibre</th>
-                <th v-if="hasArmorValue(group.items)">Armure</th>
-                <th>Maniab.</th>
-                <th>Portée</th>
-                <th>Dégâts</th>
-                <th>Charg.</th>
-                <th>Propriétés</th>
-                <th>Encomb.</th>
-                <th>Tech.</th>
-                <th>Empl.</th>
-                <th>Prix</th>
-                <th v-if="hasResources(group.items)">Res.</th>
-                <th>Culte</th>
-                <th>Acheter</th>
+                <th>{{ $t('inventory.colName') }}</th>
+                <th v-if="hasCaliber(group.items)">{{ $t('inventory.colCaliber') }}</th>
+                <th v-if="hasArmorValue(group.items)">{{ $t('inventory.colArmor') }}</th>
+                <th>{{ $t('inventory.colHandling') }}</th>
+                <th>{{ $t('inventory.colRange') }}</th>
+                <th>{{ $t('inventory.colDamage') }}</th>
+                <th>{{ $t('inventory.colMagazine') }}</th>
+                <th>{{ $t('inventory.colProperties') }}</th>
+                <th>{{ $t('inventory.colEncumbrance') }}</th>
+                <th>{{ $t('inventory.colTechLevel') }}</th>
+                <th>{{ $t('inventory.colSlots') }}</th>
+                <th>{{ $t('inventory.colPrice') }}</th>
+                <th v-if="hasResources(group.items)">{{ $t('inventory.colResources') }}</th>
+                <th>{{ $t('inventory.colCult') }}</th>
+                <th>{{ $t('inventory.colBuy') }}</th>
               </tr>
             </thead>
             <tbody>
@@ -319,7 +319,7 @@
                 <td>{{ item.slots ?? '—' }}</td>
                 <td class="text-no-wrap">
                   {{ item.value }} {{ store.computedDinars?.currency ?? 'LC' }}
-                  <span v-if="item.levelable" class="inv-muted text-caption"> × Niv.</span>
+                  <span v-if="item.levelable" class="inv-muted text-caption"> × {{ $t('inventory.level') }}</span>
                 </td>
                 <td v-if="hasResources(group.items)">
                   <span v-if="item.resources !== undefined">{{ item.resources }}</span>
@@ -350,7 +350,7 @@
                     class="mr-1"
                     @click="store.buyItemWithResources(item.id)"
                   >
-                    Res.
+                    {{ $t('inventory.btnResources') }}
                   </v-btn>
                   <v-btn
                     size="x-small"
@@ -372,12 +372,12 @@
   <!-- ── Dialog sélection de niveau ── -->
   <v-dialog v-model="levelDialog" max-width="400" persistent>
     <v-card v-if="levelDialogItem">
-      <v-card-title class="text-h6">Choisir le niveau</v-card-title>
+      <v-card-title class="text-h6">{{ $t('inventory.levelDialogTitle') }}</v-card-title>
       <v-card-text>
         <p class="mb-3">
-          <strong>{{ levelDialogItem.name }}</strong><br>
-          <span v-if="!levelDialogFree" class="text-caption inv-muted">Prix unitaire : {{ levelDialogItem.value }} {{ store.computedDinars?.currency ?? 'LC' }}</span>
-          <span v-else class="text-caption" style="color: rgb(var(--v-theme-purple-darken-2))">Ajout gratuit</span>
+          <strong>{{ tItem(levelDialogItem).name }}</strong><br>
+          <span v-if="!levelDialogFree" class="text-caption inv-muted">{{ $t('inventory.levelDialogUnitPrice') }} {{ levelDialogItem.value }} {{ store.computedDinars?.currency ?? 'LC' }}</span>
+          <span v-else class="text-caption" style="color: rgb(var(--v-theme-purple-darken-2))">{{ $t('inventory.levelDialogFreeAdd') }}</span>
         </p>
         <v-btn-toggle v-model="selectedLevel" mandatory density="compact" variant="outlined" divided class="mb-3">
           <v-btn
@@ -386,25 +386,25 @@
             :value="lvl"
             :disabled="!levelDialogFree && !canAffordLevel(levelDialogItem, lvl)"
           >
-            Niv. {{ lvl }}
+            {{ $t('inventory.level') }} {{ lvl }}
             <br>
             <span v-if="!levelDialogFree" class="text-caption">{{ levelCost(levelDialogItem, lvl) }} {{ store.computedDinars?.currency ?? 'LC' }}</span>
           </v-btn>
         </v-btn-toggle>
         <div v-if="!levelDialogFree" class="text-caption inv-muted">
-          Restant après achat : {{ store.remainingLC - levelCost(levelDialogItem, selectedLevel) }} {{ store.computedDinars?.currency ?? 'LC' }}
+          {{ $t('inventory.levelDialogRemaining') }} {{ store.remainingLC - levelCost(levelDialogItem, selectedLevel) }} {{ store.computedDinars?.currency ?? 'LC' }}
         </div>
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn variant="text" @click="levelDialog = false">Annuler</v-btn>
+        <v-btn variant="text" @click="levelDialog = false">{{ $t('messages.cancel') }}</v-btn>
         <v-btn
           :color="levelDialogFree ? 'purple-darken-2' : 'green-darken-2'"
           variant="flat"
           :disabled="!levelDialogFree && !canAffordLevel(levelDialogItem, selectedLevel)"
           @click="confirmLevelPurchase"
         >
-          {{ levelDialogFree ? 'Ajouter' : 'Acheter' }}
+          {{ levelDialogFree ? $t('inventory.levelDialogAdd') : $t('inventory.levelDialogBuy') }}
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -553,7 +553,7 @@ function getItem(id: string) {
 }
 
 function categoryLabel(cat: ItemCategory) {
-  return CATEGORY_LABELS[cat] ?? cat
+  return i18n.t(`inventory.categories.${cat}`)
 }
 
 function hasCaliber(items: Item[]) {
@@ -652,7 +652,7 @@ const filteredCatalogGroups = computed(() => {
   }
   return CATEGORY_ORDER
     .filter(cat => map.has(cat))
-    .map(cat => ({ category: cat, label: CATEGORY_LABELS[cat], items: map.get(cat)! }))
+    .map(cat => ({ category: cat, label: i18n.t(`inventory.categories.${cat}`), items: map.get(cat)! }))
 })
 
 // Options pour le select catégorie (uniquement celles qui ont des items visibles si pas de recherche)
@@ -662,7 +662,7 @@ const availableCategoryOptions = computed(() => {
     .map(i => i.category))
   return CATEGORY_ORDER
     .filter(cat => presentCats.has(cat))
-    .map(cat => ({ value: cat, label: CATEGORY_LABELS[cat] }))
+    .map(cat => ({ value: cat, label: i18n.t(`inventory.categories.${cat}`) }))
 })
 </script>
 

@@ -7,6 +7,7 @@ import { potentials } from "./potentials";
 import { clanNames } from "./clans/names";
 import { clanRanks } from "./clans/ranks";
 import { legacies } from "./legacies";
+import { inventory } from "./inventory";
 
 export default {
   de: {
@@ -18,6 +19,7 @@ export default {
     potentials: potentials.de,
     clans: clanNames.de,
     legacies: legacies.de,
+    inventory: inventory.de,
   },
   en: {
     messages: messages.en,
@@ -28,6 +30,7 @@ export default {
     potentials: potentials.en,
     clans: clanNames.en,
     legacies: legacies.en,
+    inventory: inventory.en,
   },
   fr: {
     messages: messages.fr,
@@ -37,6 +40,7 @@ export default {
     sheet: sheet.fr,
     potentials: potentials.fr,
     clans: clanNames.fr,
-    legacies: legacies.fr
+    legacies: legacies.fr,
+    inventory: inventory.fr,
   }
 }
