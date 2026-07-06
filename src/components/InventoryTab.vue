@@ -15,7 +15,7 @@
     <div class="inv-header elevation-2 pa-4 d-flex flex-wrap align-center gap-4">
       <!-- Budget LC/Dinars -->
       <div class="inv-stat-chip">
-        <span class="inv-stat-label">{{ store.computedDinars?.currency ?? 'LC' }}</span>
+        <span class="inv-stat-label">{{ currencyDisplay(store.computedDinars?.currency) }}</span>
         <input
           v-if="store.editorMode === 'free'"
           type="number"
@@ -179,7 +179,7 @@
                 <td>{{ group.item.slots ?? '—' }}</td>
                 <td>
                   <v-chip size="x-small" :color="group.purchaseMethod === 'entrepreneur' ? 'orange-darken-2' : group.purchaseMethod === 'resources' ? 'blue-darken-1' : group.purchaseMethod === 'free' ? 'purple-darken-2' : 'green-darken-1'" text-color="white">
-                    {{ group.purchaseMethod === 'entrepreneur' ? $t('inventory.purchaseEntrepreneur') : group.purchaseMethod === 'resources' ? $t('inventory.purchaseResources') : group.purchaseMethod === 'free' ? $t('inventory.purchaseFree') : (store.computedDinars?.currency ?? 'LC') }}
+                    {{ group.purchaseMethod === 'entrepreneur' ? $t('inventory.purchaseEntrepreneur') : group.purchaseMethod === 'resources' ? $t('inventory.purchaseResources') : group.purchaseMethod === 'free' ? $t('inventory.purchaseFree') : (currencyDisplay(store.computedDinars?.currency)) }}
                   </v-chip>
                 </td>
                 <td>
@@ -318,7 +318,7 @@
                 <td>{{ item.techLevel ?? '—' }}</td>
                 <td>{{ item.slots ?? '—' }}</td>
                 <td class="text-no-wrap">
-                  {{ item.value }} {{ store.computedDinars?.currency ?? 'LC' }}
+                  {{ item.value }} {{ currencyDisplay(store.computedDinars?.currency) }}
                   <span v-if="item.levelable" class="inv-muted text-caption"> × {{ $t('inventory.level') }}</span>
                 </td>
                 <td v-if="hasResources(group.items)">
@@ -339,7 +339,7 @@
                     class="mr-1"
                     @click="item.levelable ? openLevelDialog(item, false) : store.buyItemWithLC(item.id)"
                   >
-                    {{ store.computedDinars?.currency ?? 'LC' }}
+                    {{ currencyDisplay(store.computedDinars?.currency) }}
                   </v-btn>
                   <v-btn
                     v-if="item.resources !== undefined && item.cult !== undefined && (item.cult === store.cult?.name || item.cult === store.imposteurCult?.name || store.renegadeCults.some(c => c.name === item.cult) || store.hasEntrepreneur || store.editorMode === 'free')"
@@ -376,7 +376,7 @@
       <v-card-text>
         <p class="mb-3">
           <strong>{{ tItem(levelDialogItem).name }}</strong><br>
-          <span v-if="!levelDialogFree" class="text-caption inv-muted">{{ $t('inventory.levelDialogUnitPrice') }} {{ levelDialogItem.value }} {{ store.computedDinars?.currency ?? 'LC' }}</span>
+          <span v-if="!levelDialogFree" class="text-caption inv-muted">{{ $t('inventory.levelDialogUnitPrice') }} {{ levelDialogItem.value }} {{ currencyDisplay(store.computedDinars?.currency) }}</span>
           <span v-else class="text-caption" style="color: rgb(var(--v-theme-purple-darken-2))">{{ $t('inventory.levelDialogFreeAdd') }}</span>
         </p>
         <v-btn-toggle v-model="selectedLevel" mandatory density="compact" variant="outlined" divided class="mb-3">
@@ -388,11 +388,11 @@
           >
             {{ $t('inventory.level') }} {{ lvl }}
             <br>
-            <span v-if="!levelDialogFree" class="text-caption">{{ levelCost(levelDialogItem, lvl) }} {{ store.computedDinars?.currency ?? 'LC' }}</span>
+            <span v-if="!levelDialogFree" class="text-caption">{{ levelCost(levelDialogItem, lvl) }} {{ currencyDisplay(store.computedDinars?.currency) }}</span>
           </v-btn>
         </v-btn-toggle>
         <div v-if="!levelDialogFree" class="text-caption inv-muted">
-          {{ $t('inventory.levelDialogRemaining') }} {{ store.remainingLC - levelCost(levelDialogItem, selectedLevel) }} {{ store.computedDinars?.currency ?? 'LC' }}
+          {{ $t('inventory.levelDialogRemaining') }} {{ store.remainingLC - levelCost(levelDialogItem, selectedLevel) }} {{ currencyDisplay(store.computedDinars?.currency) }}
         </div>
       </v-card-text>
       <v-card-actions>
@@ -446,6 +446,12 @@ function tItem(item: Item): Item {
 }
 
 const showNotTranslatedDialog = ref(false)
+
+function currencyDisplay(raw?: string): string {
+  const c = raw ?? 'LC'
+  if (c === 'LC') return i18n.t('inventory.lcLabel')
+  return c
+}
 
 // ── Encombrement ──
 const totalEncumbrance = computed(() =>
