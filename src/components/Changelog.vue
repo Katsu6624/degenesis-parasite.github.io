@@ -60,7 +60,7 @@ onMounted(async () => {
 <style scoped>
 .changelog {
   font-family: monospace;
-  color: #ccc;
+  color: rgb(var(--v-theme-on-surface));
 }
 
 .changelog-title {
@@ -68,7 +68,7 @@ onMounted(async () => {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.15em;
-  color: #fff;
+  color: rgb(var(--v-theme-on-surface));
   border-bottom: 1px solid #cc0000;
   padding-bottom: 6px;
   margin-bottom: 12px;
@@ -77,7 +77,7 @@ onMounted(async () => {
 .changelog-loading,
 .changelog-error {
   font-size: 0.8rem;
-  color: #888;
+  color: rgba(var(--v-theme-on-surface), 0.5);
   font-style: italic;
 }
 
@@ -96,7 +96,7 @@ onMounted(async () => {
   align-items: baseline;
   gap: 10px;
   font-size: 0.8rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(var(--v-theme-on-surface), 0.08);
   padding-bottom: 6px;
 }
 
@@ -115,17 +115,17 @@ onMounted(async () => {
 }
 
 .changelog-tag.fix {
-  background: #444;
-  color: #aaa;
+  background: rgba(var(--v-theme-on-surface), 0.15);
+  color: rgba(var(--v-theme-on-surface), 0.7);
 }
 
 .changelog-msg {
-  color: #ddd;
+  color: rgb(var(--v-theme-on-surface));
   line-height: 1.4;
 }
 
 .changelog-date {
-  color: #555;
+  color: rgba(var(--v-theme-on-surface), 0.45);
   font-size: 0.7rem;
   white-space: nowrap;
 }
