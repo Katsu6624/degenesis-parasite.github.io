@@ -1,5 +1,5 @@
 export type ItemTranslation = {
-  name: string
+  name?: string
   properties?: string
   description?: string
   caliber?: string
