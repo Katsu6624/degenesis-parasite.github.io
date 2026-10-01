@@ -11,7 +11,7 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
     name: `.44`,
   },
   'mun-556': {
-    name: `5.56x45 mm`,
+    name: `5.56x45mm`,
   },
   'mun-balle-blindee-hf': {
     name: `HF Full Jacket`,
@@ -20,26 +20,26 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
     name: `HF Hollow Point`,
   },
   'mun-flechette-chasse': {
-    name: `5.56 mm HUNTER Flechette`,
+    name: `5.56mm Hunter Flechette`,
   },
   'mun-46x30': {
-    name: `4.6x30 mm`,
+    name: `4.6x30mm`,
   },
   'mun-9mm': {
-    name: `9 mm`,
+    name: `9mm`,
   },
   'mun-5x30-sans-douille': {
-    name: `5x30 mm Caseless`,
+    name: `5x30mm Caseless`,
   },
   'mun-cal12-chevrotine': {
     name: `Caliber 12 (Buckshot)`,
     properties: `Scatter`,
   },
   'mun-cal12-fusil': {
-    name: `Caliber 12 (Rifle Slug)`,
+    name: `Caliber 12 (Rifle Barrel Ammo)`,
   },
   'mun-balle-plomb': {
-    name: `Lead Bullet and Black Powder`,
+    name: `Lead Bullets and Black Powder`,
   },
   'mun-ecube': {
     name: `E-Cube`,
@@ -51,17 +51,17 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
     name: `Bolt`,
   },
   'mun-petro': {
-    name: `Can of Petreo`,
-    properties: `5 D in Afrika`,
+    name: `Can of Petro`,
+    properties: `5 dinars in Africa`,
   },
   'bracelet-poignard': {
     name: `Blade Bracelet`,
   },
   'gant-de-diffuseur': {
-    name: `Diffuser Glove`,
+    name: `Streamer Glove`,
   },
   'poings-de-fer': {
-    name: `Iron Fists`,
+    name: `Brass Knuckles`,
     properties: `Blunt`,
   },
   'pistol-9mm': {
@@ -200,9 +200,9 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
     name: `Spear`,
   },
   'marteau-de-jugement': {
-    name: `Judgement Hammer`,
+    name: `Judgment Hammer`,
     properties: `Blunt, Knockback (3T)`,
-    description: `<b>Judgement Hammer</b><br>The Supreme Judge established the tradition of rendering judgement with a hammer, a tradition that persists to this day. Every City Judge receives one of these solid steel hammers upon appointment. They won\\'t wait long before using it. A Judgement Hammer is not merely decorative — it symbolizes the Judge\\'s executive power. The handle is one meter long and equally unadorned.<br><br><b>SPECIALTY:</b> A Judgement Hammer has the negative property "Knockback (3T)". This can be mitigated by a Potential.`,
+    description: `<b>Judgment Hammer</b><br>The Supreme Judge established the tradition of rendering judgement with a hammer, a tradition that persists to this day. Every City Judge receives one of these solid steel hammers upon appointment. They won\\'t wait long before using it. A Judgment Hammer is not merely decorative — it symbolizes the Judge\\'s executive power. The handle is one meter long and equally unadorned.<br><br><b>SPECIALTY:</b> A Judgment Hammer has the negative property "Knockback (3T)". This can be mitigated by a Potential.`,
   },
   'masse': {
     name: `Sledgehammer`,
@@ -317,19 +317,19 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
     magazine: `1`,
   },
   'sarbacane': {
-    name: `Blowgun`,
+    name: `Blow Gun`,
     caliber: `Darts`,
     magazine: `1`,
   },
   'carabine-neo': {
-    name: `Carbine (Neo.)`,
+    name: `Hunting Rifle (Neo.)`,
     properties: `Special`,
     description: `<b>Carbine</b><br>Neolibyans import their carbines from the Protectorate. Shorter and lighter than standard rifles, the carbine is perfect during long sea crossings. Its stock can fold, reducing its bulk further. Its maneuverability makes it a highly prized weapon, especially for shipboard combat.<br><br><b>SPECIALTY:</b> None.`,
     caliber: `.357`,
     magazine: `4`,
   },
   'carabine': {
-    name: `Carbine`,
+    name: `Hunting Rifle`,
     caliber: `.357`,
     magazine: `4`,
   },
@@ -399,7 +399,7 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
     magazine: `60`,
   },
   'fusil-a-pompe': {
-    name: `Pump-Action Shotgun`,
+    name: `Pump Gun`,
     caliber: `12 mm`,
     magazine: `4`,
   },
@@ -411,7 +411,7 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
     magazine: `1`,
   },
   'mousquet-de-juge': {
-    name: `Judge's Musket`,
+    name: `Judges' Musket`,
     properties: `Muzzle-loaded`,
     description: `<b>Judge\\'s Musket</b><br>This muzzle-loading rifle, manufactured in the Steel Masters\\' workshops in Justitia, is an exact replica of 17th and 18th century muskets from the old era. It is loaded with powder and a lead ball, the charge then rammed down. The weapon can only fire once and must be reloaded. Each musket is adorned with standard decorations indicating the year of manufacture and the Steel Master who crafted it. The stock flap containing spare parts and maintenance equipment is also standard.<br><br><b>SPECIALTY:</b> A few double-barreled muskets exist, each barrel with its own trigger. If both barrels are fired simultaneously, accuracy drops by 2D but base damage is doubled. Loading a Judge\\'s Musket takes 2 actions (per barrel).`,
     caliber: `Lead Bullet`,
@@ -462,14 +462,14 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
     magazine: `4`,
   },
   'pneumo-marteau': {
-    name: `Pneumo-Hammer`,
+    name: `Pneumo Hammer`,
     properties: `Thunder, Special`,
     description: `<b>Pneumo-Hammer</b><br>A pneumatic nail gun heated with coal until steam pressure is reached. A valve system redirects steam into the barrels one by one, propelling nails similar to crossbow bolts.<br><br>This weapon requires more than 5 minutes to reach operating temperature. It can also serve as a bomb: if all valves are closed, pressure builds until a detonation of power 12.`,
     caliber: `Bolt/Coal`,
     magazine: `12`,
   },
   'bouteille-explosive': {
-    name: `Molotov Cocktail`,
+    name: `Explosive Bottles`,
     properties: `Incendiary, Explosive, Special`,
     description: `<b>Molotov Cocktail</b><br>Djihad-warriors craft their explosive bottles from salvaged alcohol poured into glass bottles with a soaked cloth as a wick. Simple but effective, these incendiary weapons are the weapon of choice for Jehammetan warriors during their raids.`,
     magazine: `1`,
@@ -663,16 +663,16 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
     description: `<b>Oval Shield</b><br>Scourgers who carry a hide-covered oval shield into battle are not following the rules of modern warfare but the precepts of their traditions. The assault rifle stays in the tent, wrapped in oiled cloth, while the warrior takes up shield and spear. In doing so, they walk in the footsteps of distant ancestors, reducing their enemies to the level of animals and turning war into a simple hunt.<br><br><b>SPECIALTY:</b> This shield grants +2D active defense and +1 passive defense. However, it hinders its bearer, who suffers a -1D penalty on attack rolls.`,
   },
   'defricheur-blinf': {
-    name: `Sawed-Off Trailblazer`,
+    name: `Stubbed Trailblazer`,
     properties: `Regularity (2T)`,
-    description: `<b>Sawed-Off Trailblazer</b><br>Special forces also use a lighter, sawed-off version of the Trailblazer. Its range is significantly reduced, but its design allows for operations in confined spaces and close-quarters combat without difficulty. It can be used with one hand.<br><br><b>SPECIALTY:</b> None.`,
+    description: `<b>Stubbed Trailblazer</b><br>Special forces also use a lighter, stubbed version of the Trailblazer. Its range is significantly reduced, but its design allows for operations in confined spaces and close-quarters combat without difficulty. It can be used with one hand.<br><br><b>SPECIALTY:</b> None.`,
     caliber: `HF Full Jacket`,
     magazine: `20`,
   },
   'defricheur-creuse': {
-    name: `Sawed-Off Trailblazer`,
+    name: `Stubbed Trailblazer`,
     properties: `Regularity (2T)`,
-    description: `<b>Sawed-Off Trailblazer</b><br>Special forces also use a lighter, sawed-off version of the Trailblazer. Its range is significantly reduced, but its design allows for operations in confined spaces and close-quarters combat without difficulty. It can be used with one hand.<br><br><b>SPECIALTY:</b> None.`,
+    description: `<b>Stubbed Trailblazer</b><br>Special forces also use a lighter, stubbed version of the Trailblazer. Its range is significantly reduced, but its design allows for operations in confined spaces and close-quarters combat without difficulty. It can be used with one hand.<br><br><b>SPECIALTY:</b> None.`,
     caliber: `HF Hollow Point`,
     magazine: `20`,
   },
@@ -686,11 +686,11 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
   'pistolet-automatique': {
     name: `Automatic Pistol`,
     properties: `Regularity (3T)`,
-    caliber: `4.6x30 mm`,
+    caliber: `4.6x30mm`,
     magazine: `20`,
   },
   'pistolet-de-detresse': {
-    name: `Flare Gun`,
+    name: `Signal Pistol`,
     properties: `Incendiary`,
     caliber: `Special`,
     magazine: `1`,
@@ -1407,7 +1407,7 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
     properties: `Stun (F/4), Terrifying (1), Regularity (3T)`,
   },
   'garrot-lutte': {
-    name: `Garrote`,
+    name: `Garotte`,
     properties: `Stun (F/3), Special`,
   },
   'scindo': {
@@ -1415,19 +1415,19 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
     properties: `Regularity (3T), Special`,
   },
   'mini-grenaille': {
-    name: `.410 – "Mini" Shot`,
+    name: `.410 shot – "Tiny"`,
   },
   'mini-chevrotine': {
-    name: `.410 – "Mini" Slug`,
+    name: `.410 slug – "Tiny"`,
   },
   '762-poing': {
-    name: `7.62 – "Fist"`,
+    name: `7.62mm – "Fist"`,
   },
   '14mm-danger': {
-    name: `14 mm – "Danger"`,
+    name: `14mm – "Danger"`,
   },
   'balle-fragmentation': {
-    name: `Fragmentation Round`,
+    name: `Fragger Round`,
   },
   'cartouche-freon': {
     name: `Freon Cartridge`,
@@ -1599,7 +1599,7 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
     name: `Pike`,
   },
   'brise-lame': {
-    name: `Sword Breaker`,
+    name: `Swordbreaker`,
     properties: `Special`,
   },
   'rapiere': {
@@ -1639,7 +1639,7 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
     magazine: `2`,
   },
   'fusil-canon-scie-corneille': {
-    name: `Corneille Sawn-Off Rifle`,
+    name: `Raven's Sawn-Off Rifle`,
     properties: `Scatter, Double Barrel`,
     caliber: `12 mm`,
     magazine: `2`,
@@ -1662,7 +1662,7 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
     magazine: `20`,
   },
   'carabine-air-comprime': {
-    name: `Compressed Air Carbine`,
+    name: `Repeating Air Rifle`,
     properties: `Long Reload (1H), Sensitive`,
     caliber: `.357`,
     magazine: `8`,
@@ -1697,7 +1697,7 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
     magazine: `6`,
   },
   'fusil-anti-materiel': {
-    name: `Anti-Materiel Rifle`,
+    name: `Anti-Matériel Rifle`,
     properties: `Anti-armor, Sensitive`,
     caliber: `14 mm`,
     magazine: `5`,
@@ -1715,7 +1715,7 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
     magazine: `10`,
   },
   'canon-rotatif': {
-    name: `Rotary Cannon`,
+    name: `Rotary Gun`,
     properties: `Burst (4), Muzzle-loaded`,
     caliber: `Lead Ball`,
     magazine: `6`,
@@ -1727,7 +1727,7 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
     magazine: `4`,
   },
   'tribut-nullpellia': {
-    name: `Nullpellia Tribute`,
+    name: `Nullpellia's Toll`,
     properties: `Thunder, Explosive, Terrifying (5), Lethal, Special`,
     caliber: `E-Cube`,
     magazine: `1`,
