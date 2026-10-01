@@ -84,6 +84,14 @@
               ></v-file-input>
             </v-form>
           </v-list-item>
+          <v-divider class="mt-2 mb-2"></v-divider>
+          <v-list-item role="button" link @click="openCommunity" :variant="communityMode ? 'tonal' : 'plain'">
+            {{ $t('community.title') }}
+            <template v-slot:prepend>
+              <v-icon :icon="mdiAccountMultiple"></v-icon>
+            </template>
+          </v-list-item>
+          <v-divider class="mt-2 mb-2"></v-divider>
           <v-list-item role="button" link @click="openNpcGenerator">
             {{ $t('messages.npcGenerator.navButton') }}
             <template v-slot:prepend>
@@ -139,7 +147,10 @@
         </template>
       </v-app-bar>
     </div>
-    <v-main v-if="charactersGalleryMode" class="bg-grey-darken-4">
+    <v-main v-if="communityMode" class="bg-grey-darken-4">
+      <CommunityTab />
+    </v-main>
+    <v-main v-else-if="charactersGalleryMode" class="bg-grey-darken-4">
       <CharactersTab
         :characters="appStore.getStoredCharacters"
         :active-character-name="store.characterName"
@@ -167,7 +178,7 @@
       </v-window>
     </v-main>
     <v-main
-      v-else-if="!charactersGalleryMode && !nameGeneratorMode && store.characterName.length > 0"
+      v-else-if="!charactersGalleryMode && !nameGeneratorMode && !communityMode && store.characterName.length > 0"
       :class="[tab == 'sheet' ? 'bg-grey-lighten-3' : '', isSharedView ? 'shared-view-mode' : '']"
     >
       <v-tabs v-model="tab" bg-color="grey-darken-3">
@@ -175,7 +186,18 @@
         <v-tab value="sheet">{{ $t('messages.characterSheet') }}</v-tab>
         <v-tab value="cultRelationships">{{ $t('cultRelationships.title') }}</v-tab>
         <v-tab value="other">{{ $t('other.title') }}</v-tab>
+        <v-spacer />
+        <v-btn
+          :prepend-icon="mdiAccountMultiple"
+          variant="text"
+          size="small"
+          class="align-self-center mr-2"
+          @click="showPublishDialog = true"
+        >
+          {{ $t('community.publish') }}
+        </v-btn>
       </v-tabs>
+      <PublishDialog v-model="showPublishDialog" />
       <v-window v-model="tab">
         <v-window-item value="edit">
           <Editor> </Editor>
@@ -193,7 +215,7 @@
         </v-window-item>
       </v-window>
     </v-main>
-    <div v-if="!charactersGalleryMode && !npcGeneratorMode && !nameGeneratorMode && store.characterName.length == 0" class="bg-grey-darken-4">
+    <div v-if="!charactersGalleryMode && !npcGeneratorMode && !nameGeneratorMode && !communityMode && store.characterName.length == 0" class="bg-grey-darken-4">
       <IntroPage></IntroPage>
     </div>
     <v-snackbar v-model="ownCharSnackbar" timeout="6000" color="blue-darken-2">
@@ -245,6 +267,8 @@ import NameGeneratorTab from '@/components/NameGeneratorTab.vue'
 import CharactersTab from '@/components/CharactersTab.vue'
 import CultRelationshipsTab from '@/components/CultRelationshipsTab.vue'
 import OtherTab from '@/components/OtherTab.vue'
+import CommunityTab from '@/components/CommunityTab.vue'
+import PublishDialog from '@/components/PublishDialog.vue'
 import config from '@/config'
 import { useCharacterStore } from '@/store'
 import type { Character } from '@/store/character'
@@ -257,6 +281,7 @@ import {
   mdiAccountPlusOutline,
   mdiAccountQuestionOutline,
   mdiAccountGroup,
+  mdiAccountMultiple,
   mdiImport,
   mdiInformation,
   mdiCogOutline,
@@ -419,6 +444,7 @@ const loadCharacter = (characterName: string) => {
   npcGeneratorMode.value = false
   charactersGalleryMode.value = false
   nameGeneratorMode.value = false
+  communityMode.value = false
   const character = browserStorage.loadCharacter(characterName)
   if (character) {
     store.loadCharacter(character)
@@ -441,6 +467,17 @@ const openNameGenerator = () => {
   nameGeneratorMode.value = true
   npcGeneratorMode.value = false
   charactersGalleryMode.value = false
+  communityMode.value = false
+  showNavigationDrawer.value = !mobile.value
+}
+
+const communityMode = ref(false)
+const showPublishDialog = ref(false)
+const openCommunity = () => {
+  communityMode.value = true
+  charactersGalleryMode.value = false
+  npcGeneratorMode.value = false
+  nameGeneratorMode.value = false
   showNavigationDrawer.value = !mobile.value
 }
 
@@ -452,6 +489,7 @@ const openCharactersGallery = () => {
   charactersGalleryMode.value = true
   npcGeneratorMode.value = false
   nameGeneratorMode.value = false
+  communityMode.value = false
   showNavigationDrawer.value = !mobile.value
 }
 

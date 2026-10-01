@@ -1,0 +1,18 @@
+name = "parasite-api"
+main = "src/index.ts"
+compatibility_date = "2024-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "parasite-characters"
+database_id = "5c0c7b66-5bd2-4955-820f-629fe9c2918b"
+
+[[r2_buckets]]
+binding = "PORTRAITS"
+bucket_name = "parasite-portraits"
+
+[vars]
+REPORT_THRESHOLD = "3"
+FRONTEND_ORIGIN = "https://katsu6624.github.io"
+API_URL = "https://parasite-api.shiney273.workers.dev"
