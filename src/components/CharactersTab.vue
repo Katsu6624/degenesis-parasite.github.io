@@ -26,6 +26,8 @@
         v-for="character in characters"
         :key="character.name"
         class="char-card"
+        :class="{ 'char-card--highlighted': character.name === props.highlightedCharacter }"
+        :ref="el => { if (character.name === props.highlightedCharacter && el) (el as HTMLElement).scrollIntoView({ behavior: 'smooth', block: 'center' }) }"
         @click="emit('load', character.name)"
       >
         <!-- Portrait -->
@@ -178,6 +180,7 @@ import {
 const props = defineProps<{
   characters: Character[]
   activeCharacterName: string
+  highlightedCharacter?: string | null
 }>()
 
 const emit = defineEmits<{
@@ -339,6 +342,17 @@ function rankLabel(character: Character): string {
   border-color: rgba(var(--v-theme-primary), 0.5);
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(0,0,0,0.35);
+}
+
+.char-card--highlighted {
+  border-color: #4caf50;
+  box-shadow: 0 0 0 2px #4caf50, 0 0 20px rgba(76, 175, 80, 0.4);
+  animation: highlight-pulse 2s ease-in-out 3;
+}
+
+@keyframes highlight-pulse {
+  0%, 100% { box-shadow: 0 0 0 2px #4caf50, 0 0 20px rgba(76, 175, 80, 0.4); }
+  50%       { box-shadow: 0 0 0 3px #4caf50, 0 0 36px rgba(76, 175, 80, 0.7); }
 }
 
 .char-card-portrait {

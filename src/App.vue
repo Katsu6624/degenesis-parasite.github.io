@@ -19,7 +19,15 @@
           >
             {{ $t('messages.myCharacters') }}
             <template v-slot:prepend>
-              <v-icon :icon="mdiAccountGroup"></v-icon>
+              <v-badge
+                v-if="importNotifCount > 0"
+                :content="importNotifCount"
+                color="green-darken-1"
+                floating
+              >
+                <v-icon :icon="mdiAccountGroup"></v-icon>
+              </v-badge>
+              <v-icon v-else :icon="mdiAccountGroup"></v-icon>
             </template>
           </v-list-item>
           <v-divider class="mt-2 mb-2"></v-divider>
@@ -154,6 +162,7 @@
       <CharactersTab
         :characters="appStore.getStoredCharacters"
         :active-character-name="store.characterName"
+        :highlighted-character="highlightedCharacter"
         @load="loadCharacterFromGallery"
         @delete="deleteCharacter"
         @create-new="openCreateNewDialog"
@@ -481,9 +490,14 @@ const openCommunity = () => {
   showNavigationDrawer.value = !mobile.value
 }
 
+const importNotifCount = ref(0)
+const highlightedCharacter = ref<string | null>(null)
+
 const onCommunityImport = (character: Record<string, unknown>) => {
   browserStorage.storeCharacter(character as any)
   appStore.refresh()
+  importNotifCount.value++
+  highlightedCharacter.value = (character as any).name ?? null
 }
 
 const charactersGalleryMode = ref(false)
@@ -495,6 +509,7 @@ const openCharactersGallery = () => {
   charactersGalleryMode.value = true
   npcGeneratorMode.value = false
   nameGeneratorMode.value = false
+  importNotifCount.value = 0
   communityMode.value = false
   showNavigationDrawer.value = !mobile.value
 }
