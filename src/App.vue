@@ -22,7 +22,7 @@
               <v-badge
                 v-if="importNotifCount > 0"
                 :content="importNotifCount"
-                color="green-darken-1"
+                color="red-darken-2"
                 floating
               >
                 <v-icon :icon="mdiAccountGroup"></v-icon>
@@ -454,6 +454,7 @@ const loadCharacter = (characterName: string) => {
   charactersGalleryMode.value = false
   nameGeneratorMode.value = false
   communityMode.value = false
+  highlightedCharacter.value = null
   const character = browserStorage.loadCharacter(characterName)
   if (character) {
     store.loadCharacter(character)

@@ -8,6 +8,7 @@ export interface CommunityCharacter {
   culture: string | null
   concept: string | null
   character_name: string | null
+  description: string
   created_at: string
 }
 
@@ -19,6 +20,7 @@ export interface ListResponse {
 
 export interface PublishPayload {
   pseudo: string
+  description?: string
   character: Record<string, unknown>
   portraits?: {
     main?: string
@@ -65,6 +67,18 @@ export async function publishCharacter(payload: PublishPayload): Promise<Publish
 
 export async function reportCharacter(id: string): Promise<void> {
   await fetch(`${API_URL}/api/characters/${id}/report`, { method: 'POST' })
+}
+
+export async function updateDescription(id: string, secret: string, description: string): Promise<void> {
+  const res = await fetch(`${API_URL}/api/characters/${id}/description`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ secret, description }),
+  })
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}))
+    throw new Error((data as { error?: string }).error ?? 'Erreur')
+  }
 }
 
 export async function deleteCharacter(id: string, secret: string): Promise<void> {

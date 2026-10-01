@@ -2,6 +2,10 @@ export const community = {
   fr: {
     navTitle: 'Personnages de la Commu',
     title: 'Personnages Originaux',
+    description: 'Description (optionnelle)',
+    editDesc: 'Modifier la description',
+    editDescTitle: 'Modifier la description',
+    editDescSave: 'Enregistrer',
     subtitle: 'Parcourez les personnages partagés par la communauté.',
     search: 'Rechercher',
     filterCult: 'Culte',
@@ -30,6 +34,10 @@ export const community = {
   en: {
     navTitle: 'Community Characters',
     title: 'Original Characters',
+    description: 'Description (optional)',
+    editDesc: 'Edit description',
+    editDescTitle: 'Edit description',
+    editDescSave: 'Save',
     subtitle: 'Browse characters shared by the community.',
     search: 'Search',
     filterCult: 'Cult',
@@ -58,6 +66,10 @@ export const community = {
   de: {
     navTitle: 'Community-Charaktere',
     title: 'Originalcharaktere',
+    description: 'Beschreibung (optional)',
+    editDesc: 'Beschreibung bearbeiten',
+    editDescTitle: 'Beschreibung bearbeiten',
+    editDescSave: 'Speichern',
     subtitle: 'Charaktere der Community durchsuchen.',
     search: 'Suchen',
     filterCult: 'Kult',

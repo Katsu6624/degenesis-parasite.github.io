@@ -345,14 +345,14 @@ function rankLabel(character: Character): string {
 }
 
 .char-card--highlighted {
-  border-color: #4caf50;
-  box-shadow: 0 0 0 2px #4caf50, 0 0 20px rgba(76, 175, 80, 0.4);
+  border-color: rgb(var(--v-theme-primary));
+  box-shadow: 0 0 0 2px rgb(var(--v-theme-primary)), 0 0 20px rgba(var(--v-theme-primary), 0.4);
   animation: highlight-pulse 2s ease-in-out 3;
 }
 
 @keyframes highlight-pulse {
-  0%, 100% { box-shadow: 0 0 0 2px #4caf50, 0 0 20px rgba(76, 175, 80, 0.4); }
-  50%       { box-shadow: 0 0 0 3px #4caf50, 0 0 36px rgba(76, 175, 80, 0.7); }
+  0%, 100% { box-shadow: 0 0 0 2px rgb(var(--v-theme-primary)), 0 0 20px rgba(var(--v-theme-primary), 0.35); }
+  50%       { box-shadow: 0 0 0 3px rgb(var(--v-theme-primary)), 0 0 36px rgba(var(--v-theme-primary), 0.6); }
 }
 
 .char-card-portrait {

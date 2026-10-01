@@ -15,6 +15,7 @@ interface CharacterRow {
   culture: string | null
   concept: string | null
   character_name: string | null
+  description: string
   report_count: number
   hidden: number
   created_at: string
@@ -89,7 +90,7 @@ export default {
         .bind(...params).first<{ n: number }>()
 
       const rows = await env.DB.prepare(
-        `SELECT id, pseudo, character_data, cult, culture, concept, character_name, created_at FROM characters ${query} ORDER BY created_at DESC LIMIT ? OFFSET ?`
+        `SELECT id, pseudo, character_data, cult, culture, concept, character_name, description, created_at FROM characters ${query} ORDER BY created_at DESC LIMIT ? OFFSET ?`
       ).bind(...params, limit, offset).all<CharacterRow>()
 
       return json({ characters: rows.results, total: total?.n ?? 0, page }, 200, env)
@@ -99,7 +100,7 @@ export default {
     const matchGet = path.match(/^\/api\/characters\/([a-f0-9]+)$/)
     if (method === 'GET' && matchGet) {
       const row = await env.DB.prepare(
-        'SELECT id, pseudo, character_data, cult, culture, concept, character_name, created_at FROM characters WHERE id = ? AND hidden = 0'
+        'SELECT id, pseudo, character_data, cult, culture, concept, character_name, description, created_at FROM characters WHERE id = ? AND hidden = 0'
       ).bind(matchGet[1]).first<CharacterRow>()
       if (!row) return err('Not found', 404, env)
       return json(row, 200, env)
@@ -109,6 +110,7 @@ export default {
     if (method === 'POST' && path === '/api/characters') {
       let body: {
         pseudo: string
+        description?: string
         character: Record<string, unknown>
         portraits?: { main?: string; original?: string; fiche?: string }
       }
@@ -143,9 +145,11 @@ export default {
       const concept = (body.character.concept as string) ?? null
       const characterName = (body.character.name as string) ?? null
 
+      const description = (body.description ?? '').trim().slice(0, 1000)
+
       await env.DB.prepare(
-        'INSERT INTO characters (id, pseudo, character_data, secret_hash, cult, culture, concept, character_name, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'
-      ).bind(id, body.pseudo.trim(), JSON.stringify(charData), secretHash, cult, culture, concept, characterName, now).run()
+        'INSERT INTO characters (id, pseudo, character_data, secret_hash, cult, culture, concept, character_name, description, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+      ).bind(id, body.pseudo.trim(), JSON.stringify(charData), secretHash, cult, culture, concept, characterName, description, now).run()
 
       return json({ id, secret }, 201, env)
     }
@@ -183,6 +187,21 @@ export default {
       }
 
       return json({ ok: true, hidden: hidden === 1 }, 200, env)
+    }
+
+    // PATCH /api/characters/:id/description
+    const matchPatch = path.match(/^\/api\/characters\/([a-f0-9]+)\/description$/)
+    if (method === 'PATCH' && matchPatch) {
+      const charId = matchPatch[1]
+      let body: { secret: string; description: string }
+      try { body = await request.json() } catch { return err('Invalid JSON', 400, env) }
+      if (!body.secret) return err('Secret requis', 400, env)
+      const hash = await hashSecret(body.secret)
+      const row = await env.DB.prepare('SELECT secret_hash FROM characters WHERE id = ?').bind(charId).first<{ secret_hash: string }>()
+      if (!row || row.secret_hash !== hash) return err('Non autorisé', 403, env)
+      const desc = (body.description ?? '').trim().slice(0, 1000)
+      await env.DB.prepare('UPDATE characters SET description = ? WHERE id = ?').bind(desc, charId).run()
+      return json({ ok: true }, 200, env)
     }
 
     // DELETE /api/characters/:id (admin ou auteur)

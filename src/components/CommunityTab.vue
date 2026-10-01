@@ -88,15 +88,29 @@
         </div>
         <div class="char-card-body">
           <div class="char-card-name">{{ char.character_name ?? '?' }}</div>
-          <div class="char-card-rank">{{ char.pseudo }}</div>
+          <div class="char-card-rank">{{ rankLabel(char) }}</div>
+          <div class="char-card-pseudo">{{ char.pseudo }}</div>
           <div class="char-card-icons">
-            <img v-if="char.culture" :src="`${baseUrl}logotypes/cultures/${char.culture}.svg`" class="char-logotype char-logotype--dark" />
-            <span v-else class="char-logotype-unknown">?</span>
-            <img v-if="char.concept" :src="`${baseUrl}logotypes/concepts/${char.concept}.svg`" class="char-logotype char-logotype--dark" />
-            <span v-else class="char-logotype-unknown">?</span>
-            <img v-if="char.cult" :src="`${baseUrl}logotypes/cults/${char.cult}.svg`" class="char-logotype char-logotype--dark" />
-            <span v-else class="char-logotype-unknown">?</span>
+            <v-tooltip :text="char.culture ? t(`culturesConceptsCults.${char.culture}`) : '?'" location="top">
+              <template #activator="{ props: tp }">
+                <img v-if="char.culture" v-bind="tp" :src="`${baseUrl}logotypes/cultures/${char.culture}.svg`" class="char-logotype char-logotype--dark" />
+                <span v-else v-bind="tp" class="char-logotype-unknown">?</span>
+              </template>
+            </v-tooltip>
+            <v-tooltip :text="char.concept ? t(`culturesConceptsCults.${char.concept}`) : '?'" location="top">
+              <template #activator="{ props: tp }">
+                <img v-if="char.concept" v-bind="tp" :src="`${baseUrl}logotypes/concepts/${char.concept}.svg`" class="char-logotype char-logotype--dark" />
+                <span v-else v-bind="tp" class="char-logotype-unknown">?</span>
+              </template>
+            </v-tooltip>
+            <v-tooltip :text="char.cult ? t(`culturesConceptsCults.${char.cult}`) : '?'" location="top">
+              <template #activator="{ props: tp }">
+                <img v-if="char.cult" v-bind="tp" :src="`${baseUrl}logotypes/cults/${char.cult}.svg`" class="char-logotype char-logotype--dark" />
+                <span v-else v-bind="tp" class="char-logotype-unknown">?</span>
+              </template>
+            </v-tooltip>
           </div>
+          <div v-if="char.description" class="char-card-description">{{ char.description }}</div>
         </div>
         <div class="char-card-actions" @click.stop>
           <v-btn
@@ -123,6 +137,15 @@
             variant="text"
             color="grey"
             class="char-card-action-btn"
+            @click="openEditDesc(char)"
+          >
+            {{ $t('community.editDesc') }}
+          </v-btn>
+          <v-btn
+            block
+            variant="text"
+            color="grey"
+            class="char-card-action-btn"
             @click="openDelete(char)"
           >
             {{ $t('community.delete') }}
@@ -135,6 +158,42 @@
     <div v-if="totalPages > 1" class="d-flex justify-center mt-6">
       <v-pagination v-model="page" :length="totalPages" @update:model-value="loadPage" />
     </div>
+
+    <!-- Edit description dialog -->
+    <v-dialog v-model="showEditDesc" max-width="480" persistent>
+      <v-card>
+        <v-card-title class="text-uppercase label">{{ $t('community.editDescTitle') }}</v-card-title>
+        <v-card-text>
+          <v-textarea
+            v-model="editDescText"
+            :label="$t('community.description')"
+            variant="outlined"
+            density="compact"
+            maxlength="1000"
+            counter
+            rows="3"
+            auto-grow
+            class="mb-3"
+          />
+          <v-text-field
+            v-model="editDescSecret"
+            :label="$t('community.deleteSecret')"
+            variant="outlined"
+            density="compact"
+            :type="showEditDescSecret ? 'text' : 'password'"
+            :append-inner-icon="showEditDescSecret ? mdiEyeOff : mdiEye"
+            @click:append-inner="showEditDescSecret = !showEditDescSecret"
+          />
+          <v-alert v-if="editDescError" type="error" density="compact" class="mt-2">{{ editDescError }}</v-alert>
+        </v-card-text>
+        <v-card-actions class="justify-end">
+          <v-btn variant="text" @click="showEditDesc = false">{{ $t('messages.close') }}</v-btn>
+          <v-btn color="red-darken-2" variant="flat" :loading="editDescLoading" :disabled="!editDescSecret.trim()" @click="doEditDesc">
+            {{ $t('community.editDescSave') }}
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
 
     <!-- Import snackbar -->
     <v-snackbar v-model="importedSnack" timeout="3000" color="green-darken-2">
@@ -180,7 +239,7 @@
 import { ref, onMounted, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { mdiAccount, mdiEye, mdiEyeOff } from '@mdi/js'
-import { listCharacters, reportCharacter, deleteCharacter, portraitUrl, fetchPortraitsForImport } from '@/services/communityApi'
+import { listCharacters, reportCharacter, deleteCharacter, updateDescription, portraitUrl, fetchPortraitsForImport } from '@/services/communityApi'
 import type { CommunityCharacter } from '@/services/communityApi'
 import { CULT_RELATIONSHIP_KEYS } from '@/config/cultRelationships'
 import config from '@/config'
@@ -200,6 +259,14 @@ const filterCulture = ref('')
 const filterConcept = ref('')
 const reportedIds = ref(new Set<string>())
 const importedSnack = ref(false)
+
+const showEditDesc = ref(false)
+const editDescTarget = ref<CommunityCharacter | null>(null)
+const editDescText = ref('')
+const editDescSecret = ref('')
+const editDescLoading = ref(false)
+const editDescError = ref('')
+const showEditDescSecret = ref(false)
 
 const showDelete = ref(false)
 const deleteTarget = ref<CommunityCharacter | null>(null)
@@ -248,6 +315,37 @@ function onFilterChange() {
 
 function loadPage() {
   load()
+}
+
+function rankLabel(char: CommunityCharacter): string {
+  const cultLabel = char.cult ? t(`culturesConceptsCults.${char.cult}`) : ''
+  const rankKey = charData(char).rank as string | undefined
+  const rank = rankKey ? t(`ranks.${rankKey}`) : ''
+  return rank ? `${cultLabel} (${rank})` : cultLabel
+}
+
+function openEditDesc(char: CommunityCharacter) {
+  editDescTarget.value = char
+  editDescText.value = char.description ?? ''
+  editDescSecret.value = ''
+  editDescError.value = ''
+  showEditDescSecret.value = false
+  showEditDesc.value = true
+}
+
+async function doEditDesc() {
+  if (!editDescTarget.value || !editDescSecret.value.trim()) return
+  editDescLoading.value = true
+  editDescError.value = ''
+  try {
+    await updateDescription(editDescTarget.value.id, editDescSecret.value.trim(), editDescText.value)
+    editDescTarget.value.description = editDescText.value
+    showEditDesc.value = false
+  } catch (e) {
+    editDescError.value = e instanceof Error ? e.message : 'Erreur'
+  } finally {
+    editDescLoading.value = false
+  }
 }
 
 function openDelete(char: CommunityCharacter) {
@@ -382,12 +480,35 @@ onMounted(load)
 
 .char-card-rank {
   font-size: 0.7rem;
-  color: rgba(var(--v-theme-on-surface), 0.55);
+  color: rgba(var(--v-theme-on-surface), 0.7);
+  margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.char-card-pseudo {
+  font-size: 0.65rem;
+  color: rgba(var(--v-theme-on-surface), 0.45);
   margin-bottom: 10px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 100%;
+}
+
+.char-card-description {
+  font-size: 0.68rem;
+  color: rgba(var(--v-theme-on-surface), 0.6);
+  margin-top: 10px;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-align: left;
+  width: 100%;
 }
 
 .char-card-icons {

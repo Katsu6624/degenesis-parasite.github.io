@@ -15,6 +15,17 @@
             counter
             class="mb-2"
           />
+          <v-textarea
+            v-model="description"
+            :label="$t('community.description')"
+            variant="outlined"
+            density="compact"
+            maxlength="1000"
+            counter
+            rows="3"
+            auto-grow
+            class="mb-2"
+          />
           <v-alert v-if="error" type="error" density="compact" class="mb-2">{{ error }}</v-alert>
         </template>
         <template v-else>
@@ -67,6 +78,7 @@ const model = computed({
 const store = useCharacterStore()
 
 const pseudo = ref('')
+const description = ref('')
 const loading = ref(false)
 const error = ref('')
 const result = ref<PublishResult | null>(null)
@@ -91,6 +103,7 @@ async function publish() {
 
     result.value = await publishCharacter({
       pseudo: pseudo.value.trim(),
+      description: description.value.trim() || undefined,
       character: charData,
       portraits: Object.keys(portraits).length ? portraits : undefined,
     })
@@ -109,6 +122,7 @@ function close() {
   emit('update:modelValue', false)
   if (result.value) {
     pseudo.value = ''
+    description.value = ''
     result.value = null
     error.value = ''
   }
