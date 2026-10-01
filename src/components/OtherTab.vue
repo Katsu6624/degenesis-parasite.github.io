@@ -89,9 +89,7 @@
           <v-col cols="12">
             <v-card variant="tonal" class="pa-2">
               <div class="d-flex justify-end mb-1">
-                <v-btn size="x-small" icon variant="text" @click="removeArtifact(i)">
-                  <v-icon>mdi-close</v-icon>
-                </v-btn>
+                <v-btn size="x-small" :icon="mdiClose" variant="text" @click="removeArtifact(i)" />
               </div>
               <v-row dense>
                 <v-col cols="12" sm="6">
@@ -158,9 +156,7 @@
             auto-grow
             class="flex-grow-1 mr-2"
           />
-          <v-btn size="x-small" icon variant="text" @click="removeNote(i)">
-            <v-icon>mdi-close</v-icon>
-          </v-btn>
+          <v-btn size="x-small" :icon="mdiClose" variant="text" @click="removeNote(i)" />
         </div>
         <div v-if="store.other.notes.length === 0" class="text-caption text-grey">—</div>
       </v-card-text>
@@ -171,6 +167,7 @@
 <script setup lang="ts">
 import { useCharacterStore } from '@/store'
 import type { ArtifactEntry } from '@/config/other'
+import { mdiClose } from '@mdi/js'
 
 const store = useCharacterStore()
 
