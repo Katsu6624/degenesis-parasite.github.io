@@ -178,6 +178,7 @@ import { mdiAccount, mdiEye, mdiEyeOff } from '@mdi/js'
 import { listCharacters, reportCharacter, deleteCharacter, portraitUrl, fetchPortraitsForImport } from '@/services/communityApi'
 import type { CommunityCharacter } from '@/services/communityApi'
 import { useCharacterStore } from '@/store'
+import type { Character } from '@/store/character'
 import { CULT_RELATIONSHIP_KEYS } from '@/config/cultRelationships'
 import config from '@/config'
 
@@ -277,7 +278,7 @@ async function importChar(char: CommunityCharacter) {
   try {
     const data = JSON.parse(char.character_data)
     const dataWithPortraits = await fetchPortraitsForImport(char.id, data)
-    store.loadCharacter(dataWithPortraits)
+    store.loadCharacter(dataWithPortraits as unknown as Character)
   } catch {
     // ignore
   }
