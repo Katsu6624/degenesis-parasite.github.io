@@ -110,12 +110,18 @@
               </template>
             </v-tooltip>
           </div>
-          <div
+          <v-tooltip
             v-if="char.description"
-            class="char-card-description"
-            :class="{ 'char-card-description--open': expandedDescs.has(char.id) }"
-            @click.stop="toggleDesc(char.id)"
-          >{{ char.description }}</div>
+            location="top"
+            max-width="320"
+            open-delay="150"
+            content-class="char-desc-tooltip"
+          >
+            <template #activator="{ props: tp }">
+              <div v-bind="tp" class="char-card-description">{{ char.description }}</div>
+            </template>
+            <span class="char-desc-tooltip-text">{{ char.description }}</span>
+          </v-tooltip>
         </div>
         <div class="char-card-actions" @click.stop>
           <v-btn
@@ -263,13 +269,6 @@ const filterCult = ref('')
 const filterCulture = ref('')
 const filterConcept = ref('')
 const reportedIds = ref(new Set<string>())
-const expandedDescs = ref(new Set<string>())
-function toggleDesc(id: string) {
-  const next = new Set(expandedDescs.value)
-  if (next.has(id)) next.delete(id)
-  else next.add(id)
-  expandedDescs.value = next
-}
 const importedSnack = ref(false)
 
 const showEditDesc = ref(false)
@@ -515,7 +514,7 @@ onMounted(load)
   color: rgba(var(--v-theme-on-surface), 0.6);
   margin-top: 10px;
   line-height: 1.4;
-  cursor: pointer;
+  cursor: help;
   white-space: pre-line;
   display: -webkit-box;
   -webkit-line-clamp: 3;
@@ -523,12 +522,6 @@ onMounted(load)
   overflow: hidden;
   text-align: left;
   width: 100%;
-}
-
-.char-card-description--open {
-  display: block;
-  -webkit-line-clamp: unset;
-  overflow: visible;
 }
 
 .char-card-icons {
@@ -574,5 +567,24 @@ onMounted(load)
   font-size: 0.73rem !important;
   letter-spacing: 0.06em !important;
   justify-content: center !important;
+}
+</style>
+
+<style>
+.char-desc-tooltip.v-overlay__content {
+  background: rgba(24, 24, 24, 0.97) !important;
+  color: #e6e6e6 !important;
+  border: 1px solid rgba(239, 83, 80, 0.55);
+  border-left: 3px solid #ef5350;
+  border-radius: 6px;
+  padding: 12px 14px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.55);
+  font-size: 0.8rem;
+  line-height: 1.55;
+  text-align: left;
+}
+
+.char-desc-tooltip-text {
+  white-space: pre-line;
 }
 </style>
