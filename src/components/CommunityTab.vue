@@ -170,7 +170,7 @@ const reportSent = ref(false)
 const LIMIT = 20
 const totalPages = computed(() => Math.ceil(total.value / LIMIT))
 
-const cultOptions = CULT_RELATIONSHIP_KEYS.map(k => k)
+const cultOptions: string[] = [...CULT_RELATIONSHIP_KEYS]
 const cultureOptions = Object.values(config.cultures).map(c => c.name)
 const conceptOptions = Object.values(config.concepts).map(c => c.name)
 
