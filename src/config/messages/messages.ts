@@ -210,6 +210,7 @@ export const messages = {
         diskordanz: 'Diskordanz: Entwickler, der die Basis des Codes erstellt hat, die wir verändert haben.',
         miokido: 'Miokido: Mitentwickler',
         katsu: 'Katsu: Entwickler',
+        mara: 'Mara: Entwicklerin — hat Funktionen hinzugefügt (Kultbeziehungen, weitere Tabs, Encumbrance-Berechnung u.v.m.).',
       },
     }
   },
@@ -423,6 +424,7 @@ export const messages = {
         diskordanz: 'Diskordanz: Developer who created the codebase we modified.',
         miokido: 'Miokido: Co-developer',
         katsu: 'Katsu: Developer',
+        mara: 'Mara: Developer — added features including cult relationships, additional tabs, encumbrance calculation, and more.',
       },
     }
   },
@@ -623,6 +625,7 @@ export const messages = {
         diskordanz: 'Diskordanz : Développeur ayant créé la base du code que nous avons modifié.',
         miokido: 'Miokido : Co-Développeur',
         katsu: 'Katsu : Développeur',
+        mara: 'Mara : Développeuse — a ajouté les relations de culte, les onglets supplémentaires, le calcul d\'encombrement, et bien d\'autres fonctionnalités.',
       },
     },
   }

@@ -19,6 +19,10 @@
               <p class="mt-0">{{ $t('messages.introduction.credits.diskordanz') }}</p>
               <p class="mt-0">{{ $t('messages.introduction.credits.miokido') }}</p>
               <p class="mt-0">{{ $t('messages.introduction.credits.katsu') }}</p>
+              <p class="mt-0">
+                {{ $t('messages.introduction.credits.mara') }}
+                <a href="https://github.com/ViktorMallagant/Degenesis-Alpha" target="_blank">GitHub</a>
+              </p>
 
               <div class="bottom-row mt-4">
                 <img
