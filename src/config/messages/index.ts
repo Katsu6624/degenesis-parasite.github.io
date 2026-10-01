@@ -8,6 +8,8 @@ import { clanNames } from "./clans/names";
 import { clanRanks } from "./clans/ranks";
 import { legacies } from "./legacies";
 import { inventory } from "./inventory";
+import { other } from "./other";
+import { cultRelationships } from "./cultRelationships";
 
 export default {
   de: {
@@ -20,6 +22,8 @@ export default {
     clans: clanNames.de,
     legacies: legacies.de,
     inventory: inventory.de,
+    other: other.de,
+    cultRelationships: cultRelationships.de,
   },
   en: {
     messages: messages.en,
@@ -31,6 +35,8 @@ export default {
     clans: clanNames.en,
     legacies: legacies.en,
     inventory: inventory.en,
+    other: other.en,
+    cultRelationships: cultRelationships.en,
   },
   fr: {
     messages: messages.fr,
@@ -42,5 +48,7 @@ export default {
     clans: clanNames.fr,
     legacies: legacies.fr,
     inventory: inventory.fr,
+    other: other.fr,
+    cultRelationships: cultRelationships.fr,
   }
 }

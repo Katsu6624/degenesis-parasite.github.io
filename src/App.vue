@@ -173,6 +173,8 @@
       <v-tabs v-model="tab" bg-color="grey-darken-3">
         <v-tab value="edit">{{ $t('messages.editCharacter') }}</v-tab>
         <v-tab value="sheet">{{ $t('messages.characterSheet') }}</v-tab>
+        <v-tab value="cultRelationships">{{ $t('cultRelationships.title') }}</v-tab>
+        <v-tab value="other">{{ $t('other.title') }}</v-tab>
       </v-tabs>
       <v-window v-model="tab">
         <v-window-item value="edit">
@@ -182,6 +184,12 @@
           <div class="bg-grey-lighten-3">
             <Sheet></Sheet>
           </div>
+        </v-window-item>
+        <v-window-item value="cultRelationships">
+          <CultRelationshipsTab />
+        </v-window-item>
+        <v-window-item value="other">
+          <OtherTab />
         </v-window-item>
       </v-window>
     </v-main>
@@ -235,6 +243,8 @@ import NpcGeneratorTab from '@/components/NpcGeneratorTab.vue'
 import NpcSimpleGeneratorTab from '@/components/NpcSimpleGeneratorTab.vue'
 import NameGeneratorTab from '@/components/NameGeneratorTab.vue'
 import CharactersTab from '@/components/CharactersTab.vue'
+import CultRelationshipsTab from '@/components/CultRelationshipsTab.vue'
+import OtherTab from '@/components/OtherTab.vue'
 import config from '@/config'
 import { useCharacterStore } from '@/store'
 import type { Character } from '@/store/character'

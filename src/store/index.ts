@@ -1,6 +1,14 @@
 import { type Clan } from '@/config/model'
 import { EditorMode } from '@/config/modes'
 import {
+  CULT_RELATIONSHIP_KEYS,
+  clampCultRelationship,
+  defaultCultRelationships,
+  normalizeCultRelationships,
+  type CultRelationships,
+} from '@/config/cultRelationships'
+import { defaultOtherData, normalizeOtherData, type OtherData } from '@/config/other'
+import {
   ITEMS,
   ResourceMode,
   ADVANCEMENT_THRESHOLDS,
@@ -97,6 +105,8 @@ export type State = {
   cultureSelected: boolean
   conceptSelected: boolean
   cultSelected: boolean
+  cultRelationships: CultRelationships
+  other: OtherData
 }
 
 export const useCharacterStore = defineStore('character', {
@@ -140,6 +150,8 @@ export const useCharacterStore = defineStore('character', {
     cultureSelected: false,
     conceptSelected: false,
     cultSelected: false,
+    cultRelationships: defaultCultRelationships(),
+    other: defaultOtherData(),
   }),
   getters: {
     attributeValue:
@@ -531,6 +543,8 @@ export const useCharacterStore = defineStore('character', {
         Object.keys(state.giftedBonuses).length > 0 ? state.giftedBonuses : undefined,
         state.imposteurCultName,
         state.renegadeCultNames.length > 0 ? state.renegadeCultNames : undefined,
+        state.cultRelationships,
+        state.other,
       )
     },
     maxEgo(): number {
@@ -827,6 +841,8 @@ export const useCharacterStore = defineStore('character', {
       this.giftedBonuses = character.giftedBonuses ? { ...character.giftedBonuses } : {}
       this.imposteurCultName = character.imposteurCultName ?? null
       this.renegadeCultNames = character.renegadeCultNames ?? []
+      this.cultRelationships = normalizeCultRelationships(character.cultRelationships)
+      this.other = normalizeOtherData(character.other)
       this.isLoading = false
     },
     adjustProperties() {
@@ -1265,6 +1281,24 @@ export const useCharacterStore = defineStore('character', {
       this.sidewinderOldCultName = oldCultName
       const newCult = Object.values(Cults).find(c => c.name === newCultName)
       if (newCult) this.setCult(newCult)
+    },
+    increaseCultRelationship(cult: (typeof CULT_RELATIONSHIP_KEYS)[number]) {
+      this.cultRelationships = {
+        ...this.cultRelationships,
+        [cult]: clampCultRelationship(this.cultRelationships[cult] + 1),
+      }
+    },
+    decreaseCultRelationship(cult: (typeof CULT_RELATIONSHIP_KEYS)[number]) {
+      this.cultRelationships = {
+        ...this.cultRelationships,
+        [cult]: clampCultRelationship(this.cultRelationships[cult] - 1),
+      }
+    },
+    resetCultRelationships() {
+      this.cultRelationships = defaultCultRelationships()
+    },
+    setOther(data: Partial<OtherData>) {
+      this.other = { ...this.other, ...data }
     },
   }
 })
