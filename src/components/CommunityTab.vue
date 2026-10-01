@@ -71,7 +71,6 @@
         v-for="char in characters"
         :key="char.id"
         class="char-card"
-        @click="openCard(char)"
       >
         <div class="char-card-portrait">
           <img
@@ -99,6 +98,27 @@
             <span v-else class="char-logotype-unknown">?</span>
           </div>
         </div>
+        <div class="char-card-actions" @click.stop>
+          <v-btn
+            block
+            variant="flat"
+            color="red-darken-3"
+            class="char-card-action-btn"
+            @click="importChar(char)"
+          >
+            {{ $t('community.import') }}
+          </v-btn>
+          <v-btn
+            block
+            variant="outlined"
+            color="red-darken-3"
+            class="char-card-action-btn"
+            :disabled="reportedIds.has(char.id)"
+            @click="report(char.id)"
+          >
+            {{ reportedIds.has(char.id) ? $t('community.reportSent') : $t('community.report') }}
+          </v-btn>
+        </div>
       </div>
     </div>
 
@@ -107,44 +127,6 @@
       <v-pagination v-model="page" :length="totalPages" @update:model-value="loadPage" />
     </div>
 
-    <!-- Detail dialog -->
-    <v-dialog v-model="showDetail" max-width="600">
-      <v-card v-if="selected">
-        <div v-if="selected.character_data && JSON.parse(selected.character_data).portraitKey" class="community-detail__portrait">
-          <img :src="portraitUrl(selected.id, 'main')" :alt="selected.character_name ?? ''" class="community-detail__img" />
-        </div>
-        <v-card-title class="d-flex justify-space-between align-center">
-          <span>{{ selected.character_name ?? '?' }}</span>
-          <span class="text-caption text-medium-emphasis">{{ selected.pseudo }}</span>
-        </v-card-title>
-        <v-card-text>
-          <div class="d-flex gap-2 flex-wrap mb-3">
-            <v-chip v-if="selected.cult" size="small" color="red-darken-3">{{ selected.cult }}</v-chip>
-            <v-chip v-if="selected.culture" size="small" variant="outlined">{{ selected.culture }}</v-chip>
-            <v-chip v-if="selected.concept" size="small" variant="outlined">{{ selected.concept }}</v-chip>
-          </div>
-          <p class="text-caption text-medium-emphasis">{{ $t('community.publishedOn') }} {{ formatDate(selected.created_at) }}</p>
-          <v-alert v-if="reportSent" type="success" density="compact" class="mt-2">{{ $t('community.reportSent') }}</v-alert>
-        </v-card-text>
-        <v-card-actions class="justify-space-between">
-          <v-btn
-            variant="text"
-            color="red"
-            size="small"
-            :disabled="reportSent"
-            @click="report(selected.id)"
-          >
-            {{ $t('community.report') }}
-          </v-btn>
-          <div class="d-flex gap-2">
-            <v-btn variant="text" @click="showDetail = false">{{ $t('messages.close') }}</v-btn>
-            <v-btn color="red-darken-2" variant="flat" @click="importChar(selected)">
-              {{ $t('community.import') }}
-            </v-btn>
-          </div>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
   </div>
 </template>
 
@@ -169,9 +151,7 @@ const search = ref('')
 const filterCult = ref('')
 const filterCulture = ref('')
 const filterConcept = ref('')
-const showDetail = ref(false)
-const selected = ref<CommunityCharacter | null>(null)
-const reportSent = ref(false)
+const reportedIds = ref(new Set<string>())
 
 const LIMIT = 20
 const totalPages = computed(() => Math.ceil(total.value / LIMIT))
@@ -209,29 +189,18 @@ function loadPage() {
   load()
 }
 
-function openCard(char: CommunityCharacter) {
-  selected.value = char
-  reportSent.value = false
-  showDetail.value = true
-}
-
 async function report(id: string) {
   await reportCharacter(id)
-  reportSent.value = true
+  reportedIds.value = new Set([...reportedIds.value, id])
 }
 
 function importChar(char: CommunityCharacter) {
   try {
     const data = JSON.parse(char.character_data)
     store.loadCharacter(data)
-    showDetail.value = false
   } catch {
     // ignore
   }
-}
-
-function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString()
 }
 
 function charData(char: CommunityCharacter): Record<string, unknown> {
@@ -367,14 +336,16 @@ onMounted(load)
   flex-shrink: 0;
 }
 
-.community-detail__portrait {
-  max-height: 300px;
-  overflow: hidden;
+.char-card-actions {
+  padding: 8px 12px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
-.community-detail__img {
-  width: 100%;
-  object-fit: cover;
-  max-height: 300px;
+.char-card-action-btn {
+  font-size: 0.73rem !important;
+  letter-spacing: 0.06em !important;
+  justify-content: center !important;
 }
 </style>
