@@ -825,7 +825,7 @@ export const useCharacterStore = defineStore('character', {
       character.potentials &&
         character.potentials.forEach(([name, v]) => {
           const potential = PotentialsByName.get(name)
-          potential && this.setPotential(potential, v)
+          potential && this.potentials.set(potential, Math.min(v, 3))
         })
       character.legacies &&
         character.legacies.forEach(([name, v]) => {
