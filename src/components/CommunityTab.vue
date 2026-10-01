@@ -110,7 +110,12 @@
               </template>
             </v-tooltip>
           </div>
-          <div v-if="char.description" class="char-card-description">{{ char.description }}</div>
+          <div
+            v-if="char.description"
+            class="char-card-description"
+            :class="{ 'char-card-description--open': expandedDescs.has(char.id) }"
+            @click.stop="toggleDesc(char.id)"
+          >{{ char.description }}</div>
         </div>
         <div class="char-card-actions" @click.stop>
           <v-btn
@@ -258,6 +263,13 @@ const filterCult = ref('')
 const filterCulture = ref('')
 const filterConcept = ref('')
 const reportedIds = ref(new Set<string>())
+const expandedDescs = ref(new Set<string>())
+function toggleDesc(id: string) {
+  const next = new Set(expandedDescs.value)
+  if (next.has(id)) next.delete(id)
+  else next.add(id)
+  expandedDescs.value = next
+}
 const importedSnack = ref(false)
 
 const showEditDesc = ref(false)
@@ -503,12 +515,20 @@ onMounted(load)
   color: rgba(var(--v-theme-on-surface), 0.6);
   margin-top: 10px;
   line-height: 1.4;
+  cursor: pointer;
+  white-space: pre-line;
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-align: left;
   width: 100%;
+}
+
+.char-card-description--open {
+  display: block;
+  -webkit-line-clamp: unset;
+  overflow: visible;
 }
 
 .char-card-icons {
