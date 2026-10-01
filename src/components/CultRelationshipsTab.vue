@@ -1,13 +1,24 @@
 <template>
-  <div class="cult-relationships-tab pa-4">
-    <div class="d-flex justify-space-between align-center mb-4">
-      <span class="text-h6 label text-uppercase">{{ $t('cultRelationships.title') }}</span>
-      <v-btn size="small" variant="outlined" color="red-darken-2" @click="showResetDialog = true">
+  <section class="cult-relationships">
+    <header class="cult-relationships__header">
+      <div>
+        <h1 class="text-h5 mb-1">{{ $t('cultRelationships.title') }}</h1>
+        <p class="text-body-2 cult-relationships__instructions mb-0">
+          {{ $t('cultRelationships.help') }}
+        </p>
+      </div>
+      <v-btn
+        :prepend-icon="mdiRestore"
+        color="red-darken-2"
+        variant="outlined"
+        :disabled="!hasRelationships"
+        @click="showResetConfirmation = true"
+      >
         {{ $t('cultRelationships.reset') }}
       </v-btn>
-    </div>
+    </header>
 
-    <v-expansion-panels class="mb-4" variant="accordion">
+    <v-expansion-panels class="cult-relationships__rules mb-6" variant="accordion">
       <v-expansion-panel>
         <v-expansion-panel-title class="label text-uppercase text-caption">
           {{ $t('cultRelationships.rulesTitle') }}
@@ -18,154 +29,104 @@
       </v-expansion-panel>
     </v-expansion-panels>
 
-    <div class="cult-grid">
-      <div
-        v-for="cult in CULT_RELATIONSHIP_KEYS"
-        :key="cult"
+    <div class="cult-relationships__grid">
+      <article
+        v-for="card in cultCards"
+        :key="card.key"
         class="cult-card"
-        @click="store.increaseCultRelationship(cult)"
-        @contextmenu.prevent="store.decreaseCultRelationship(cult)"
-        :title="$t(`cultRelationships.cults.${cult}`)"
+        :class="{ 'cult-card--centered': card.centered }"
+        :tabindex="0"
+        :aria-label="card.name"
+        @click="store.increaseCultRelationship(card.key)"
+        @contextmenu.prevent="store.decreaseCultRelationship(card.key)"
+        @keydown.enter.prevent="store.increaseCultRelationship(card.key)"
+        @keydown.space.prevent="store.increaseCultRelationship(card.key)"
+        @keydown.up.prevent="store.increaseCultRelationship(card.key)"
+        @keydown.down.prevent="store.decreaseCultRelationship(card.key)"
       >
-        <div class="cult-image-wrapper">
-          <img
-            v-if="imageExists(cult)"
-            :src="cultImageSrc(cult)"
-            :alt="$t(`cultRelationships.cults.${cult}`)"
-            class="cult-image"
-          />
-          <div v-else class="cult-placeholder">
-            <span class="cult-name-abbr">{{ cultAbbr(cult) }}</span>
-          </div>
-          <div class="die-overlay">
-            <RelationshipDie :value="store.cultRelationships[cult]" />
-          </div>
-        </div>
-        <div class="cult-label text-caption text-center mt-1">
-          {{ $t(`cultRelationships.cults.${cult}`) }}
-        </div>
-      </div>
+        <img :src="card.image" :alt="card.name" class="cult-card__image" draggable="false" />
+        <RelationshipDie :value="store.cultRelationships[card.key]" />
+      </article>
     </div>
 
-    <v-dialog v-model="showResetDialog" max-width="320">
+    <v-dialog v-model="showResetConfirmation" max-width="480">
       <v-card>
+        <v-card-title>{{ $t('cultRelationships.reset') }}</v-card-title>
         <v-card-text>{{ $t('cultRelationships.resetConfirm') }}</v-card-text>
-        <v-card-actions>
-          <v-spacer />
-          <v-btn @click="showResetDialog = false">{{ $t('messages.cancel') }}</v-btn>
-          <v-btn color="red-darken-2" @click="confirmReset">{{ $t('cultRelationships.reset') }}</v-btn>
+        <v-card-actions class="justify-end">
+          <v-btn variant="text" @click="showResetConfirmation = false">
+            {{ $t('messages.cancel') }}
+          </v-btn>
+          <v-btn color="red-darken-2" variant="flat" @click="confirmReset">
+            {{ $t('cultRelationships.reset') }}
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
-  </div>
+  </section>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
+import { mdiRestore } from '@mdi/js'
 import { useCharacterStore } from '@/store'
-import { CULT_RELATIONSHIP_KEYS, type CultRelationshipKey } from '@/config/cultRelationships'
+import type { CultRelationshipKey } from '@/config/cultRelationships'
 import RelationshipDie from './RelationshipDie.vue'
 
 const store = useCharacterStore()
-const showResetDialog = ref(false)
+const showResetConfirmation = ref(false)
+const baseUrl = import.meta.env.BASE_URL
 
-// Map cult keys to image filenames (adjust if actual files differ)
-const cultImageFilenames: Record<CultRelationshipKey, string> = {
-  spitalians: '01-CULT-CARDS-SPITALIAN.png',
-  chroniclers: '02-CULT-CARDS-CHRONICLER.png',
-  hellvetics: '03-CULT-CARDS-HELLVETIC.png',
-  judges: '04-CULT-CARDS-JUDGE.png',
-  clanners: '05-CULT-CARDS-CLANNER.png',
-  scrappers: '06-CULT-CARDS-SCRAPPER.png',
-  neolibyans: '07-CULT-CARDS-NEOLIBYAN.png',
-  scourgers: '08-CULT-CARDS-SCOURGER.png',
-  anubians: '09-CULT-CARDS-ANUBIAN.png',
-  jehammedans: '10-CULT-CARDS-JEHAMMEDAN.png',
-  apocalyptics: '11-CULT-CARDS-APOCALYPTICS.png',
-  anabaptists: '12-CULT-CARDS-ANABAPTIST.png',
-  palers: '13-CULT-CARDS-PALER.png',
-}
+const cultCards: Array<{ key: CultRelationshipKey; name: string; image: string; centered?: boolean }> = [
+  { key: 'spitalians',   name: 'Spitalians',   image: `${baseUrl}cult-cards/01-CULT-CARDS-SPITALIAN.png` },
+  { key: 'chroniclers',  name: 'Chroniclers',  image: `${baseUrl}cult-cards/02-CULT-CARDS-CHRONICLER.png` },
+  { key: 'hellvetics',   name: 'Hellvetics',   image: `${baseUrl}cult-cards/03-CULT-CARDS-HELLVETIC.png` },
+  { key: 'judges',       name: 'Judges',       image: `${baseUrl}cult-cards/04-CULT-CARDS-JUDGE.png` },
+  { key: 'clanners',     name: 'Clanners',     image: `${baseUrl}cult-cards/05-CULT-CARDS-CLANNER.png` },
+  { key: 'scrappers',    name: 'Scrappers',    image: `${baseUrl}cult-cards/06-CULT-CARDS-SCRAPPER.png` },
+  { key: 'neolibyans',   name: 'Neolibyans',   image: `${baseUrl}cult-cards/07-CULT-CARDS-NEOLIBYAN.png` },
+  { key: 'scourgers',    name: 'Scourgers',    image: `${baseUrl}cult-cards/08-CULT-CARDS-SCOURGER.png` },
+  { key: 'anubians',     name: 'Anubians',     image: `${baseUrl}cult-cards/09-CULT-CARDS-ANUBIAN.png` },
+  { key: 'jehammedans',  name: 'Jehammedans',  image: `${baseUrl}cult-cards/10-CULT-CARDS-JEHAMMEDAN.png` },
+  { key: 'apocalyptics', name: 'Apocalyptics', image: `${baseUrl}cult-cards/11-CULT-CARDS-APOCALYPTICS.png` },
+  { key: 'anabaptists',  name: 'Anabaptists',  image: `${baseUrl}cult-cards/12-CULT-CARDS-ANABAPTIST.png` },
+  { key: 'palers',       name: 'Palers',       image: `${baseUrl}cult-cards/13-CULT-CARDS-PALER.png`, centered: true },
+]
 
-function cultImageSrc(cult: CultRelationshipKey): string {
-  return `${import.meta.env.BASE_URL}cult-cards/${cultImageFilenames[cult]}`
-}
-
-function imageExists(_cult: CultRelationshipKey): boolean {
-  return true
-}
-
-function cultAbbr(cult: CultRelationshipKey): string {
-  return cult.slice(0, 3).toUpperCase()
-}
+const hasRelationships = computed(() =>
+  Object.values(store.cultRelationships).some((v) => v !== 0),
+)
 
 function confirmReset() {
   store.resetCultRelationships()
-  showResetDialog.value = false
+  showResetConfirmation.value = false
 }
 </script>
 
 <style scoped>
-.cult-relationships-tab {
-  max-width: 900px;
+.cult-relationships {
+  min-height: calc(100vh - 112px);
+  padding: clamp(16px, 3vw, 32px);
+  color: #f5f5f5;
+  background: radial-gradient(circle at 50% 0%, rgba(120, 0, 0, 0.16), transparent 32rem), #080808;
+}
+
+.cult-relationships__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  width: min(1500px, 100%);
+  margin: 0 auto 16px;
+}
+
+.cult-relationships__instructions {
+  color: rgba(255, 255, 255, 0.68);
+}
+
+.cult-relationships__rules {
+  width: min(1500px, 100%);
   margin: 0 auto;
-}
-
-.cult-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  gap: 12px;
-}
-
-.cult-card {
-  cursor: pointer;
-  user-select: none;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.cult-image-wrapper {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 2/3;
-  border-radius: 6px;
-  overflow: hidden;
-  border: 2px solid rgba(128, 128, 128, 0.3);
-  transition: border-color 0.15s ease;
-}
-
-.cult-card:hover .cult-image-wrapper {
-  border-color: rgba(204, 0, 0, 0.6);
-}
-
-.cult-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-.cult-placeholder {
-  width: 100%;
-  height: 100%;
-  background: rgba(80, 80, 80, 0.4);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.cult-name-abbr {
-  font-size: 1.1rem;
-  font-weight: 900;
-  letter-spacing: 0.05em;
-  color: rgba(200, 200, 200, 0.8);
-  font-family: monospace;
-}
-
-.die-overlay {
-  position: absolute;
-  bottom: 6px;
-  right: 6px;
 }
 
 .rules-text {
@@ -175,15 +136,66 @@ function confirmReset() {
   color: rgb(var(--v-theme-on-surface));
 }
 
-.cult-label {
-  font-size: 0.65rem;
-  font-weight: 600;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: rgba(180, 180, 180, 0.8);
-  max-width: 100%;
+.cult-relationships__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(12px, 2vw, 22px);
+  align-items: start;
+  width: min(1500px, 100%);
+  margin: 0 auto;
+}
+
+.cult-card {
+  position: relative;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 12px;
+  background: #000;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.48);
+  cursor: pointer;
+  user-select: none;
+  transition:
+    transform 150ms ease,
+    border-color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.cult-card:hover,
+.cult-card:focus-visible {
+  border-color: rgba(200, 20, 32, 0.78);
+  outline: none;
+  transform: translateY(-3px);
+  box-shadow:
+    0 13px 30px rgba(0, 0, 0, 0.62),
+    0 0 0 2px rgba(160, 0, 12, 0.2);
+}
+
+.cult-card--centered {
+  grid-column: 1 / -1;
+  width: calc(50% - clamp(6px, 1vw, 11px));
+  justify-self: center;
+}
+
+.cult-card__image {
+  display: block;
+  width: 100%;
+  height: auto;
+  pointer-events: none;
+}
+
+@media (max-width: 850px) {
+  .cult-relationships__header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .cult-relationships__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .cult-card--centered {
+    grid-column: auto;
+    width: 100%;
+  }
 }
 </style>

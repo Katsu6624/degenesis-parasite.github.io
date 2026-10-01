@@ -3,6 +3,7 @@ export const cultRelationships = {
     title: 'Relations de Culte',
     reset: 'Réinitialiser',
     resetConfirm: 'Remettre toutes les relations à 0 ?',
+    help: 'Clic gauche : améliorer la relation · Clic droit : détériorer la relation',
     rulesTitle: 'Relations avec les Cultes',
     rules: `Au début de la carrière d'un groupe de personnages, aucune des 13 cartes de culte n'est posée sur la table. Mais dès que les personnages rencontrent un premier culte, le Meneur de Jeu choisit la carte correspondante dans le paquet et la pose devant les joueurs. S'il place également un dé blanc ou noir dessus, c'est que quelque chose a changé dans la relation entre ce culte et les personnages :
 
@@ -48,6 +49,7 @@ Les cartes sont un moyen rapide de donner aux nouveaux joueurs une idée des cul
     title: 'Cult Relationships',
     reset: 'Reset',
     resetConfirm: 'Reset all relationships to 0?',
+    help: 'Left click: improve relationship · Right click: worsen relationship',
     rulesTitle: 'Cult Relationships',
     rules: `At the beginning of the career of a group of characters, none of the 13 cult cards are on the table. Once the characters meet their first cult, however, the game master chooses the respective card from the deck and puts it in front of the players. If he also puts a white or a black die on top of it, something in the relationship between the cult and the characters has changed:
 
@@ -93,6 +95,7 @@ The cards are a quick and dirty possibility to convey a feeling of the cults to 
     title: 'Kultbeziehungen',
     reset: 'Zurücksetzen',
     resetConfirm: 'Alle Beziehungen auf 0 zurücksetzen?',
+    help: 'Linksklick: Beziehung verbessern · Rechtsklick: Beziehung verschlechtern',
     rulesTitle: 'Beziehungen mit den Kulten',
     rules: `Zu Beginn der Karriere einer Gruppe von Charakteren liegt keine der 13 Kultkarten auf dem Tisch. Sobald die Charaktere jedoch ihren ersten Kult treffen, wählt der Spielleiter die entsprechende Karte aus dem Stapel und legt sie vor die Spieler. Wenn er außerdem einen weißen oder schwarzen Würfel darauflegt, hat sich etwas in der Beziehung zwischen dem Kult und den Charakteren verändert:
 

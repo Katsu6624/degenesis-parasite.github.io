@@ -1,132 +1,120 @@
 <template>
-  <div class="relationship-die" :class="[valueClass, { bounce: isBouncing }]">
-    <div class="die-face">
-      <span v-if="value !== 0" class="die-value">{{ value > 0 ? '+' : '' }}{{ value }}</span>
-      <span v-else class="die-zero">0</span>
-      <div class="pips">
-        <div
-          v-for="pip in activePips"
-          :key="pip"
-          class="pip"
-          :style="pipStyle(pip)"
-        ></div>
-      </div>
-    </div>
+  <div
+    v-if="value !== 0"
+    class="relationship-die"
+    :class="[
+      { 'relationship-die--positive': value > 0, 'relationship-die--negative': value < 0 },
+      { 'relationship-die--bouncing': bouncing }
+    ]"
+    :aria-label="`${value > 0 ? 'Positive' : 'Negative'} relationship ${absoluteValue}`"
+    role="img"
+    @animationend="bouncing = false"
+  >
+    <span
+      v-for="pip in pipLayouts[absoluteValue]"
+      :key="pip"
+      class="relationship-die__pip"
+      :class="`relationship-die__pip--${pip}`"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, watch, computed, nextTick } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
 
 const props = defineProps<{ value: number }>()
 
-const isBouncing = ref(false)
+const absoluteValue = computed(() => Math.abs(props.value))
+const bouncing = ref(false)
+
+const pipLayouts: Record<number, number[]> = {
+  1: [5],
+  2: [1, 9],
+  3: [1, 5, 9],
+  4: [1, 3, 7, 9],
+  5: [1, 3, 5, 7, 9],
+  6: [1, 3, 4, 6, 7, 9],
+}
 
 watch(
   () => props.value,
-  () => {
-    isBouncing.value = false
-    nextTick(() => {
-      isBouncing.value = true
-      setTimeout(() => { isBouncing.value = false }, 400)
-    })
+  async (value, previousValue) => {
+    if (value === previousValue || value === 0) return
+    bouncing.value = false
+    await nextTick()
+    bouncing.value = true
   },
 )
-
-const valueClass = computed(() => {
-  if (props.value > 0) return 'positive'
-  if (props.value < 0) return 'negative'
-  return 'neutral'
-})
-
-// Pip layout: positions in a 3x3 grid (row 0-2, col 0-2)
-const pipLayouts: Record<number, [number, number][]> = {
-  1: [[1, 1]],
-  2: [[0, 0], [2, 2]],
-  3: [[0, 0], [1, 1], [2, 2]],
-  4: [[0, 0], [0, 2], [2, 0], [2, 2]],
-  5: [[0, 0], [0, 2], [1, 1], [2, 0], [2, 2]],
-  6: [[0, 0], [0, 2], [1, 0], [1, 2], [2, 0], [2, 2]],
-}
-
-const abs = computed(() => Math.min(Math.abs(props.value), 6))
-const activePips = computed(() => pipLayouts[abs.value] ? Array.from({ length: abs.value }, (_, i) => i) : [])
-
-function pipStyle(index: number): Record<string, string> {
-  const layout = pipLayouts[abs.value]
-  if (!layout || !layout[index]) return {}
-  const [row, col] = layout[index]
-  return {
-    top: `${8 + row * 10}px`,
-    left: `${8 + col * 10}px`,
-  }
-}
 </script>
 
 <style scoped>
 .relationship-die {
-  width: 40px;
-  height: 40px;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  font-weight: 900;
-  font-size: 0.85rem;
-  user-select: none;
-  transition: transform 0.15s ease;
-  border: 2px solid rgba(0, 0, 0, 0.3);
-}
-
-.relationship-die.positive {
-  background: #f0f0f0;
-  color: #111;
-}
-
-.relationship-die.negative {
-  background: #1a1a1a;
-  color: #eee;
-}
-
-.relationship-die.neutral {
-  background: #555;
-  color: #ccc;
-}
-
-.die-face {
-  position: relative;
-  width: 100%;
-  height: 100%;
-}
-
-.die-value, .die-zero {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 0.8rem;
-  font-weight: 900;
+  right: clamp(10px, 2vw, 18px);
+  bottom: clamp(10px, 2vw, 18px);
   z-index: 2;
+  width: clamp(42px, 5.2vw, 62px);
+  aspect-ratio: 1;
+  border-radius: 20%;
+  box-shadow:
+    0 10px 18px rgba(0, 0, 0, 0.55),
+    inset 0 3px 3px rgba(255, 255, 255, 0.38),
+    inset 0 -4px 5px rgba(0, 0, 0, 0.28);
+  transform: perspective(150px) rotateX(10deg) rotateY(-9deg);
+  transform-origin: center bottom;
 }
 
-.pip {
+.relationship-die--positive {
+  border: 1px solid rgba(0, 0, 0, 0.25);
+  background: linear-gradient(145deg, #fff 6%, #ededed 48%, #c9c9c9 100%);
+}
+
+.relationship-die--negative {
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: linear-gradient(145deg, #454545 0%, #151515 52%, #020202 100%);
+}
+
+.relationship-die--bouncing {
+  animation: relationship-die-bounce 420ms cubic-bezier(0.2, 0.8, 0.25, 1);
+}
+
+.relationship-die__pip {
   position: absolute;
-  width: 5px;
-  height: 5px;
+  width: 14%;
+  aspect-ratio: 1;
   border-radius: 50%;
-  background: currentColor;
-  opacity: 0.4;
+  transform: translate(-50%, -50%);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.35);
 }
 
-.bounce {
-  animation: die-bounce 0.4s ease;
+.relationship-die--positive .relationship-die__pip {
+  background: #111;
 }
 
-@keyframes die-bounce {
-  0% { transform: scale(1); }
-  30% { transform: scale(1.3); }
-  60% { transform: scale(0.9); }
-  100% { transform: scale(1); }
+.relationship-die--negative .relationship-die__pip {
+  background: #f5f5f5;
+  box-shadow: 0 0 2px rgba(255, 255, 255, 0.5);
+}
+
+.relationship-die__pip--1 { left: 25%; top: 25%; }
+.relationship-die__pip--2 { left: 50%; top: 25%; }
+.relationship-die__pip--3 { left: 75%; top: 25%; }
+.relationship-die__pip--4 { left: 25%; top: 50%; }
+.relationship-die__pip--5 { left: 50%; top: 50%; }
+.relationship-die__pip--6 { left: 75%; top: 50%; }
+.relationship-die__pip--7 { left: 25%; top: 75%; }
+.relationship-die__pip--8 { left: 50%; top: 75%; }
+.relationship-die__pip--9 { left: 75%; top: 75%; }
+
+@keyframes relationship-die-bounce {
+  0%   { transform: perspective(150px) rotateX(10deg) rotateY(-9deg) translateY(0) scale(1); }
+  35%  { transform: perspective(150px) rotateX(2deg) rotateY(7deg) translateY(-16px) scale(1.08); }
+  62%  { transform: perspective(150px) rotateX(13deg) rotateY(-12deg) translateY(2px) scale(0.97); }
+  82%  { transform: perspective(150px) rotateX(8deg) rotateY(-6deg) translateY(-4px) scale(1.02); }
+  100% { transform: perspective(150px) rotateX(10deg) rotateY(-9deg) translateY(0) scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .relationship-die--bouncing { animation: none; }
 }
 </style>
