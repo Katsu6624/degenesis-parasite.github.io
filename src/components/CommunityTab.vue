@@ -132,6 +132,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { mdiAccount } from '@mdi/js'
 import { listCharacters, reportCharacter, portraitUrl } from '@/services/communityApi'
 import type { CommunityCharacter } from '@/services/communityApi'
@@ -140,6 +141,7 @@ import { CULT_RELATIONSHIP_KEYS } from '@/config/cultRelationships'
 import config from '@/config'
 
 const store = useCharacterStore()
+const { t } = useI18n()
 const baseUrl = import.meta.env.BASE_URL
 
 const characters = ref<CommunityCharacter[]>([])
@@ -156,9 +158,15 @@ const reportedIds = ref(new Set<string>())
 const LIMIT = 20
 const totalPages = computed(() => Math.ceil(total.value / LIMIT))
 
-const cultOptions: string[] = [...CULT_RELATIONSHIP_KEYS]
-const cultureOptions = Object.values(config.cultures).map(c => c.name)
-const conceptOptions = Object.values(config.concepts).map(c => c.name)
+const cultOptions = computed(() =>
+  CULT_RELATIONSHIP_KEYS.map(k => ({ title: t(`culturesConceptsCults.${k}`), value: k }))
+)
+const cultureOptions = computed(() =>
+  Object.values(config.cultures).map(c => ({ title: t(`culturesConceptsCults.${c.name}`), value: c.name }))
+)
+const conceptOptions = computed(() =>
+  Object.values(config.concepts).map(c => ({ title: t(`culturesConceptsCults.${c.name}`), value: c.name }))
+)
 
 async function load() {
   loading.value = true
