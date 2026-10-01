@@ -49,14 +49,21 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { mdiContentCopy } from '@mdi/js'
 import { useCharacterStore } from '@/store'
 import { publishCharacter } from '@/services/communityApi'
 import type { PublishResult } from '@/services/communityApi'
 
-const model = defineModel<boolean>({ default: false })
-const props = defineProps<{ prefilledCharacter?: Record<string, unknown> | null }>()
+const props = defineProps<{
+  modelValue: boolean
+  prefilledCharacter?: Record<string, unknown> | null
+}>()
+const emit = defineEmits<{ (e: 'update:modelValue', v: boolean): void }>()
+const model = computed({
+  get: () => props.modelValue,
+  set: (v) => emit('update:modelValue', v),
+})
 const store = useCharacterStore()
 
 const pseudo = ref('')
@@ -99,7 +106,7 @@ function copySecret() {
 }
 
 function close() {
-  model.value = false
+  emit('update:modelValue', false)
   if (result.value) {
     pseudo.value = ''
     result.value = null
