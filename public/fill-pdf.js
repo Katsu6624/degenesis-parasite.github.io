@@ -675,7 +675,8 @@
       var inGallery = window.__charactersGalleryMode && window.__charactersGalleryMode.value;
       var inNpc = window.__npcGeneratorMode && window.__npcGeneratorMode.value;
       var inNameGen = window.__nameGeneratorMode && window.__nameGeneratorMode.value;
-      var show = hasName && !onInventoryTab && !inGallery && !inNpc && !inNameGen;
+      var inCommunity = window.__communityMode && window.__communityMode.value;
+      var show = hasName && !onInventoryTab && !inGallery && !inNpc && !inNameGen && !inCommunity;
       btnFR.style.display = (show && (locale === "fr" || locale === null)) ? "block" : "none";
       btnEN.style.display = (show && locale === "en") ? "block" : "none";
     }, 500);

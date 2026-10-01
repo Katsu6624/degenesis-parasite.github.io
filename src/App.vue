@@ -485,6 +485,7 @@ const charactersGalleryMode = ref(false)
 ;(window as any).__charactersGalleryMode = charactersGalleryMode
 ;(window as any).__npcGeneratorMode = npcGeneratorMode
 ;(window as any).__nameGeneratorMode = nameGeneratorMode
+;(window as any).__communityMode = communityMode
 const openCharactersGallery = () => {
   charactersGalleryMode.value = true
   npcGeneratorMode.value = false

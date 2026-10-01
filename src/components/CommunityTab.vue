@@ -136,6 +136,11 @@
       <v-pagination v-model="page" :length="totalPages" @update:model-value="loadPage" />
     </div>
 
+    <!-- Import snackbar -->
+    <v-snackbar v-model="importedSnack" timeout="3000" color="green-darken-2">
+      {{ $t('community.importSuccess') }}
+    </v-snackbar>
+
     <!-- Delete dialog -->
     <v-dialog v-model="showDelete" max-width="440" persistent>
       <v-card>
@@ -196,6 +201,7 @@ const filterCult = ref('')
 const filterCulture = ref('')
 const filterConcept = ref('')
 const reportedIds = ref(new Set<string>())
+const importedSnack = ref(false)
 
 const showDelete = ref(false)
 const deleteTarget = ref<CommunityCharacter | null>(null)
@@ -279,6 +285,7 @@ async function importChar(char: CommunityCharacter) {
     const data = JSON.parse(char.character_data)
     const dataWithPortraits = await fetchPortraitsForImport(char.id, data)
     store.loadCharacter(dataWithPortraits as unknown as Character)
+    importedSnack.value = true
   } catch {
     // ignore
   }
