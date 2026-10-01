@@ -209,7 +209,7 @@
         title: 'Credits',
         diskordanz: 'Diskordanz: Entwickler, der die Basis des Codes erstellt hat, die wir verändert haben.',
         miokido: 'Miokido: Mitentwickler',
-        katsu: 'Katsu: Entwickler',
+        katsu: 'Katsu: Hauptentwickler',
         mara: 'Mara: Entwicklerin, hat Funktionen hinzugefügt (Kultbeziehungen, weitere Tabs, Encumbrance-Berechnung u.v.m.).',
       },
     }
@@ -423,7 +423,7 @@
         title: 'Credits',
         diskordanz: 'Diskordanz: Developer who created the codebase we modified.',
         miokido: 'Miokido: Co-developer',
-        katsu: 'Katsu: Developer',
+        katsu: 'Katsu: Lead Developer',
         mara: 'Mara: Developer, added features including cult relationships, additional tabs, encumbrance calculation, and more.',
       },
     }
@@ -624,7 +624,7 @@
         title: 'Crédits',
         diskordanz: 'Diskordanz : Développeur ayant créé la base du code que nous avons modifié.',
         miokido: 'Miokido : Co-Développeur',
-        katsu: 'Katsu : Développeur',
+        katsu: 'Katsu : Développeur principal',
         mara: 'Mara : Développeuse, a ajouté les relations de culte, les onglets supplémentaires, le calcul d\'encombrement, et bien d\'autres fonctionnalités.',
       },
     },
