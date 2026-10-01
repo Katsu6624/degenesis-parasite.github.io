@@ -118,6 +118,15 @@
           >
             {{ reportedIds.has(char.id) ? $t('community.reportSent') : $t('community.report') }}
           </v-btn>
+          <v-btn
+            block
+            variant="text"
+            color="grey"
+            class="char-card-action-btn"
+            @click="openDelete(char)"
+          >
+            {{ $t('community.delete') }}
+          </v-btn>
         </div>
       </div>
     </div>
@@ -127,14 +136,46 @@
       <v-pagination v-model="page" :length="totalPages" @update:model-value="loadPage" />
     </div>
 
+    <!-- Delete dialog -->
+    <v-dialog v-model="showDelete" max-width="440" persistent>
+      <v-card>
+        <v-card-title class="text-uppercase label">{{ $t('community.deleteTitle') }}</v-card-title>
+        <v-card-text>
+          <p class="text-body-2 mb-4">{{ $t('community.deleteDesc') }}</p>
+          <v-text-field
+            v-model="deleteSecret"
+            :label="$t('community.deleteSecret')"
+            variant="outlined"
+            density="compact"
+            :type="showDeleteSecret ? 'text' : 'password'"
+            :append-inner-icon="showDeleteSecret ? mdiEyeOff : mdiEye"
+            @click:append-inner="showDeleteSecret = !showDeleteSecret"
+          />
+          <v-alert v-if="deleteError" type="error" density="compact" class="mt-2">{{ deleteError }}</v-alert>
+        </v-card-text>
+        <v-card-actions class="justify-end">
+          <v-btn variant="text" @click="showDelete = false">{{ $t('messages.close') }}</v-btn>
+          <v-btn
+            color="red-darken-2"
+            variant="flat"
+            :loading="deleteLoading"
+            :disabled="!deleteSecret.trim()"
+            @click="doDelete"
+          >
+            {{ $t('community.deleteConfirm') }}
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { mdiAccount } from '@mdi/js'
-import { listCharacters, reportCharacter, portraitUrl } from '@/services/communityApi'
+import { mdiAccount, mdiEye, mdiEyeOff } from '@mdi/js'
+import { listCharacters, reportCharacter, deleteCharacter, portraitUrl } from '@/services/communityApi'
 import type { CommunityCharacter } from '@/services/communityApi'
 import { useCharacterStore } from '@/store'
 import { CULT_RELATIONSHIP_KEYS } from '@/config/cultRelationships'
@@ -154,6 +195,13 @@ const filterCult = ref('')
 const filterCulture = ref('')
 const filterConcept = ref('')
 const reportedIds = ref(new Set<string>())
+
+const showDelete = ref(false)
+const deleteTarget = ref<CommunityCharacter | null>(null)
+const deleteSecret = ref('')
+const deleteLoading = ref(false)
+const deleteError = ref('')
+const showDeleteSecret = ref(false)
 
 const LIMIT = 20
 const totalPages = computed(() => Math.ceil(total.value / LIMIT))
@@ -195,6 +243,29 @@ function onFilterChange() {
 
 function loadPage() {
   load()
+}
+
+function openDelete(char: CommunityCharacter) {
+  deleteTarget.value = char
+  deleteSecret.value = ''
+  deleteError.value = ''
+  showDeleteSecret.value = false
+  showDelete.value = true
+}
+
+async function doDelete() {
+  if (!deleteTarget.value || !deleteSecret.value.trim()) return
+  deleteLoading.value = true
+  deleteError.value = ''
+  try {
+    await deleteCharacter(deleteTarget.value.id, deleteSecret.value.trim())
+    characters.value = characters.value.filter(c => c.id !== deleteTarget.value!.id)
+    showDelete.value = false
+  } catch (e) {
+    deleteError.value = e instanceof Error ? e.message : 'Erreur'
+  } finally {
+    deleteLoading.value = false
+  }
 }
 
 async function report(id: string) {
