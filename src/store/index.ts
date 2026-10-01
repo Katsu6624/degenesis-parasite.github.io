@@ -95,6 +95,7 @@ export type State = {
   expertLCModified: boolean
   ignoreAutoLC: boolean
   legacyChoices: Record<string, { attributes?: string[]; skills?: string[] }>
+  potentialChoices: Record<string, string>
   errorMessage: string | null
   sidewinderOldCultName: string | null
   imposteurCultName: string | null
@@ -140,6 +141,7 @@ export const useCharacterStore = defineStore('character', {
     expertLCModified: false,
     ignoreAutoLC: false,
     legacyChoices: {},
+    potentialChoices: {},
     errorMessage: null,
     sidewinderOldCultName: null,
     imposteurCultName: null,
@@ -545,6 +547,7 @@ export const useCharacterStore = defineStore('character', {
         state.renegadeCultNames.length > 0 ? state.renegadeCultNames : undefined,
         state.cultRelationships,
         state.other,
+        Object.keys(state.potentialChoices).length > 0 ? state.potentialChoices : undefined,
       )
     },
     maxEgo(): number {
@@ -835,6 +838,7 @@ export const useCharacterStore = defineStore('character', {
       this.resourceMode = character.resourceMode ?? ResourceMode.A
       this.manualLC = character.manualLC ?? null
       this.legacyChoices = character.legacyChoices ? { ...character.legacyChoices } : {}
+      this.potentialChoices = character.potentialChoices ? { ...character.potentialChoices } : {}
       this.sidewinderOldCultName = character.sidewinderOldCultName ?? null
       this.mentalPowerChoice = character.mentalPowerChoice ?? null
       this.mentalResistanceChoice = character.mentalResistanceChoice ?? null
@@ -1053,6 +1057,9 @@ export const useCharacterStore = defineStore('character', {
       }
       
       this.potentials.set(potential, newValue())
+    },
+    setPotentialChoice(potentialName: string, skillName: string) {
+      this.potentialChoices = { ...this.potentialChoices, [potentialName]: skillName }
     },
     setLegacyChoices(legacyName: string, choices: { attributes?: string[]; skills?: string[] } | null) {
       if (!choices || ((!choices.attributes || choices.attributes.length === 0) && (!choices.skills || choices.skills.length === 0))) {

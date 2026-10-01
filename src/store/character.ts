@@ -40,6 +40,7 @@ export class Character {
     readonly renegadeCultNames?: string[],
     readonly cultRelationships?: CultRelationships,
     readonly other?: OtherData,
+    readonly potentialChoices?: Record<string, string>,
   ) {
     this.storageVersion = 'v1'
     const legacyEditorMode = wasCreatedWithFreeMode ? (wasCreatedWithFreeMode ? EditorMode.Free : editorMode) : editorMode
