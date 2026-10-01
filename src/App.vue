@@ -15,7 +15,7 @@
             role="button"
             link
             @click="openCharactersGallery"
-            :variant="charactersGalleryMode ? 'tonal' : 'plain'"
+            :class="charactersGalleryMode ? 'v-list-item--active' : ''"
           >
             {{ $t('messages.myCharacters') }}
             <template v-slot:prepend>
