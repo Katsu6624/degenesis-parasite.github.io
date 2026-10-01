@@ -1604,7 +1604,7 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
   },
   'rapiere': {
     name: `Rapier`,
-    properties: `Smooth Running (2T)`,
+    properties: `Piercing (2), Smooth Running (2T)`,
   },
   'lance-katharsys': {
     name: `Lance`,
