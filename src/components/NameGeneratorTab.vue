@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <v-container class="name-gen-container">
     <div class="intro-block">
       <div class="intro-title">NOMEN EST OMEN</div>
@@ -87,7 +87,7 @@
     </div>
 
     <div v-if="history.length > 1" class="history-section mt-8">
-      <div class="history-title">— {{ $t('messages.nameGenerator.sessionHistory') }} —</div>
+      <div class="history-title"> {{ $t('messages.nameGenerator.sessionHistory') }} </div>
       <div class="history-list">
         <span
           v-for="(n, i) in [...history].reverse().slice(1)"
@@ -188,7 +188,7 @@ function shuffle(arr: number[]): number[] {
 }
 
 function pickFrom(pool: string[], key: string): string {
-  if (pool.length === 0) return '—'
+  if (pool.length === 0) return ''
   if (!queues.has(key) || queues.get(key)!.length === 0) {
     const indices = shuffle(Array.from({ length: pool.length }, (_, i) => i))
     queues.set(key, indices)

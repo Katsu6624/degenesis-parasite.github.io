@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <v-app id="app">
     <div id="mainNavigation" class="doNotPrint">
       <v-navigation-drawer v-model="showNavigationDrawer" color="grey-darken-4" width="320" :class="{ 'nav-glitching': navGlitch }">
@@ -197,7 +197,7 @@
       <IntroPage></IntroPage>
     </div>
     <v-snackbar v-model="ownCharSnackbar" timeout="6000" color="blue-darken-2">
-      C'est ta propre fiche — elle s'est ouverte depuis ta sauvegarde locale.
+      C'est ta propre fiche, elle s'est ouverte depuis ta sauvegarde locale.
     </v-snackbar>
     <v-overlay
       v-model="showOverlay"
@@ -296,7 +296,7 @@ onMounted(async () => {
 
     if (parsed?.storageVersion === 'v1') {
       if (browserStorage.characterIsStored(parsed.name)) {
-        // C'est la fiche de l'utilisateur courant — ouvrir depuis le local
+        // C'est la fiche de l'utilisateur courant, ouvrir depuis le local
         const local = browserStorage.loadCharacter(parsed.name)
         if (local) store.loadCharacter(local)
         ownCharSnackbar.value = true
@@ -515,7 +515,7 @@ if (storedDisplayTranslatedLabels) {
 }
 </script>
 <style>
-/* Block all editing in shared view — global so it reaches child components */
+/* Block all editing in shared view, global so it reaches child components */
 .shared-view-mode .box,
 .shared-view-mode .v-field,
 .shared-view-mode .v-selection-control,

@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="inventory-root">
     <v-dialog v-model="showNotTranslatedDialog" max-width="420">
       <v-card>
@@ -160,10 +160,10 @@
                   <v-chip v-if="group.count > 1" size="x-small" color="grey-darken-1" class="ml-1">×{{ group.count }}</v-chip>
                 </td>
                 <td class="text-caption inv-muted">{{ categoryLabel(group.item.category) }}</td>
-                <td>{{ group.item.handling ?? '—' }}</td>
-                <td>{{ group.item.range ?? '—' }}</td>
-                <td>{{ group.item.damage ?? '—' }}</td>
-                <td>{{ tItem(group.item).magazine ?? '—' }}</td>
+                <td>{{ group.item.handling ?? '' }}</td>
+                <td>{{ group.item.range ?? '' }}</td>
+                <td>{{ group.item.damage ?? '' }}</td>
+                <td>{{ tItem(group.item).magazine ?? '' }}</td>
                 <td class="text-caption">
                   <template v-if="tItem(group.item).properties">
                     <div v-for="(prop, idx) in parseProperties(tItem(group.item).properties!)" :key="idx">
@@ -172,11 +172,11 @@
                       </HoverTooltip>
                     </div>
                   </template>
-                  <span v-else class="inv-muted">—</span>
+                  <span v-else class="inv-muted"></span>
                 </td>
-                <td>{{ group.item.encumbrance ?? '—' }}</td>
-                <td>{{ group.item.techLevel ?? '—' }}</td>
-                <td>{{ group.item.slots ?? '—' }}</td>
+                <td>{{ group.item.encumbrance ?? '' }}</td>
+                <td>{{ group.item.techLevel ?? '' }}</td>
+                <td>{{ group.item.slots ?? '' }}</td>
                 <td>
                   <v-chip size="x-small" :color="group.purchaseMethod === 'entrepreneur' ? 'orange-darken-2' : group.purchaseMethod === 'resources' ? 'blue-darken-1' : group.purchaseMethod === 'free' ? 'purple-darken-2' : 'green-darken-1'" text-color="white">
                     {{ group.purchaseMethod === 'entrepreneur' ? $t('inventory.purchaseEntrepreneur') : group.purchaseMethod === 'resources' ? $t('inventory.purchaseResources') : group.purchaseMethod === 'free' ? $t('inventory.purchaseFree') : (currencyDisplay(store.computedDinars?.currency)) }}
@@ -298,12 +298,12 @@
                     <span :class="tItem(item).description ? 'inv-has-tooltip' : ''">{{ tItem(item).name }}</span>
                   </HoverTooltip>
                 </td>
-                <td v-if="hasCaliber(group.items)">{{ tItem(item).caliber ?? '—' }}</td>
-                <td v-if="hasArmorValue(group.items)">{{ item.armorValue ?? '—' }}</td>
-                <td>{{ item.handling ?? '—' }}</td>
-                <td>{{ item.range ?? '—' }}</td>
-                <td>{{ item.damage ?? '—' }}</td>
-                <td>{{ tItem(item).magazine ?? '—' }}</td>
+                <td v-if="hasCaliber(group.items)">{{ tItem(item).caliber ?? '' }}</td>
+                <td v-if="hasArmorValue(group.items)">{{ item.armorValue ?? '' }}</td>
+                <td>{{ item.handling ?? '' }}</td>
+                <td>{{ item.range ?? '' }}</td>
+                <td>{{ item.damage ?? '' }}</td>
+                <td>{{ tItem(item).magazine ?? '' }}</td>
                 <td class="text-caption">
                   <template v-if="tItem(item).properties">
                     <div v-for="(prop, idx) in parseProperties(tItem(item).properties!)" :key="idx">
@@ -312,22 +312,22 @@
                       </HoverTooltip>
                     </div>
                   </template>
-                  <span v-else class="inv-muted">—</span>
+                  <span v-else class="inv-muted"></span>
                 </td>
-                <td>{{ item.encumbrance ?? '—' }}</td>
-                <td>{{ item.techLevel ?? '—' }}</td>
-                <td>{{ item.slots ?? '—' }}</td>
+                <td>{{ item.encumbrance ?? '' }}</td>
+                <td>{{ item.techLevel ?? '' }}</td>
+                <td>{{ item.slots ?? '' }}</td>
                 <td class="text-no-wrap">
                   {{ item.value }} {{ currencyDisplay(store.computedDinars?.currency) }}
                   <span v-if="item.levelable" class="inv-muted text-caption"> × {{ $t('inventory.level') }}</span>
                 </td>
                 <td v-if="hasResources(group.items)">
                   <span v-if="item.resources !== undefined">{{ item.resources }}</span>
-                  <span v-else class="inv-muted">—</span>
+                  <span v-else class="inv-muted"></span>
                 </td>
                 <td class="text-caption">
                   <span v-if="item.cult">{{ $t(`culturesConceptsCults.${item.cult}`) }}</span>
-                  <span v-else class="inv-muted">—</span>
+                  <span v-else class="inv-muted"></span>
                 </td>
                 <td class="text-no-wrap">
                   <v-btn

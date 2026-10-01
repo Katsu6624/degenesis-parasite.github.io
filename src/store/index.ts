@@ -1,4 +1,4 @@
-import { type Clan } from '@/config/model'
+﻿import { type Clan } from '@/config/model'
 import { EditorMode } from '@/config/modes'
 import {
   CULT_RELATIONSHIP_KEYS,
@@ -959,11 +959,11 @@ export const useCharacterStore = defineStore('character', {
       // Block antagonist (the unchosen skill of each dilemma)
       if (this.editorMode !== EditorMode.Free) {
         if ((skill.name === 'faith' || skill.name === 'willpower') && this.mentalResistanceChoice && skill.name !== this.mentalResistanceChoice) {
-          this.errorMessage = `Vous avez choisi ${this.mentalResistanceChoice === 'faith' ? 'Foi' : 'Volonté'} comme rempart mental — ${skill.name === 'faith' ? 'Foi' : 'Volonté'} ne peut pas être augmentée.`
+          this.errorMessage = `Vous avez choisi ${this.mentalResistanceChoice === 'faith' ? 'Foi' : 'Volonté'} comme rempart mental, ${skill.name === 'faith' ? 'Foi' : 'Volonté'} ne peut pas être augmentée.`
           return
         }
         if ((skill.name === 'primal' || skill.name === 'focus') && this.mentalPowerChoice && skill.name !== this.mentalPowerChoice) {
-          this.errorMessage = `Vous avez choisi ${this.mentalPowerChoice === 'primal' ? 'Pulsions' : 'Concentration'} comme compétence mentale — ${skill.name === 'primal' ? 'Pulsions' : 'Concentration'} ne peut pas être augmentée.`
+          this.errorMessage = `Vous avez choisi ${this.mentalPowerChoice === 'primal' ? 'Pulsions' : 'Concentration'} comme compétence mentale, ${skill.name === 'primal' ? 'Pulsions' : 'Concentration'} ne peut pas être augmentée.`
           return
         }
       }
@@ -1108,7 +1108,7 @@ export const useCharacterStore = defineStore('character', {
       } else {
         this.legacies.set(legacy, newValue())
         if (legacy.name === 'offspring' && !this.isLoading) {
-          // Auto-reduce INT and CHA by 1 (locked last box) — skip on loadCharacter
+          // Auto-reduce INT and CHA by 1 (locked last box), skip on loadCharacter
           const int = this.attributes.get(Attributes.intellect) ?? 0
           if (int > 0) this.attributes.set(Attributes.intellect, Math.max(0, int - 1))
           const cha = this.attributes.get(Attributes.charisma) ?? 0

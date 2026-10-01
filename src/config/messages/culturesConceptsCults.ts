@@ -1,4 +1,4 @@
-export const culturesConceptsCults = {
+﻿export const culturesConceptsCults = {
   de: {
     // Cultures
     borca: 'Borca',
@@ -248,15 +248,15 @@ export const culturesConceptsCults = {
 
     judgesDescription: 'The Judges imposed law in the wastelands, striking outlaws and wild clans with rigor and violence. In the city of Justitian, they founded the Protectorate, a safe but strictly controlled world. <br/>Today, ruins regain life, clans grow stronger, and the Judges must master not only the Codex but also the unpredictable laws of the wastelands to survive.',
 
-    clannersDescription: 'Clanners make up over 90% of humanity, united by new bonds replacing the individual with the group. Some turned to bloodthirsty cults and savagery, others preserved traditions, morality, and technology. <br/>Nomadic, sedentary, or barbaric—if they all united, armed with spears and rifles, nothing could stop them.',
+    clannersDescription: 'Clanners make up over 90% of humanity, united by new bonds replacing the individual with the group. Some turned to bloodthirsty cults and savagery, others preserved traditions, morality, and technology. <br/>Nomadic, sedentary, or barbaricif they all united, armed with spears and rifles, nothing could stop them.',
 
-    scrappersDescription: 'Scrappers live for the ruins, relentlessly digging for the ancients’ technical remnants. Hardened by dust, cold, and hunger, they know every corner of the devastated world and survive better than anyone outside cities. <br/>When they return to town, they sell their finds to Chroniclers before the call of the ruins—their true home—draws them back out.',
+    scrappersDescription: 'Scrappers live for the ruins, relentlessly digging for the ancients’ technical remnants. Hardened by dust, cold, and hunger, they know every corner of the devastated world and survive better than anyone outside cities. <br/>When they return to town, they sell their finds to Chroniclers before the call of the ruinstheir true homedraws them back out.',
 
     neolibyansDescription: 'Neolibyans are global capitalists, explorers, and peerless traders. Masters of commerce and diplomacy, they boldly exploit routes, resources, and territories, selling everything from weapons to spices and profiting even from resistance. <br/>Adventurers and hunters, they map the world and track monsters, convinced no obstacle is insurmountable and everything can become profit.',
 
     scourgersDescription: 'The Scourgers, proud African warriors, despise Neolibyans and follow their ancestors’ path in strict hierarchy. Linked to each other and the world’s spirits through Psychovores, they advise and protect their people in Africa as the Lion’s claws, becoming death-bringers among the Ravens. <br/>Strategists and fearsome hunters, they lead battle with discipline and power, enslaving enemies to settle Neolibyans’ debts.',
 
-    anubiansDescription: 'Anubians consider themselves the chosen people, Africa’s soul, marked by seven Circles symbolizing their transformation toward perfect Ka. Between ancestral rites and mastery of Psychovores, they guide their people and develop knowledge and powers—some in healing, others in combat against aberrations disturbing the Wave.',
+    anubiansDescription: 'Anubians consider themselves the chosen people, Africa’s soul, marked by seven Circles symbolizing their transformation toward perfect Ka. Between ancestral rites and mastery of Psychovores, they guide their people and develop knowledge and powerssome in healing, others in combat against aberrations disturbing the Wave.',
 
     jehammedansDescription: 'A Jehammedan’s life is mapped from birth: honor the family and follow Jehammed’s teachings, the last prophet who fused the three Abrahamic religions. Ismaelis work the land dreaming of glory, while Isaakis train for combat to prove their worth. <br/>Women traditionally hold the homemaker role yet are the true pillar of Jehammed’s cult. Hagari bear future Ismaelis, Saraeli bear sacred Isaakis, maintain armor and clothing, and preserve the Last Prophet’s teachings.',
 

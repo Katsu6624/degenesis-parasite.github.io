@@ -1,4 +1,4 @@
-import type { ItemTranslation } from '../types'
+﻿import type { ItemTranslation } from '../types'
 
 export const itemTranslationsEn: Record<string, ItemTranslation> = {
   'mun-50gl': {
@@ -111,7 +111,7 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
   'dilacerateur': {
     name: `Splayer`,
     properties: `Cutting (2DC, +1D damage)`,
-    description: `<b>Splayer</b><br>Old stories claim the EUF used Splayers during pacification operations in the old era. Inside the shaft lies a kinetic storage cylinder, constantly fed by a pumping lever that spreads the blades apart. When the lever is snapped back, the outer blades slam shut powerfully onto the central blade.<br><br><b>SPECIALTY:</b> Special ability "Cutting" — if an attack succeeds with 2 Triggers, the Spitalian can snap the blades shut to deal 1D additional damage. At best, they can deal +4 damage.`,
+    description: `<b>Splayer</b><br>Old stories claim the EUF used Splayers during pacification operations in the old era. Inside the shaft lies a kinetic storage cylinder, constantly fed by a pumping lever that spreads the blades apart. When the lever is snapped back, the outer blades slam shut powerfully onto the central blade.<br><br><b>SPECIALTY:</b> Special ability "Cutting", if an attack succeeds with 2 Triggers, the Spitalian can snap the blades shut to deal 1D additional damage. At best, they can deal +4 damage.`,
   },
   'electrocuteur': {
     name: `Shocker`,
@@ -194,7 +194,7 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
   'lance-ancestrale': {
     name: `Ancestor Spear`,
     properties: `Talisman (+2D)`,
-    description: `<b>Ancestor Spear</b><br>Before earning their first rifle, young warriors must master the spear, the Scourgers\\' traditional weapon. If they accomplish a heroic feat with it, the exploit is also attributed to the weapon. It is then considered blessed and possessed of a soul — probably that of an ancestor or benevolent spirit guiding the Scourger\\'s hand. Warriors treat such a spear with respect, passing it from hand to hand within the group upon the owner\\'s death.<br><br><b>SPECIALTY:</b> Soul-bound weapons are never sold. A Scourger must prove their worth on the battlefield before their Dumisai honors them with such a weapon. In their hands, the warrior feels invincible: +2D to PSY+Faith/Will rolls.`,
+    description: `<b>Ancestor Spear</b><br>Before earning their first rifle, young warriors must master the spear, the Scourgers\\' traditional weapon. If they accomplish a heroic feat with it, the exploit is also attributed to the weapon. It is then considered blessed and possessed of a soul, probably that of an ancestor or benevolent spirit guiding the Scourger\\'s hand. Warriors treat such a spear with respect, passing it from hand to hand within the group upon the owner\\'s death.<br><br><b>SPECIALTY:</b> Soul-bound weapons are never sold. A Scourger must prove their worth on the battlefield before their Dumisai honors them with such a weapon. In their hands, the warrior feels invincible: +2D to PSY+Faith/Will rolls.`,
   },
   'lance': {
     name: `Spear`,
@@ -202,7 +202,7 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
   'marteau-de-jugement': {
     name: `Judgment Hammer`,
     properties: `Blunt, Impact (3T)`,
-    description: `<b>Judgment Hammer</b><br>The Supreme Judge established the tradition of rendering judgement with a hammer, a tradition that persists to this day. Every City Judge receives one of these solid steel hammers upon appointment. They won\\'t wait long before using it. A Judgment Hammer is not merely decorative — it symbolizes the Judge\\'s executive power. The handle is one meter long and equally unadorned.<br><br><b>SPECIALTY:</b> A Judgment Hammer has the negative property "Impact (3T)". This can be mitigated by a Potential.`,
+    description: `<b>Judgment Hammer</b><br>The Supreme Judge established the tradition of rendering judgement with a hammer, a tradition that persists to this day. Every City Judge receives one of these solid steel hammers upon appointment. They won\\'t wait long before using it. A Judgment Hammer is not merely decorative, it symbolizes the Judge\\'s executive power. The handle is one meter long and equally unadorned.<br><br><b>SPECIALTY:</b> A Judgment Hammer has the negative property "Impact (3T)". This can be mitigated by a Potential.`,
   },
   'masse': {
     name: `Sledgehammer`,
@@ -493,7 +493,7 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
   'raccordeur': {
     name: `Cascader`,
     properties: `Thunder Strike, Area Damage (45°)`,
-    description: `<b>Cascader</b><br>A vocoder at full power is already painful, but plugged into a Cascader — a kind of scepter fitted with amplifier blocks and speakers — it transforms a nasal voice into a roar of divine fury. Mountain slopes tremble, avalanches form and crash into the valley below with a thunderous din. Waves form on still water, dust swirls around huts. The sound pressure pierces eardrums and can knock a person to the ground, then hurl them further away. Ribs crack and veins burst.<br><br><b>SPECIALTY:</b> Cascaders are area weapons that hit allies and enemies alike. They cause serious Traumas in a 45° cone.`,
+    description: `<b>Cascader</b><br>A vocoder at full power is already painful, but plugged into a Cascader, a kind of scepter fitted with amplifier blocks and speakers, it transforms a nasal voice into a roar of divine fury. Mountain slopes tremble, avalanches form and crash into the valley below with a thunderous din. Waves form on still water, dust swirls around huts. The sound pressure pierces eardrums and can knock a person to the ground, then hurl them further away. Ribs crack and veins burst.<br><br><b>SPECIALTY:</b> Cascaders are area weapons that hit allies and enemies alike. They cause serious Traumas in a 45° cone.`,
     caliber: `4x E-Cube`,
     magazine: `8`,
   },
@@ -506,7 +506,7 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
   'aerosol-ex-eg1': {
     name: `EX/EG-1 Aerosol`,
     properties: `Virtual Exsporiator (-1 + triggers, 10 min)`,
-    description: `<b>EX/EG-1 Aerosol</b><br>When a Psychonaut comes into contact with this aerosol, it blocks the catalytic effects of spores at an epigenetic level — effectively destroying all of the Aberrant\\'s spores. However, this chemical agent deteriorates within minutes, after which the Psychonaut regains the full range of Phenomena granted by the spores.<br><br><b>EFFECT:</b> For each dose or explosive cartridge, sporulation decreases for 10 minutes (see the "Virtual Exsporiator" property).`,
+    description: `<b>EX/EG-1 Aerosol</b><br>When a Psychonaut comes into contact with this aerosol, it blocks the catalytic effects of spores at an epigenetic level, effectively destroying all of the Aberrant\\'s spores. However, this chemical agent deteriorates within minutes, after which the Psychonaut regains the full range of Phenomena granted by the spores.<br><br><b>EFFECT:</b> For each dose or explosive cartridge, sporulation decreases for 10 minutes (see the "Virtual Exsporiator" property).`,
   },
   'bande-noire': {
     name: `Black Band`,
@@ -516,7 +516,7 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
   'gaz-chlore': {
     name: `Chlorine Gas`,
     properties: `Poisoned (5, 1 Trauma/round, Power -1/round, PHY+Resistance roll stops poisoning)`,
-    description: `<b>Chlorine Gas</b><br>Chlorine gas is one of the Spital\\'s most dangerous chemical agents. Inhaled, it destroys lung tissue. Pinkish chunks tear away and are expelled in violent coughing fits. The bronchi fill with fluid, breathing becomes hoarse. When the victim\\'s skin turns from pale to bluish, they have already lost consciousness. Chlorine is far heavier than air, sinking to the ground — making it ideal for exterminating Psychonauts and contaminating valleys with concentric ring formations, signs of spore fields.<br><br><b>EFFECT:</b> Chlorine gas only exists as cartridge launcher ammunition, grenades, or mines. It is not compatible with the fungicide rifle or injector gun. It only disperses in strong winds. Its effects match a Power 5 toxin. It deals 1 Trauma per round, but can be stopped by a successful PHY+Resistance (Might) roll (see the "Poisoned" property).`,
+    description: `<b>Chlorine Gas</b><br>Chlorine gas is one of the Spital\\'s most dangerous chemical agents. Inhaled, it destroys lung tissue. Pinkish chunks tear away and are expelled in violent coughing fits. The bronchi fill with fluid, breathing becomes hoarse. When the victim\\'s skin turns from pale to bluish, they have already lost consciousness. Chlorine is far heavier than air, sinking to the ground, making it ideal for exterminating Psychonauts and contaminating valleys with concentric ring formations, signs of spore fields.<br><br><b>EFFECT:</b> Chlorine gas only exists as cartridge launcher ammunition, grenades, or mines. It is not compatible with the fungicide rifle or injector gun. It only disperses in strong winds. Its effects match a Power 5 toxin. It deals 1 Trauma per round, but can be stopped by a successful PHY+Resistance (Might) roll (see the "Poisoned" property).`,
   },
   'irritant': {
     name: `Tear Gas`,
@@ -679,7 +679,7 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
   'moulinette': {
     name: `Grinder`,
     properties: `Muzzle Loader, Scatter`,
-    description: `<b>Grinder</b><br>This legendary variant of the Marvel is a sawed-off barrel wielded one-handed. Designed by Artisan Wismuth 50 winters ago, it is fitted with a crank-operated mill that grinds screws and stones into ammunition. One simply needs to find small scraps of metal — not difficult for those who know how to look — then add powder and fire.<br><br><b>SPECIALTY:</b> The Grinder\\'s ammunition deals horrible damage but lacks great penetration (damage halved against an armor value of 2 or more).`,
+    description: `<b>Grinder</b><br>This legendary variant of the Marvel is a sawed-off barrel wielded one-handed. Designed by Artisan Wismuth 50 winters ago, it is fitted with a crank-operated mill that grinds screws and stones into ammunition. One simply needs to find small scraps of metal, not difficult for those who know how to look, then add powder and fire.<br><br><b>SPECIALTY:</b> The Grinder\\'s ammunition deals horrible damage but lacks great penetration (damage halved against an armor value of 2 or more).`,
     caliber: `Black Powder`,
     magazine: `1`,
   },
@@ -835,7 +835,7 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
   'traqueur': {
     name: `Tracker`,
     properties: `Detects transponders, range 100 m`,
-    description: `<b>Tracker</b><br>A transponder is injected into the bodies of Fuses and sometimes other Chroniclers so they can be located later. The tracker does not indicate direction — it simply blinks faster as it closes in on its target.`,
+    description: `<b>Tracker</b><br>A transponder is injected into the bodies of Fuses and sometimes other Chroniclers so they can be located later. The tracker does not indicate direction, it simply blinks faster as it closes in on its target.`,
   },
   'vocalisateur-noumenon': {
     name: `Noumenon Vocalizer`,
@@ -894,7 +894,7 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
   'sesamite': {
     name: `Sesamite`,
     properties: `Lockpicking: AGI+Dexterity: +3D`,
-    description: `<b>Sesamite</b><br>Every lock implies an opening — a mindset that suits Palers equipped with a Sesamite, an electric pick. The Sesamite\\'s mechanisms click and hum once inside the lock. The Paler, eyes closed, listens carefully and carefully repositions the artifact until a snap occurs.<br><br>Cannot be used on the electronic locks of Dispensers.`,
+    description: `<b>Sesamite</b><br>Every lock implies an opening, a mindset that suits Palers equipped with a Sesamite, an electric pick. The Sesamite\\'s mechanisms click and hum once inside the lock. The Paler, eyes closed, listens carefully and carefully repositions the artifact until a snap occurs.<br><br>Cannot be used on the electronic locks of Dispensers.`,
   },
   'trousseau-cles': {
     name: `Key Ring`,
@@ -964,7 +964,7 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
   'disque-quantum': {
     name: `Quantum`,
     properties: `Detects other Quantum disks. Range depends on level`,
-    description: `<b>Quantum</b><br>The surface of this disk is rough, with rings engraved on it. This disk interacts with other Quantums — they hum and vibrate when they come near one another. A level 1 disk detects others at 100 paces, level 2 at 500 paces, and level 3 at 1 km.`,
+    description: `<b>Quantum</b><br>The surface of this disk is rough, with rings engraved on it. This disk interacts with other Quantums, they hum and vibrate when they come near one another. A level 1 disk detects others at 100 paces, level 2 at 500 paces, and level 3 at 1 km.`,
   },
   'disque-quasar': {
     name: `Quasar`,
@@ -1004,7 +1004,7 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
   'mod-source': {
     name: `Source`,
     properties: `Level equals the total levels of all modules to be powered`,
-    description: `<b>Source</b><br>The central module, the "source," is an energy storage cell worn at the belt, made up of linked E-Cubes. The upgrade level determines how many levels of modules can be powered simultaneously. The maximum level is 3, but nothing stops a Chronicler from equipping several sources at once — though even a single energy cell is quite heavy.`,
+    description: `<b>Source</b><br>The central module, the "source," is an energy storage cell worn at the belt, made up of linked E-Cubes. The upgrade level determines how many levels of modules can be powered simultaneously. The maximum level is 3, but nothing stops a Chronicler from equipping several sources at once, though even a single energy cell is quite heavy.`,
   },
   'mod-circuit-refroidissement': {
     name: `Cooling Circuit`,
@@ -1202,7 +1202,7 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
   'kom': {
     name: `Kom`,
     properties: `Spd. 5, Acc. 3, Brk. 2, Armor 4, Body 20, Structure 10, Slots 2`,
-    description: `<b>Kom</b><br>The Kom is the Scourgers\\' mechanical mount — an armored tricycle with a salvaged engine, ideal for quick raids. Agile and relatively light, it can traverse rough terrain that heavier vehicles cannot cross.<br><br>Scourgers customize it with spikes, barbed wire, and tribal paint to intimidate their enemies.`,
+    description: `<b>Kom</b><br>The Kom is the Scourgers\\' mechanical mount, an armored tricycle with a salvaged engine, ideal for quick raids. Agile and relatively light, it can traverse rough terrain that heavier vehicles cannot cross.<br><br>Scourgers customize it with spikes, barbed wire, and tribal paint to intimidate their enemies.`,
   },
   'moto': {
     name: `Motorcycle`,
@@ -1257,7 +1257,7 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
   'cheval-jugement': {
     name: `Judgment Horse`,
     properties: `Spd. 3, Acc. 2, Brk. 1, Armor –, Flashwounds 16, Trauma 8, Slots 2`,
-    description: `<b>Judgment Horse</b><br>Judges raise and train their horses from foalhood, forging an unbreakable bond between rider and mount. These horses are selected for their endurance and courage in battle.<br><br>A Judgment Horse is more than a means of transport — it is a companion and a symbol of the Judges\\' authority over the roads of Europe.`,
+    description: `<b>Judgment Horse</b><br>Judges raise and train their horses from foalhood, forging an unbreakable bond between rider and mount. These horses are selected for their endurance and courage in battle.<br><br>A Judgment Horse is more than a means of transport, it is a companion and a symbol of the Judges\\' authority over the roads of Europe.`,
   },
   'cheval-newcrest': {
     name: `Newcrest Horse`,
@@ -1376,7 +1376,7 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
   'huile-acheron': {
     name: `Acheron`,
     properties: `Ethereal vision: level 1 = 10 m, level 2 = 100 m, level 3 = 300 m, then: sporulation`,
-    description: `<b>Acheron</b><br>The Styx destroys the body; the Acheron, the soul. Massaged into the scalp, this oil opens a field of perception far broader than that of ordinary mortals and offers a glimpse of the Demiurge\\'s ethereal world. No spore field, Psychonaut, or Leperos can escape this vision — but they all gaze back at the Anabaptist in turn.<br><br>After the effect, the Anabaptist suffers sporulation equal to the oil\\'s level.`,
+    description: `<b>Acheron</b><br>The Styx destroys the body; the Acheron, the soul. Massaged into the scalp, this oil opens a field of perception far broader than that of ordinary mortals and offers a glimpse of the Demiurge\\'s ethereal world. No spore field, Psychonaut, or Leperos can escape this vision, but they all gaze back at the Anabaptist in turn.<br><br>After the effect, the Anabaptist suffers sporulation equal to the oil\\'s level.`,
   },
   'artefact-tech-i': {
     name: `Tech I`,

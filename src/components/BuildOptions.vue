@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="pa-1">
     <v-btn-toggle
       v-model="store.editorMode"
@@ -62,7 +62,7 @@ let pendingMode: EditorMode | null = null
 function onModeChange(mode: EditorMode) {
   const leavingExpert = store.editorMode === EditorMode.Free && mode !== EditorMode.Free
   if (leavingExpert && store.expertLCModified) {
-    // Revert the v-model change visually — we'll apply it after dialog
+    // Revert the v-model change visually, we'll apply it after dialog
     store.editorMode = EditorMode.Free
     pendingMode = mode
     showLCDialog.value = true

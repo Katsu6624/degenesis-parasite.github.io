@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="mb-2" style="display:flex;align-items:center;gap:16px">
     <span>{{ $t('messages.legacies').toUpperCase() }}</span>
     <span style="font-size:12px;color:#999">{{ store.spentPoints.legacies }}/{{ config.availablePoints.legacies }}</span>
@@ -96,7 +96,7 @@
   <!-- Dialog Techno-Influenceur : choix artéfact -->
   <v-dialog v-model="artefactDialogOpen" max-width="520" persistent>
     <v-card>
-      <v-card-title class="text-h6 pa-4">Techno-Influenceur — Artéfact Légendaire</v-card-title>
+      <v-card-title class="text-h6 pa-4">Techno-Influenceur, Artéfact Légendaire</v-card-title>
       <v-card-text class="pa-4 pt-0">
         <p style="font-size:14px;line-height:1.6;color:#ccc" class="mb-4">
           Vous avez trouvé par pure chance un artéfact légendaire. Attention, le MJ peut décider que vous n'en avez pas du tout (on vous l'a volé, vous l'avez déjà vendu). Mais dans le cas où il vous le laisse, il y a deux possibilités. Soit il vous en donne un aléatoire (cliquez sur "Aléatoire") soit vous choisissez votre artéfact.
@@ -116,7 +116,7 @@
 
         <!-- Message artéfact aléatoire -->
         <div v-if="artefactPickMode === 'random' && artefactRandom" class="mt-2 pa-3" style="background:rgba(255,255,255,0.06);border-radius:6px;font-size:14px">
-          🎲 Vous avez reçu <strong>{{ artefactRandom.name }}</strong> — allez voir dans l'inventaire !
+          🎲 Vous avez reçu <strong>{{ artefactRandom.name }}</strong>, allez voir dans l'inventaire !
         </div>
       </v-card-text>
       <v-card-actions class="pa-4 pt-0" style="flex-wrap:wrap;gap:8px">

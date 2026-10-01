@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="npc-generator">
     <v-toolbar class="pa-4 bg-grey-lighten-2 elevation-2" density="compact">
       <template v-slot:append>
@@ -179,7 +179,7 @@
           <v-expansion-panels variant="accordion">
             <v-expansion-panel v-for="attr in attributes" :key="attr.name">
               <v-expansion-panel-title>
-                {{ $t('messages.npcGenerator.skillsSection') }} — {{ $t(`attributes.${attr.name}`) }}
+                {{ $t('messages.npcGenerator.skillsSection') }}, {{ $t(`attributes.${attr.name}`) }}
               </v-expansion-panel-title>
               <v-expansion-panel-text>
                 <v-row>

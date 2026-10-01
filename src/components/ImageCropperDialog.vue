@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <v-dialog v-model="open" max-width="640" persistent>
     <v-card>
       <v-card-title class="d-flex align-center justify-space-between flex-wrap gap-2">
@@ -275,7 +275,7 @@ function applyDrag(mx: number, my: number) {
 
     const MIN = 30
     if (ar !== null) {
-      // Keep aspect ratio — use width as master for se/ne, height for sw/nw
+      // Keep aspect ratio, use width as master for se/ne, height for sw/nw
       if (drag === 'nw' || drag === 'sw') { nw = Math.max(MIN, nw); nh = nw / ar }
       else { nw = Math.max(MIN, nw); nh = nw / ar }
       if (drag === 'nw') { nx = cx + cw - nw; ny = cy + ch - nh }

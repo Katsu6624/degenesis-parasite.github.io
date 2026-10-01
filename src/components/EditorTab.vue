@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <v-toolbar class="pa-4 bg-grey-lighten-2 elevation-2" density="compact">
     <template v-slot:append>
       <!-- Music player -->
@@ -805,7 +805,7 @@ const openCropExisting = () => {
 }
 
 const onCropConfirm = (croppedDataUrl: string) => {
-  // portraitOriginal reste immuable — on écrit dans portraitFiche uniquement
+  // portraitOriginal reste immuable, on écrit dans portraitFiche uniquement
   store.portraitFiche = croppedDataUrl
 }
 

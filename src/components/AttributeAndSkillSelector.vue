@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <ValueSelector
     :name="attribute.name"
     :label="localizeAttributeName(attribute).toUpperCase()"
@@ -92,7 +92,7 @@ const skillCount = (_skill: Skill): number => 6
 const skillDisplayBonus = (skill: Skill): number => {
   const total = store.legacySkillBonus(skill.name)
   if (!store.hasGifted || !isGiftedSkill(skill)) return total
-  // Subtract gifted points from bonus prop — gifted boxes handled separately via giftedClickable
+  // Subtract gifted points from bonus prop, gifted boxes handled separately via giftedClickable
   return total - (store.giftedBonuses[skill.name] || 0)
 }
 </script>

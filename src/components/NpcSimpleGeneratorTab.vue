@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="npc-generator">
     <v-toolbar class="pa-4 bg-grey-lighten-2 elevation-2" density="compact">
       <template v-slot:append>
@@ -148,7 +148,7 @@
               <v-col cols="12" sm="6" v-for="name in selectedSpecialSkills" :key="name">
                 <v-text-field
                   v-model.number="specialSkillDice[name]"
-                  :label="`${skillLabel(name)} — ${$t('messages.npcGenerator.specialDiceCount')}`"
+                  :label="`${skillLabel(name)}, ${$t('messages.npcGenerator.specialDiceCount')}`"
                   type="number"
                   min="0"
                 ></v-text-field>

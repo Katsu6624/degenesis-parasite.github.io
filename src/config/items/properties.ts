@@ -1,9 +1,9 @@
-export const WEAPON_PROPERTY_DESCRIPTIONS: Record<string, string> = {
+﻿export const WEAPON_PROPERTY_DESCRIPTIONS: Record<string, string> = {
   'armor-piercing': '<b>ARMOR-PIERCING</b><br>This extremely compact and fast projectile pierces armor like paper.<br><br>Armor-piercing projectiles do not deal significantly more damage, but they ignore any special properties armor may have, such as \'Massive\' or \'Bulletproof\'.',
 
   'camouflage': '<b>CAMOUFLAGE (DIFFICULTY)</b><br>A weapon with the \'Camouflage\' property does not look like a weapon, or can easily be concealed. The value of this property equals the difficulty to detect the camouflage with an INS+Perception roll.',
 
-  'muzzle-loading': '<b>MUZZLE-LOADING</b><br>The weapon is loaded with powder and then a projectile through the muzzle. This procedure takes time — 2 actions.',
+  'muzzle-loading': '<b>MUZZLE-LOADING</b><br>The weapon is loaded with powder and then a projectile through the muzzle. This procedure takes time, 2 actions.',
 
   'knockback': '<b>KNOCKBACK (TRIGGER)</b><br>This weapon is heavy and very unwieldy, but in the hands of a professional, it becomes a true instrument of destruction. The fighter can only attack or defend on their next action if they obtain the required number of Triggers. If they fail to do so, they lose their balance and must spend 1 action to grip their weapon again. They may also choose to drop it and fight unarmed.',
 

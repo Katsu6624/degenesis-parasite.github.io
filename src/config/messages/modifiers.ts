@@ -1,4 +1,4 @@
-// Translation dictionary for free-text "modifier" strings attached to Legacies and Potentials.
+﻿// Translation dictionary for free-text "modifier" strings attached to Legacies and Potentials.
 // These strings are stored as raw French text in the data layer (src/config/legacies/legacies.ts
 // and src/config/cults/*/potentials.ts, src/config/potentials/common.ts) rather than i18n keys,
 // so this lookup table maps the exact French source text to its EN/DE translation.
@@ -308,9 +308,9 @@ export const modifierTranslations: Record<string, { en: string; de: string }> = 
     en: "+1D per level to INS+Perception to spot Psychonauts, Leperos, and spore fields.",
     de: "+1W pro Stufe auf INS+Wahrnehmung, um Psychonauten, Leperos und Sporenfelder zu entdecken."
   },
-  "Si blessures > 50% (Blessures + Traumatismes) : rage jusqu'à fin du combat — aucune limite d'Égo max mais Défense active impossible. Niveau unique.": {
-    en: "If wounds > 50% (Fleshwounds + Traumas): rage until the end of combat — no max Ego limit but Active Defense is impossible. Single level.",
-    de: "Wenn Verletzungen > 50% (Fleischwunden + Traumata): Rage bis zum Ende des Kampfes — keine Ego-Höchstgrenze, aber aktive Verteidigung unmöglich. Einzelne Stufe."
+  "Si blessures > 50% (Blessures + Traumatismes) : rage jusqu'à fin du combat, aucune limite d'Égo max mais Défense active impossible. Niveau unique.": {
+    en: "If wounds > 50% (Fleshwounds + Traumas): rage until the end of combat, no max Ego limit but Active Defense is impossible. Single level.",
+    de: "Wenn Verletzungen > 50% (Fleischwunden + Traumata): Rage bis zum Ende des Kampfes, keine Ego-Höchstgrenze, aber aktive Verteidigung unmöglich. Einzelne Stufe."
   },
   "(3) Égo → double les déclencheurs d'une attaque PHY+Corps à corps. Utilisable (niveau) fois par jour.": {
     en: "(3) Ego → doubles the triggers of a PHY+Melee attack. Usable (level) times per day.",

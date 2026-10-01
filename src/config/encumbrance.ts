@@ -1,4 +1,4 @@
-import { ITEMS } from '@/config/items'
+﻿import { ITEMS } from '@/config/items'
 import type { InventoryPurchase, Item } from '@/config/items'
 
 export function calculateInventoryEncumbrance(
@@ -12,7 +12,7 @@ export function calculateInventoryEncumbrance(
   const hasSled = inventory.some((p) => p.itemId === 'traineau')
   const hasHandcart = inventory.some((p) => p.itemId === 'charrette-bras')
 
-  // Weapons and armor are "protected" — not packable into a backpack/sled
+  // Weapons and armor are "protected", not packable into a backpack/sled
   const protectedCategories = new Set([
     'armesDeCorpsACorps',
     'armesDeLutte',

@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="other-tab pa-4">
     <!-- Scars -->
     <v-card class="mb-4" variant="outlined">
@@ -132,7 +132,7 @@
             </v-card>
           </v-col>
         </v-row>
-        <div v-if="store.other.artifacts.length === 0" class="text-caption text-grey">—</div>
+        <div v-if="store.other.artifacts.length === 0" class="text-caption text-grey"></div>
       </v-card-text>
     </v-card>
 
@@ -158,7 +158,7 @@
           />
           <v-btn size="x-small" :icon="mdiClose" variant="text" @click="removeNote(i)" />
         </div>
-        <div v-if="store.other.notes.length === 0" class="text-caption text-grey">—</div>
+        <div v-if="store.other.notes.length === 0" class="text-caption text-grey"></div>
       </v-card-text>
     </v-card>
   </div>

@@ -1,4 +1,4 @@
-import { Anabaptists } from '.'
+﻿import { Anabaptists } from '.'
 import { Potential } from '../../potentials/potential'
 import { Skills } from '../../properties'
 import { atLeastRank, eitherRank } from '../../ranks/ranks'
@@ -75,7 +75,7 @@ export const FishermansBlood = new Potential(
   Skills.primal,
   undefined,
   undefined,
-  ['Si blessures > 50% (Blessures + Traumatismes) : rage jusqu\'à fin du combat — aucune limite d\'Égo max mais Défense active impossible. Niveau unique.']
+  ['Si blessures > 50% (Blessures + Traumatismes) : rage jusqu\'à fin du combat, aucune limite d\'Égo max mais Défense active impossible. Niveau unique.']
 )
 export const Unleashed = new Potential(
   'unleashed',

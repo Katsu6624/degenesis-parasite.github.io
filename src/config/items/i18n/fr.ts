@@ -1,4 +1,4 @@
-import type { ItemTranslation } from '../types'
+﻿import type { ItemTranslation } from '../types'
 
 export const itemTranslationsFr: Record<string, ItemTranslation> = {
   'mun-50gl': {
@@ -768,7 +768,7 @@ export const itemTranslationsFr: Record<string, ItemTranslation> = {
   'oeil-cyclope': {
     name: `Œil de Cyclope`,
     properties: `Aucun malus d\\'obscurité (vision nocturne Blafards), sinon malus -2`,
-    description: `<b>Œil de Cyclope</b><br>Un casque de vision nocturne à amplification de lumière, récupéré ou assemblé par les techniciens Blafards. L\\'objectif unique au centre donne à son porteur une apparence de cyclope — d\\'où le surnom.<br><br>Les Blafards, dont les yeux sont déjà adaptés aux ténèbres, n\\'ont aucun malus d\\'obscurité en le portant. Pour les autres, le malus est réduit à -2.`,
+    description: `<b>Œil de Cyclope</b><br>Un casque de vision nocturne à amplification de lumière, récupéré ou assemblé par les techniciens Blafards. L\\'objectif unique au centre donne à son porteur une apparence de cyclope, d\\'où le surnom.<br><br>Les Blafards, dont les yeux sont déjà adaptés aux ténèbres, n\\'ont aucun malus d\\'obscurité en le portant. Pour les autres, le malus est réduit à -2.`,
   },
   'astrolabe': {
     name: `Astrolabe`,
@@ -1187,7 +1187,7 @@ export const itemTranslationsFr: Record<string, ItemTranslation> = {
   'kom': {
     name: `Kom`,
     properties: `Vit. 5, Acc. 3, Frein. 2, Armure 4, Carrosserie 20, Structure 10, Empl. 2`,
-    description: `<b>Kom</b><br>Le Kom est la monture mécanique des Flagellants — un tricycle blindé à moteur récupéré, idéal pour les raids rapides. Agile et relativement léger, il peut traverser des terrains accidentés que les véhicules lourds ne peuvent pas franchir.<br><br>Les Fouetteurs le personnalisent avec des pointes, du fil barbelé et des peintures tribales pour intimider leurs ennemis.`,
+    description: `<b>Kom</b><br>Le Kom est la monture mécanique des Flagellants, un tricycle blindé à moteur récupéré, idéal pour les raids rapides. Agile et relativement léger, il peut traverser des terrains accidentés que les véhicules lourds ne peuvent pas franchir.<br><br>Les Fouetteurs le personnalisent avec des pointes, du fil barbelé et des peintures tribales pour intimider leurs ennemis.`,
   },
   'moto': {
     name: `Moto`,
@@ -1242,7 +1242,7 @@ export const itemTranslationsFr: Record<string, ItemTranslation> = {
   'cheval-jugement': {
     name: `Cheval de Jugement`,
     properties: `Vit. 3, Acc. 2, Frein. 1, Armure –, Blessures 16, Trauma 8, Empl. 2`,
-    description: `<b>Cheval de Jugement</b><br>Les Juges élèvent et entraînent leurs chevaux depuis le poulain, forgeant un lien indéfectible entre cavalier et monture. Ces chevaux sont sélectionnés pour leur endurance et leur courage au combat.<br><br>Un Cheval de Jugement est plus qu\\'un moyen de transport — c\\'est un compagnon et un symbole du pouvoir des Juges sur les routes d\\'Europe.`,
+    description: `<b>Cheval de Jugement</b><br>Les Juges élèvent et entraînent leurs chevaux depuis le poulain, forgeant un lien indéfectible entre cavalier et monture. Ces chevaux sont sélectionnés pour leur endurance et leur courage au combat.<br><br>Un Cheval de Jugement est plus qu\\'un moyen de transport, c\\'est un compagnon et un symbole du pouvoir des Juges sur les routes d\\'Europe.`,
   },
   'cheval-newcrest': {
     name: `Cheval de Newcrest`,
@@ -1361,7 +1361,7 @@ export const itemTranslationsFr: Record<string, ItemTranslation> = {
   'huile-acheron': {
     name: `Achéron`,
     properties: `Vision éthérique : niveau 1 = 10 m, niveau 2 = 100 m, niveau 3 = 300 m, ensuite : sporulation`,
-    description: `<b>Achéron</b><br>Le Styx détruit le corps, et l\\'Achéron l\\'âme. Massée sur le cuir chevelu, cette huile ouvre un champ de perception bien plus large que celui du commun des mortels et donne un aperçu du monde éthéré du Démiurge. Aucun champ de spores, Psychonaute ou Léperos ne peut se soustraire à cette vision — mais ils contemplent tous l\\'Anabaptiste en retour.<br><br>Suite à l\\'effet, l\\'Anabaptiste subit une sporulation équivalente au niveau de l\\'huile.`,
+    description: `<b>Achéron</b><br>Le Styx détruit le corps, et l\\'Achéron l\\'âme. Massée sur le cuir chevelu, cette huile ouvre un champ de perception bien plus large que celui du commun des mortels et donne un aperçu du monde éthéré du Démiurge. Aucun champ de spores, Psychonaute ou Léperos ne peut se soustraire à cette vision, mais ils contemplent tous l\\'Anabaptiste en retour.<br><br>Suite à l\\'effet, l\\'Anabaptiste subit une sporulation équivalente au niveau de l\\'huile.`,
   },
   'artefact-tech-i': {
     name: `Tech I`,

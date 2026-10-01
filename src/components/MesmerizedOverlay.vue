@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <Teleport to="body">
     <div v-if="active" class="mesmerized-overlay" aria-hidden="true">
       <!-- Full-screen glitch layers over the page -->
@@ -93,7 +93,7 @@ const { active, numbers, chosenValue } = useMesmerized()
   100% { opacity: 0;  transform: translate(var(--dx), var(--dy)); }
 }
 
-/* Red channel shift — clips a band and shifts it horizontally */
+/* Red channel shift, clips a band and shifts it horizontally */
 @keyframes screen-glitch-r {
   0%   { clip-path: inset(0 0 92% 0); transform: translate(-8px, 0); opacity: 0.6; }
   7%   { clip-path: inset(28% 0 60% 0); transform: translate(5px, 0);  opacity: 0.5; }

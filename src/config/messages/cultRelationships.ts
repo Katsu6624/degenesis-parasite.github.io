@@ -1,4 +1,4 @@
-export const cultRelationships = {
+﻿export const cultRelationships = {
   fr: {
     title: 'Relations de Culte',
     reset: 'Réinitialiser',
@@ -12,7 +12,7 @@ export const cultRelationships = {
 • Le chiffre sur le dé indique le degré de respect ou de haine.
 
 RESPECT
-Le groupe gagne du respect par ses actions : s'il sauve un Chroniqueur d'une bande d'Anabaptistes, le MJ fait monter le dé blanc sur la carte des Chroniqueurs d'un cran — mais les personnages pourraient perdre le respect de la Cité Cathédrale : le dé blanc sur la carte des Anabaptistes pourrait être remplacé par un dé noir. Cela n'arrive que si l'un des Anabaptistes s'échappe pour raconter la trahison.
+Le groupe gagne du respect par ses actions : s'il sauve un Chroniqueur d'une bande d'Anabaptistes, le MJ fait monter le dé blanc sur la carte des Chroniqueurs d'un cran, mais les personnages pourraient perdre le respect de la Cité Cathédrale : le dé blanc sur la carte des Anabaptistes pourrait être remplacé par un dé noir. Cela n'arrive que si l'un des Anabaptistes s'échappe pour raconter la trahison.
 
 RÉSULTATS POSITIFS
 Le chiffre sur un dé blanc a plusieurs effets :
@@ -104,7 +104,7 @@ The cards are a quick and dirty possibility to convey a feeling of the cults to 
 • Die Zahl auf dem Würfel zeigt den Grad des Respekts oder des Hasses.
 
 RESPEKT
-Die Gruppe verdient Respekt durch ihre Taten: Wenn sie einen Chronisten vor einer Schar von Wiedertäufern retten, dreht der Spielleiter den weißen Würfel auf der Chronistenkarte eine Zahl höher — doch könnten die Charaktere dabei den Respekt der Kathedralstadt verlieren: Der weiße Würfel auf der Wiedertäuferkarte könnte durch einen schwarzen ersetzt werden. Das geschieht nur, wenn einer der Wiedertäufer entkommen konnte, um von dem Verrat zu berichten.
+Die Gruppe verdient Respekt durch ihre Taten: Wenn sie einen Chronisten vor einer Schar von Wiedertäufern retten, dreht der Spielleiter den weißen Würfel auf der Chronistenkarte eine Zahl höher, doch könnten die Charaktere dabei den Respekt der Kathedralstadt verlieren: Der weiße Würfel auf der Wiedertäuferkarte könnte durch einen schwarzen ersetzt werden. Das geschieht nur, wenn einer der Wiedertäufer entkommen konnte, um von dem Verrat zu berichten.
 
 POSITIVE ERGEBNISSE
 Die Zahl auf einem weißen Würfel hat mehrere Auswirkungen:

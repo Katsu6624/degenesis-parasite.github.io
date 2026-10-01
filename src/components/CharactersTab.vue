@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="chars-root">
     <!-- Header -->
     <div class="chars-header elevation-2">
@@ -205,7 +205,7 @@ function openCrop(character: Character) {
 function onCropConfirm(croppedDataUrl: string) {
   const char = browserStorage.loadCharacter(cropTargetName)
   if (!char) return
-  // Seul le portrait de la carte (miniature) est modifié — portraitOriginal reste intact
+  // Seul le portrait de la carte (miniature) est modifié, portraitOriginal reste intact
   const raw = char as any
   raw.portrait = croppedDataUrl
   browserStorage.storeCharacter(raw)
@@ -248,7 +248,7 @@ function rankLabel(character: Character): string {
     ? t(`clans.${character.clan}`)
     : character.cult
       ? t(`culturesConceptsCults.${character.cult}`)
-      : '—'
+      : ''
   const rank = character.rank ? t(`ranks.${character.rank}`) : ''
   return rank ? `${cultLabel} (${rank})` : cultLabel
 }

@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="hover-tooltip-wrapper" @mouseenter="onAnchorEnter" @mouseleave="onAnchorLeave">
     <slot></slot>
     <Teleport to="body">
@@ -51,7 +51,7 @@ function position(anchor: HTMLElement) {
   const w = Math.min(420, window.innerWidth - 20)
   tipMaxWidth.value = w
 
-  // We need the tip height — make it visible off-screen first
+  // We need the tip height, make it visible off-screen first
   const el = tipEl.value
   if (!el) return
   const th = el.offsetHeight
