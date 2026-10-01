@@ -578,9 +578,12 @@
               <v-list-item
                 v-for="(mod, i) in store.allModifiers"
                 :key="i"
-                :subtitle="mod"
                 class="modifier-item"
-              ></v-list-item>
+              >
+                <template #subtitle>
+                  <span v-html="mod"></span>
+                </template>
+              </v-list-item>
               <v-list-item
                 v-for="({ cultKey, count }) in store.entrepreneurSocialPenalties"
                 :key="'entr-' + cultKey"

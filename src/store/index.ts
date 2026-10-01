@@ -396,8 +396,22 @@ export const useCharacterStore = defineStore('character', {
     },
     potentialModifiers(): string[] {
       const mods: string[] = []
+      const locale = i18n.global.locale.value
+      const luminarySkill = this.potentialChoices?.['luminary']
       this.potentials.forEach((v, potential) => {
-        if (v > 0) mods.push(...potential.modifiers.map(translateModifier))
+        if (v > 0) {
+          mods.push(...potential.modifiers.map(raw => {
+            let text = translateModifier(raw)
+            if (potential.name === 'luminary' && luminarySkill) {
+              const skillLabel = i18n.global.t(`skills.${luminarySkill}`)
+              const placeholder = locale === 'de' ? 'der gewählten Fertigkeit'
+                : locale === 'en' ? 'the chosen skill'
+                : 'la compétence choisie'
+              text = text.replace(placeholder, `<strong style="color:#ef9a9a">${skillLabel}</strong>`)
+            }
+            return text
+          }))
+        }
       })
       return mods
     },
