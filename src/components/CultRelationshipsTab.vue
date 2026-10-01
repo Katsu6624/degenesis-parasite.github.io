@@ -7,6 +7,17 @@
       </v-btn>
     </div>
 
+    <v-expansion-panels class="mb-4" variant="accordion">
+      <v-expansion-panel>
+        <v-expansion-panel-title class="label text-uppercase text-caption">
+          {{ $t('cultRelationships.rulesTitle') }}
+        </v-expansion-panel-title>
+        <v-expansion-panel-text>
+          <div class="rules-text">{{ $t('cultRelationships.rules') }}</div>
+        </v-expansion-panel-text>
+      </v-expansion-panel>
+    </v-expansion-panels>
+
     <div class="cult-grid">
       <div
         v-for="cult in CULT_RELATIONSHIP_KEYS"
@@ -155,6 +166,13 @@ function confirmReset() {
   position: absolute;
   bottom: 6px;
   right: 6px;
+}
+
+.rules-text {
+  font-size: 0.85rem;
+  line-height: 1.6;
+  white-space: pre-line;
+  color: rgb(var(--v-theme-on-surface));
 }
 
 .cult-label {
