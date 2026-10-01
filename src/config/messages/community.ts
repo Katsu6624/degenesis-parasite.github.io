@@ -1,5 +1,6 @@
 export const community = {
   fr: {
+    navTitle: 'Personnages de la Commu',
     title: 'Personnages Originaux',
     subtitle: 'Parcourez les personnages partagés par la communauté.',
     search: 'Rechercher',
@@ -21,6 +22,7 @@ export const community = {
     import: 'Charger ce personnage',
   },
   en: {
+    navTitle: 'Community Characters',
     title: 'Original Characters',
     subtitle: 'Browse characters shared by the community.',
     search: 'Search',
@@ -42,6 +44,7 @@ export const community = {
     import: 'Load this character',
   },
   de: {
+    navTitle: 'Community-Charaktere',
     title: 'Originalcharaktere',
     subtitle: 'Charaktere der Community durchsuchen.',
     search: 'Suchen',

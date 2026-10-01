@@ -17,7 +17,7 @@
             @click="openCharactersGallery"
             :variant="charactersGalleryMode ? 'tonal' : 'plain'"
           >
-            {{ $t('messages.characters') }}
+            {{ $t('messages.myCharacters') }}
             <template v-slot:prepend>
               <v-icon :icon="mdiAccountGroup"></v-icon>
             </template>
@@ -85,13 +85,6 @@
             </v-form>
           </v-list-item>
           <v-divider class="mt-2 mb-2"></v-divider>
-          <v-list-item role="button" link @click="openCommunity" :variant="communityMode ? 'tonal' : 'plain'">
-            {{ $t('community.title') }}
-            <template v-slot:prepend>
-              <v-icon :icon="mdiAccountMultiple"></v-icon>
-            </template>
-          </v-list-item>
-          <v-divider class="mt-2 mb-2"></v-divider>
           <v-list-item role="button" link @click="openNpcGenerator">
             {{ $t('messages.npcGenerator.navButton') }}
             <template v-slot:prepend>
@@ -102,6 +95,13 @@
             {{ $t('messages.nameGenerator.navButton') }}
             <template v-slot:prepend>
               <v-icon :icon="mdiTagTextOutline"></v-icon>
+            </template>
+          </v-list-item>
+          <v-divider class="mt-2 mb-2"></v-divider>
+          <v-list-item role="button" link @click="openCommunity" :class="communityMode ? 'v-list-item--active' : ''">
+            {{ $t('community.navTitle') }}
+            <template v-slot:prepend>
+              <v-icon :icon="mdiAccountMultiple"></v-icon>
             </template>
           </v-list-item>
         </v-list>
