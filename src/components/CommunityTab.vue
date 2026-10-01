@@ -182,12 +182,10 @@ import { useI18n } from 'vue-i18n'
 import { mdiAccount, mdiEye, mdiEyeOff } from '@mdi/js'
 import { listCharacters, reportCharacter, deleteCharacter, portraitUrl, fetchPortraitsForImport } from '@/services/communityApi'
 import type { CommunityCharacter } from '@/services/communityApi'
-import { useCharacterStore } from '@/store'
-import type { Character } from '@/store/character'
 import { CULT_RELATIONSHIP_KEYS } from '@/config/cultRelationships'
 import config from '@/config'
 
-const store = useCharacterStore()
+const emit = defineEmits<{ (e: 'import', character: Record<string, unknown>): void }>()
 const { t } = useI18n()
 const baseUrl = import.meta.env.BASE_URL
 
@@ -284,7 +282,7 @@ async function importChar(char: CommunityCharacter) {
   try {
     const data = JSON.parse(char.character_data)
     const dataWithPortraits = await fetchPortraitsForImport(char.id, data)
-    store.loadCharacter(dataWithPortraits as unknown as Character)
+    emit('import', dataWithPortraits)
     importedSnack.value = true
   } catch {
     // ignore

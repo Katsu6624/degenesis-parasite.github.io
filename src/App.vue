@@ -148,7 +148,7 @@
       </v-app-bar>
     </div>
     <v-main v-if="communityMode" class="bg-grey-darken-4">
-      <CommunityTab />
+      <CommunityTab @import="onCommunityImport" />
     </v-main>
     <v-main v-else-if="charactersGalleryMode" class="bg-grey-darken-4">
       <CharactersTab
@@ -479,6 +479,11 @@ const openCommunity = () => {
   npcGeneratorMode.value = false
   nameGeneratorMode.value = false
   showNavigationDrawer.value = !mobile.value
+}
+
+const onCommunityImport = (character: Record<string, unknown>) => {
+  browserStorage.storeCharacter(character as any)
+  appStore.refresh()
 }
 
 const charactersGalleryMode = ref(false)
