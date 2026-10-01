@@ -150,7 +150,7 @@ import { listCharacters, reportCharacter, portraitUrl } from '@/services/communi
 import type { CommunityCharacter } from '@/services/communityApi'
 import { useCharacterStore } from '@/store'
 import { CULT_RELATIONSHIP_KEYS } from '@/config/cultRelationships'
-import culturesConceptsCults from '@/config/culturesConceptsCults'
+import config from '@/config'
 
 const store = useCharacterStore()
 
@@ -171,8 +171,8 @@ const LIMIT = 20
 const totalPages = computed(() => Math.ceil(total.value / LIMIT))
 
 const cultOptions = CULT_RELATIONSHIP_KEYS.map(k => k)
-const cultureOptions = culturesConceptsCults.map((c: { name: string }) => c.name)
-const conceptOptions = culturesConceptsCults.flatMap((c: { concepts: { name: string }[] }) => c.concepts.map(co => co.name))
+const cultureOptions = Object.values(config.cultures).map(c => c.name)
+const conceptOptions = Object.values(config.concepts).map(c => c.name)
 
 async function load() {
   loading.value = true
