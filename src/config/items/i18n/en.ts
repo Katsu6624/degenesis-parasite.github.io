@@ -1182,7 +1182,7 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
   'mitrailleuse': {
     name: `Machine Gun`,
     properties: `Salvoes (10), Jamming, Slots used 1, Slots 2`,
-    caliber: `5.56×45mm`,
+    caliber: `5.56x45mm`,
     magazine: `Belt`,
   },
   'autobastion': {
@@ -1658,7 +1658,7 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
   'smartgun': {
     name: `Smartgun`,
     properties: `Sensitive, Smooth Running (1T)`,
-    caliber: `4.6×30mm`,
+    caliber: `4.6x30mm`,
     magazine: `20`,
   },
   'carabine-air-comprime': {
@@ -1821,7 +1821,7 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
   },
   'fourmis-de-garde': {
     name: `Guard Ants`,
-    properties: `Detects Phéromancers up to (500)m`,
+    properties: `Detects Pheromancers up to (500)m`,
   },
   'sangblier': {
     name: `Sangblier`,
