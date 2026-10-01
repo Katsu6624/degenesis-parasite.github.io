@@ -67,34 +67,39 @@
 
     <!-- Grid -->
     <div v-else class="community-grid">
-      <v-card
+      <div
         v-for="char in characters"
         :key="char.id"
-        variant="outlined"
-        class="community-card"
+        class="char-card"
         @click="openCard(char)"
       >
-        <div class="community-card__portrait">
+        <div class="char-card-portrait">
           <img
-            v-if="char.character_data && JSON.parse(char.character_data).portraitKey"
+            v-if="charData(char).portraitKey"
             :src="portraitUrl(char.id, 'main')"
             :alt="char.character_name ?? ''"
-            class="community-card__img"
+            class="char-card-portrait-img"
           />
-          <div v-else class="community-card__placeholder">
-            <v-icon :icon="mdiAccount" size="48" color="grey" />
+          <div v-else class="char-card-portrait-placeholder">
+            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" class="char-placeholder-svg">
+              <circle cx="50" cy="35" r="22" fill="#555" />
+              <ellipse cx="50" cy="85" rx="34" ry="28" fill="#555" />
+            </svg>
           </div>
         </div>
-        <v-card-text class="pa-3">
-          <div class="text-subtitle-2 font-weight-bold mb-1">{{ char.character_name ?? '?' }}</div>
-          <div class="text-caption text-medium-emphasis mb-1">{{ char.pseudo }}</div>
-          <div class="d-flex gap-1 flex-wrap">
-            <v-chip v-if="char.cult" size="x-small" color="red-darken-3">{{ char.cult }}</v-chip>
-            <v-chip v-if="char.culture" size="x-small" variant="outlined">{{ char.culture }}</v-chip>
-            <v-chip v-if="char.concept" size="x-small" variant="outlined">{{ char.concept }}</v-chip>
+        <div class="char-card-body">
+          <div class="char-card-name">{{ char.character_name ?? '?' }}</div>
+          <div class="char-card-rank">{{ char.pseudo }}</div>
+          <div class="char-card-icons">
+            <img v-if="char.culture" :src="`${baseUrl}logotypes/cultures/${char.culture}.svg`" class="char-logotype char-logotype--dark" />
+            <span v-else class="char-logotype-unknown">?</span>
+            <img v-if="char.concept" :src="`${baseUrl}logotypes/concepts/${char.concept}.svg`" class="char-logotype char-logotype--dark" />
+            <span v-else class="char-logotype-unknown">?</span>
+            <img v-if="char.cult" :src="`${baseUrl}logotypes/cults/${char.cult}.svg`" class="char-logotype char-logotype--dark" />
+            <span v-else class="char-logotype-unknown">?</span>
           </div>
-        </v-card-text>
-      </v-card>
+        </div>
+      </div>
     </div>
 
     <!-- Pagination -->
@@ -153,6 +158,7 @@ import { CULT_RELATIONSHIP_KEYS } from '@/config/cultRelationships'
 import config from '@/config'
 
 const store = useCharacterStore()
+const baseUrl = import.meta.env.BASE_URL
 
 const characters = ref<CommunityCharacter[]>([])
 const total = ref(0)
@@ -228,6 +234,10 @@ function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString()
 }
 
+function charData(char: CommunityCharacter): Record<string, unknown> {
+  try { return JSON.parse(char.character_data) } catch { return {} }
+}
+
 onMounted(load)
 </script>
 
@@ -237,40 +247,124 @@ onMounted(load)
   margin: 0 auto;
 }
 
+.community-tab__header {
+  padding-bottom: 8px;
+}
+
 .community-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
 }
 
-.community-card {
-  cursor: pointer;
-  transition: transform 150ms ease, border-color 150ms ease;
-}
-
-.community-card:hover {
-  transform: translateY(-2px);
-  border-color: rgba(200, 20, 32, 0.6);
-}
-
-.community-card__portrait {
-  aspect-ratio: 3/4;
+.char-card {
+  background: rgb(var(--v-theme-surface-variant));
+  border-radius: 6px;
   overflow: hidden;
-  background: #111;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: border-color 0.2s, transform 0.15s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
 }
 
-.community-card__img {
+.char-card:hover {
+  border-color: rgba(var(--v-theme-primary), 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.35);
+}
+
+.char-card-portrait {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  background: #2a2a2a;
+  overflow: hidden;
+}
+
+.char-card-portrait-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  display: block;
 }
 
-.community-card__placeholder {
+.char-card-portrait-placeholder {
   width: 100%;
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
+  background: #333;
+}
+
+.char-placeholder-svg {
+  width: 60%;
+  height: 60%;
+  opacity: 0.5;
+}
+
+.char-card-body {
+  padding: 12px 12px 8px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.char-card-name {
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgb(var(--v-theme-on-surface));
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.char-card-rank {
+  font-size: 0.7rem;
+  color: rgba(var(--v-theme-on-surface), 0.55);
+  margin-bottom: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.char-card-icons {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+}
+
+.char-logotype {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.char-logotype--dark {
+  filter: invert(1) brightness(0.75);
+}
+
+.char-logotype-unknown {
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  font-weight: 700;
+  color: rgba(var(--v-theme-on-surface), 0.3);
+  border: 1px dashed rgba(var(--v-theme-on-surface), 0.25);
+  border-radius: 4px;
+  flex-shrink: 0;
 }
 
 .community-detail__portrait {
