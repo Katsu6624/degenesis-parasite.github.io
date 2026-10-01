@@ -77,3 +77,34 @@ export async function deleteCharacter(id: string, secret: string): Promise<void>
 export function portraitUrl(id: string, key: 'main' | 'original' | 'fiche'): string {
   return `${API_URL}/api/portraits/${id}/${key}`
 }
+
+async function fetchPortraitAsDataUrl(id: string, key: 'main' | 'original' | 'fiche'): Promise<string | null> {
+  try {
+    const res = await fetch(portraitUrl(id, key))
+    if (!res.ok) return null
+    const blob = await res.blob()
+    return new Promise((resolve) => {
+      const reader = new FileReader()
+      reader.onload = () => resolve(reader.result as string)
+      reader.onerror = () => resolve(null)
+      reader.readAsDataURL(blob)
+    })
+  } catch {
+    return null
+  }
+}
+
+export async function fetchPortraitsForImport(id: string, charData: Record<string, unknown>): Promise<Record<string, unknown>> {
+  if (!charData.portraitKey) return charData
+  const [main, original, fiche] = await Promise.all([
+    fetchPortraitAsDataUrl(id, 'main'),
+    fetchPortraitAsDataUrl(id, 'original'),
+    fetchPortraitAsDataUrl(id, 'fiche'),
+  ])
+  return {
+    ...charData,
+    ...(main ? { portrait: main } : {}),
+    ...(original ? { portraitOriginal: original } : {}),
+    ...(fiche ? { portraitFiche: fiche } : {}),
+  }
+}

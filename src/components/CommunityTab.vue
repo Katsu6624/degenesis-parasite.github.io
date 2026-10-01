@@ -175,7 +175,7 @@
 import { ref, onMounted, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { mdiAccount, mdiEye, mdiEyeOff } from '@mdi/js'
-import { listCharacters, reportCharacter, deleteCharacter, portraitUrl } from '@/services/communityApi'
+import { listCharacters, reportCharacter, deleteCharacter, portraitUrl, fetchPortraitsForImport } from '@/services/communityApi'
 import type { CommunityCharacter } from '@/services/communityApi'
 import { useCharacterStore } from '@/store'
 import { CULT_RELATIONSHIP_KEYS } from '@/config/cultRelationships'
@@ -273,10 +273,11 @@ async function report(id: string) {
   reportedIds.value = new Set([...reportedIds.value, id])
 }
 
-function importChar(char: CommunityCharacter) {
+async function importChar(char: CommunityCharacter) {
   try {
     const data = JSON.parse(char.character_data)
-    store.loadCharacter(data)
+    const dataWithPortraits = await fetchPortraitsForImport(char.id, data)
+    store.loadCharacter(dataWithPortraits)
   } catch {
     // ignore
   }
