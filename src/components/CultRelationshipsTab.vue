@@ -87,7 +87,7 @@ const cultImageFilenames: Record<CultRelationshipKey, string> = {
 }
 
 function cultImageSrc(cult: CultRelationshipKey): string {
-  return `/cult-cards/${cultImageFilenames[cult]}`
+  return `${import.meta.env.BASE_URL}cult-cards/${cultImageFilenames[cult]}`
 }
 
 function imageExists(_cult: CultRelationshipKey): boolean {
