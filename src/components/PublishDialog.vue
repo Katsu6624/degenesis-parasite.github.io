@@ -56,6 +56,7 @@ import { publishCharacter } from '@/services/communityApi'
 import type { PublishResult } from '@/services/communityApi'
 
 const model = defineModel<boolean>({ default: false })
+const props = defineProps<{ prefilledCharacter?: Record<string, unknown> | null }>()
 const store = useCharacterStore()
 
 const pseudo = ref('')
@@ -68,7 +69,9 @@ async function publish() {
   loading.value = true
   error.value = ''
   try {
-    const char = store.asCharacter as unknown as Record<string, unknown>
+    const char = props.prefilledCharacter
+      ? { ...props.prefilledCharacter }
+      : JSON.parse(JSON.stringify(store.asCharacter)) as Record<string, unknown>
     const portraits: Record<string, string> = {}
     if (char.portrait) portraits.main = char.portrait as string
     if (char.portraitOriginal) portraits.original = char.portraitOriginal as string

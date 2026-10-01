@@ -105,6 +105,16 @@
             variant="outlined"
             color="red-darken-3"
             class="char-card-action-btn"
+            @click="openPublish(character)"
+          >
+            <v-icon :icon="mdiAccountMultiple" size="16" class="mr-2"></v-icon>
+            {{ $t('community.publish') }}
+          </v-btn>
+          <v-btn
+            block
+            variant="outlined"
+            color="red-darken-3"
+            class="char-card-action-btn"
             @click="confirmDelete(character.name)"
           >
             <v-icon :icon="mdiDeleteOutline" size="16" class="mr-2"></v-icon>
@@ -125,6 +135,9 @@
     <v-snackbar v-model="shareCopied" timeout="3000" color="green-darken-2">
       {{ $t('messages.shareCopied') }}
     </v-snackbar>
+
+    <!-- Publish dialog -->
+    <PublishDialog v-model="showPublishDialog" :prefilled-character="publishCharacter" />
 
     <!-- Confirm delete dialog -->
     <v-dialog v-model="deleteDialog" max-width="400">
@@ -151,6 +164,7 @@ import { encodeCharacter } from '@/util/share'
 import browserStorage from '@/store/browserStorage'
 import { useApplicationStore } from '@/store/application'
 import ImageCropperDialog from './ImageCropperDialog.vue'
+import PublishDialog from './PublishDialog.vue'
 import {
   mdiAccountPlusOutline,
   mdiAccountGroupOutline,
@@ -158,6 +172,7 @@ import {
   mdiCrop,
   mdiShareVariant,
   mdiDeleteOutline,
+  mdiAccountMultiple,
 } from '@mdi/js'
 
 const props = defineProps<{
@@ -177,6 +192,15 @@ const theme = useTheme()
 const isDark = computed(() => theme.global.current.value.dark)
 const baseUrl = import.meta.env.BASE_URL
 const appStore = useApplicationStore()
+
+// Publish
+const showPublishDialog = ref(false)
+const publishCharacter = ref<Record<string, unknown> | null>(null)
+function openPublish(character: { name: string }) {
+  const raw = browserStorage.loadCharacter(character.name)
+  publishCharacter.value = raw ? JSON.parse(JSON.stringify(raw)) : null
+  showPublishDialog.value = true
+}
 
 // Delete
 const deleteDialog = ref(false)
