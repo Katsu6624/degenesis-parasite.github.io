@@ -14,10 +14,10 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
     name: `5.56x45mm`,
   },
   'mun-balle-blindee-hf': {
-    name: `HF Full Jacket`,
+    name: `High Frequency Full Jacket`,
   },
   'mun-pointe-creuse-hf': {
-    name: `HF Hollow Point`,
+    name: `High Frequency Hollow Point`,
   },
   'mun-flechette-chasse': {
     name: `5.56mm Hunter Flechette`,
@@ -77,7 +77,7 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
   },
   'baton-de-belier': {
     name: `Ram Staff`,
-    properties: `Blunt, Banner (Attack +1D)`,
+    properties: `Blunt, Standard (Attacks +1D)`,
     description: `<b>Ram Staff</b><br>Symbol of the Cult\\'s power and unity of spirit. Before an important battle, the Iconide entrusts this staff to the Isaaki who will lead the Swords of Jehammet to victory.<br><br><b>SPECIALTY:</b> During combat, Jehammedans rallied around the staff feel inspired: within 20 paces, they gain +1D to their attack rolls.`,
   },
   'baton-d-ibis': {
@@ -89,7 +89,7 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
   },
   'chaine-de-lames': {
     name: `Chain of Blades`,
-    properties: `Unwieldy (3)`,
+    properties: `Out of Control (3)`,
   },
   'cimeterre': {
     name: `Scimitar`,
@@ -110,8 +110,8 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
   },
   'dilacerateur': {
     name: `Splayer`,
-    properties: `Laceration (2T, +1D damage)`,
-    description: `<b>Splayer</b><br>Old stories claim the EUF used Splayers during pacification operations in the old era. Inside the shaft lies a kinetic storage cylinder, constantly fed by a pumping lever that spreads the blades apart. When the lever is snapped back, the outer blades slam shut powerfully onto the central blade.<br><br><b>SPECIALTY:</b> Special ability "Laceration" — if an attack succeeds with 2 Triggers, the Spitalian can snap the blades shut to deal 1D additional damage. At best, they can deal +4 damage.`,
+    properties: `Cutting (2DC, +1D damage)`,
+    description: `<b>Splayer</b><br>Old stories claim the EUF used Splayers during pacification operations in the old era. Inside the shaft lies a kinetic storage cylinder, constantly fed by a pumping lever that spreads the blades apart. When the lever is snapped back, the outer blades slam shut powerfully onto the central blade.<br><br><b>SPECIALTY:</b> Special ability "Cutting" — if an attack succeeds with 2 Triggers, the Spitalian can snap the blades shut to deal 1D additional damage. At best, they can deal +4 damage.`,
   },
   'electrocuteur': {
     name: `Shocker`,
@@ -120,8 +120,8 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
   },
   'espadon': {
     name: `Bidenhander`,
-    properties: `Knockback (2T), Special`,
-    description: `<b>Bidenhander</b><br>Wielding a hoe may invoke Rebus and warm hearts, but Orgiasts prefer the two meters of sharp forged steel of their Bidenhander. Enormous, difficult to wield, these mad weapons were designed for equally mad wars. Some Bidenhanders have a spring mechanism that lets a hidden dagger shoot out from the handle.<br><br><b>SPECIALTY:</b> Has the property "Knockback (2T)". If the Orgiast fails to wield the weapon correctly (fewer than 2 Triggers), they can draw the dagger from the handle and use it to fight on the next round.`,
+    properties: `Impact (2T), Special`,
+    description: `<b>Bidenhander</b><br>Wielding a hoe may invoke Rebus and warm hearts, but Orgiasts prefer the two meters of sharp forged steel of their Bidenhander. Enormous, difficult to wield, these mad weapons were designed for equally mad wars. Some Bidenhanders have a spring mechanism that lets a hidden dagger shoot out from the handle.<br><br><b>SPECIALTY:</b> Has the property "Impact (2T)". If the Orgiast fails to wield the weapon correctly (fewer than 2 Triggers), they can draw the dagger from the handle and use it to fight on the next round.`,
   },
   'epee-preservalis': {
     name: `Preservalis Sword`,
@@ -132,7 +132,7 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
   },
   'faucille-d-ammout': {
     name: `Ammout's Sickle`,
-    properties: `Special damage (Aberrants, +3)`,
+    properties: `Special Damage (Psychonauts, +3)`,
   },
   'flissa': {
     name: `Flyssa`,
@@ -152,13 +152,13 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
   },
   'fustigateur': {
     name: `Scourge`,
-    properties: `Stun (8), Unwieldy (3)`,
+    properties: `Dazed (8), Out of Control (3)`,
     description: `<b>Scourge</b><br>Afrikans endured the Scourge introduced by the Hybrispanian invader before rising up and tearing these electric whips from their oppressors\\' hands. Since that day, the Scourge has become a symbol of Afrikan freedom. An insulated handle contains an E-Cube powering live wires over 3 meters long tipped with hooks. When it strikes, the wires create an electric discharge as blue sparks in a smell of ozone and burning flesh.<br><br><b>SPECIALTY:</b> None.`,
     magazine: `22`,
   },
   'goupilles-en-acier': {
     name: `Steel Cotters`,
-    properties: `Special, Penetration (2)`,
+    properties: `Special, Piercing (2)`,
     description: `<b>Steel Cotters</b><br>This weapon is used by assassins who drive it slyly into their victim\\'s flesh. The victim, wracked with spasms, gropes at the wound and tries to extract the cotters but never succeeds. They succumb to a slow and painful death.<br><br><b>SPECIALTY:</b> On a successful attack roll, the cotters lodge inside the opponent\\'s body and deal 1 damage point per round (ignoring armor). To extract the metal fragments and stop the ongoing damage requires a successful AGI+Dexterity (3) roll. The Apocalyptic is left unarmed after a successful attack.`,
   },
   'grappin': {
@@ -166,7 +166,7 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
   },
   'hache-de-bataille': {
     name: `Battle Axe`,
-    properties: `Knockback (2T)`,
+    properties: `Impact (2T)`,
   },
   'hache-en-pierre': {
     name: `Stone Axe`,
@@ -184,7 +184,7 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
   },
   'khepesh': {
     name: `Khopesh`,
-    properties: `Special damage (Aberrants, +2)`,
+    properties: `Special Damage (Psychonauts, +2)`,
     description: `<b>Khopesh</b><br>Myths claim that only a Khopesh chosen by Anubis can sever a creature\\'s life line without touching its flesh and organs. It is mainly the Sickles and the Ammuts who bring this sword into the Land of Ravens to eliminate waves of Psychonauts. All Khopeshes are ancient. They were removed from Cairo\\'s chambers by those of the First Circle and passed on to worthy Anubians. Only about a hundred still exist.<br><br><b>SPECIALTY:</b> +2 damage against Psychonauts.`,
   },
   'lame-en-verre': {
@@ -201,12 +201,12 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
   },
   'marteau-de-jugement': {
     name: `Judgment Hammer`,
-    properties: `Blunt, Knockback (3T)`,
-    description: `<b>Judgment Hammer</b><br>The Supreme Judge established the tradition of rendering judgement with a hammer, a tradition that persists to this day. Every City Judge receives one of these solid steel hammers upon appointment. They won\\'t wait long before using it. A Judgment Hammer is not merely decorative — it symbolizes the Judge\\'s executive power. The handle is one meter long and equally unadorned.<br><br><b>SPECIALTY:</b> A Judgment Hammer has the negative property "Knockback (3T)". This can be mitigated by a Potential.`,
+    properties: `Blunt, Impact (3T)`,
+    description: `<b>Judgment Hammer</b><br>The Supreme Judge established the tradition of rendering judgement with a hammer, a tradition that persists to this day. Every City Judge receives one of these solid steel hammers upon appointment. They won\\'t wait long before using it. A Judgment Hammer is not merely decorative — it symbolizes the Judge\\'s executive power. The handle is one meter long and equally unadorned.<br><br><b>SPECIALTY:</b> A Judgment Hammer has the negative property "Impact (3T)". This can be mitigated by a Potential.`,
   },
   'masse': {
     name: `Sledgehammer`,
-    properties: `Blunt, Knockback (3T)`,
+    properties: `Blunt, Impact (3T)`,
   },
   'masse-d-armes': {
     name: `Mace`,
@@ -214,7 +214,7 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
   },
   'massue-roi-cafard': {
     name: `Iron Club of the Cockroach King`,
-    properties: `Blunt, Knockback (3T)`,
+    properties: `Blunt, Impact (3T)`,
     description: `<b>Iron Club of the Cockroach King</b><br>The Cockroach Clan is known for its night raids. Their kings are different: enormous, bloated, heads sunken into their shoulders. When one of these kings is unleashed on their enemies, he drags an iron beam studded with sharpened metal plates held by barbed wire along the ground. He brings down the Judges\\' horses with this weapon in a brutal and bloody manner.<br><br><b>SPECIALTY:</b> None.`,
   },
   'massue': {
@@ -228,11 +228,11 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
   },
   'pioche': {
     name: `Pickaxe`,
-    properties: `Knockback (3T)`,
+    properties: `Impact (3T)`,
   },
   'pistolet-a-injection': {
     name: `Injector Gun`,
-    properties: `Special, Penetration (4)`,
+    properties: `Special, Piercing (4)`,
     description: `<b>Injector Gun</b><br>An Anesthesiologist prefers an injector gun when introducing a chemical agent or medicinal substance into a precise point of a target\\'s body.<br><br><b>SPECIALTY:</b> On a successful melee attack, the gun is pressed against the target and injects its contents.`,
   },
   'sabre-de-damas': {
@@ -243,7 +243,7 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
   },
   'stylet': {
     name: `Stiletto`,
-    properties: `Regularity (2T)`,
+    properties: `Smooth Running (2T)`,
   },
   'atlatl': {
     name: `Atlatl`,
@@ -252,7 +252,7 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
   },
   'bola': {
     name: `Bola`,
-    properties: `Entanglement (-3D), Unwieldy (3)`,
+    properties: `Entangled (-3D), Out of Control (3)`,
     magazine: `1`,
   },
   'couteau-de-lancer': {
@@ -261,7 +261,7 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
   },
   'filet': {
     name: `Net`,
-    properties: `Entanglement (-5D)`,
+    properties: `Entangled (-5D)`,
     magazine: `1`,
   },
   'fronde': {
@@ -287,7 +287,7 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
   },
   'arbalete': {
     name: `Crossbow`,
-    caliber: `Bolts`,
+    caliber: `Bolt`,
     magazine: `1`,
   },
   'arbalete-harpon': {
@@ -298,27 +298,27 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
   },
   'arbalete-lourde': {
     name: `Heavy Crossbow`,
-    caliber: `Bolts`,
+    caliber: `Bolt`,
     magazine: `1`,
   },
   'arbalete-repetition': {
     name: `Repeating Crossbow`,
-    caliber: `Bolts`,
+    caliber: `Bolt`,
     magazine: `4`,
   },
   'arc-composite': {
     name: `Composite Bow`,
-    caliber: `Arrows`,
+    caliber: `Arrow`,
     magazine: `1`,
   },
   'arc': {
     name: `Bow`,
-    caliber: `Arrows`,
+    caliber: `Arrow`,
     magazine: `1`,
   },
   'sarbacane': {
     name: `Blow Gun`,
-    caliber: `Darts`,
+    caliber: `Nails`,
     magazine: `1`,
   },
   'carabine-neo': {
@@ -335,9 +335,9 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
   },
   'defricheur-fusil-blinf': {
     name: `Trailblazer`,
-    properties: `Regularity (3T), Burst (3)`,
+    properties: `Smooth Running (3T), Salvoes (3)`,
     description: `<b>Trailblazer</b><br>The Trailblazer is actually a Sagur-II assault rifle fitted with three 5.45 mm barrels. Ammunition can come from a magazine or a bandolier. The stock can transform into a bayonet, combat knife, or bipod. In the Alpine Fortress, every weapon is regularly checked via an interface that logs rounds fired, maintenance cycles, and whether firing dates match mission dates.<br><br><b>SPECIALTY:</b> A Trailblazer can be modified without using Slots. A bayonet can be mounted on one of the barrels in no time, usable as a melee weapon dealing damage similar to a Stiletto. The bipod, opened under the barrels, grants +2D to handling. However, it imposes a -2D penalty when fired standing. When a Hellvetic rises in rank, they may reassign their Trailblazer\\'s Slots.`,
-    caliber: `HF Full Jacket`,
+    caliber: `High Frequency Full Jacket`,
     magazine: `35`,
   },
   'defricheur-fusil-chevrotine': {
@@ -349,15 +349,15 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
   },
   'defricheur-fusil-creuse': {
     name: `Trailblazer`,
-    properties: `Regularity (3T), Burst (3)`,
+    properties: `Smooth Running (3T), Salvoes (3)`,
     description: `<b>Trailblazer</b><br>The Trailblazer is actually a Sagur-II assault rifle fitted with three 5.45 mm barrels. Ammunition can come from a magazine or a bandolier. The stock can transform into a bayonet, combat knife, or bipod. In the Alpine Fortress, every weapon is regularly checked via an interface that logs rounds fired, maintenance cycles, and whether firing dates match mission dates.<br><br><b>SPECIALTY:</b> A Trailblazer can be modified without using Slots. A bayonet can be mounted on one of the barrels in no time, usable as a melee weapon dealing damage similar to a Stiletto. The bipod, opened under the barrels, grants +2D to handling. However, it imposes a -2D penalty when fired standing. When a Hellvetic rises in rank, they may reassign their Trailblazer\\'s Slots.`,
-    caliber: `HF Hollow Point`,
+    caliber: `High Frequency Hollow Point`,
     magazine: `35`,
   },
   'fusil-de-chasse': {
     name: `Shotgun`,
-    properties: `Scatter, Double barrel`,
-    caliber: `12 mm / Buckshot`,
+    properties: `Scatter, Double Barreled`,
+    caliber: `Caliber 12 Buckshot`,
     magazine: `4`,
   },
   'fusil-de-precision': {
@@ -368,14 +368,14 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
   },
   'fusil-d-assaut': {
     name: `Assault Rifle`,
-    properties: `Burst (3)`,
+    properties: `Salvoes (3)`,
     description: `<b>Assault Rifle</b><br>Whoever proves their worth in the pack\\'s eyes is permitted to sharpen their claws and carry an assault rifle. These weapons and their ammunition come from EUF stockpiles, found partly deep in the jungle, though most are still stored in Tunis in EUF barracks. Today, Tunis is occupied by rebelling slaves. For now, the Scourgers avoid confronting the problem.<br><br><b>SPECIALTY:</b> None.`,
     caliber: `5.56x45mm`,
     magazine: `30`,
   },
   'fusil-d-exception': {
     name: `Masterpiece Rifle`,
-    properties: `Thunder`,
+    properties: `Thunder Strike`,
     description: `<b>Masterpiece Rifle</b><br>The centerpiece of any respectable merchant is their masterpiece rifle. This high-quality precision rifle was crafted in the Protectorate workshops. Its precision scope and match-grade magazine set it apart from any other rifle.<br><br><b>SPECIALTY:</b> None.`,
     caliber: `.50 GL`,
     magazine: `1`,
@@ -388,59 +388,59 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
   },
   'fusil-mitrailleur-leger': {
     name: `Light Machine Gun`,
-    properties: `Burst (4), Jam`,
+    properties: `Salvoes (4), Jamming`,
     caliber: `5.56x45mm`,
-    magazine: `Bandolier`,
+    magazine: `Belt`,
   },
   'fusil-a-flechettes': {
     name: `Flechette Rifle`,
-    properties: `Regularity (1T), Burst (5)`,
+    properties: `Smooth Running (1T), Salvoes (5)`,
     caliber: `Flechettes`,
     magazine: `60`,
   },
   'fusil-a-pompe': {
     name: `Pump Gun`,
-    caliber: `12 mm`,
+    caliber: `Caliber 12`,
     magazine: `4`,
   },
   'merveille': {
     name: `Marvel`,
-    properties: `Muzzle-loaded`,
+    properties: `Muzzle Loader`,
     description: `<b>Marvel</b><br>A Scrapper\\'s rifle is as unique as the hand that holds it. Very few dust-diggers trust weapons found under the ruins. So they bolt, weld, and assemble their own rifle from whatever they find. The result is rarely pretty, but at least it\\'s unique. The Marvel uses lead ammunition. A blade or long spike can be screwed onto it, but only as a safety mechanism.<br><br><b>SPECIALTY:</b> Marvels have the highest Slot count.`,
     caliber: `Lead Bullet`,
     magazine: `1`,
   },
   'mousquet-de-juge': {
     name: `Judges' Musket`,
-    properties: `Muzzle-loaded`,
+    properties: `Muzzle Loader`,
     description: `<b>Judge\\'s Musket</b><br>This muzzle-loading rifle, manufactured in the Steel Masters\\' workshops in Justitia, is an exact replica of 17th and 18th century muskets from the old era. It is loaded with powder and a lead ball, the charge then rammed down. The weapon can only fire once and must be reloaded. Each musket is adorned with standard decorations indicating the year of manufacture and the Steel Master who crafted it. The stock flap containing spare parts and maintenance equipment is also standard.<br><br><b>SPECIALTY:</b> A few double-barreled muskets exist, each barrel with its own trigger. If both barrels are fired simultaneously, accuracy drops by 2D but base damage is doubled. Loading a Judge\\'s Musket takes 2 actions (per barrel).`,
     caliber: `Lead Bullet`,
     magazine: `1`,
   },
   'ravageur': {
     name: `Soul Burner`,
-    properties: `Biometric encoding, Special, Lethal, Terrifying (4)`,
+    properties: `Biometrically Encoded, Special, Fatal, Terrifying (4)`,
     caliber: `E-Cube`,
     magazine: `15`,
   },
   'sagur-72': {
     name: `Sagur-72`,
-    properties: `Regularity (2T), Burst (3)`,
-    caliber: `5x30 mm cl`,
+    properties: `Smooth Running (2T), Salvoes (3)`,
+    caliber: `5x30mm Caseless`,
     magazine: `35`,
   },
   'calcinateur': {
     name: `Spitfire`,
-    properties: `Incendiary, Special`,
+    properties: `Fire Hazardous, Special`,
     description: `<b>Spitfire</b><br>Swords are powerless against spore clouds and Aberrant plagues. But the jet of flame from a Spitfire reduces them to ash. Orgiasts baptize their enemies with fire.<br><br>Its pressurized tank is its weak point: a targeted hit (difficulty +2) dealing at least 4 damage can pierce it and trigger an explosion (damage 14). The Orgiast has 1D rounds to drop the weapon before it explodes.`,
-    caliber: `Petreo`,
+    caliber: `Petro`,
     magazine: `12`,
   },
   'fusil-mitrailleur-lourd': {
     name: `Heavy Machine Gun`,
-    properties: `Burst (10), Jam`,
-    caliber: `5.56x45 mm`,
-    magazine: `Bandolier`,
+    properties: `Salvoes (10), Jamming`,
+    caliber: `5.56x45mm`,
+    magazine: `Belt`,
   },
   'lance-grenades': {
     name: `Grenade Launcher`,
@@ -450,7 +450,7 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
   },
   'lance-missiles': {
     name: `Rocket Launcher`,
-    properties: `Anti-armor, Explosive`,
+    properties: `Armor Piercing, Explosive`,
     caliber: `Missile`,
     magazine: `1`,
   },
@@ -463,43 +463,43 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
   },
   'pneumo-marteau': {
     name: `Pneumo Hammer`,
-    properties: `Thunder, Special`,
+    properties: `Thunder Strike, Special`,
     description: `<b>Pneumo-Hammer</b><br>A pneumatic nail gun heated with coal until steam pressure is reached. A valve system redirects steam into the barrels one by one, propelling nails similar to crossbow bolts.<br><br>This weapon requires more than 5 minutes to reach operating temperature. It can also serve as a bomb: if all valves are closed, pressure builds until a detonation of power 12.`,
     caliber: `Bolt/Coal`,
     magazine: `12`,
   },
   'bouteille-explosive': {
     name: `Explosive Bottles`,
-    properties: `Incendiary, Explosive, Special`,
+    properties: `Fire Hazardous, Explosive, Special`,
     description: `<b>Molotov Cocktail</b><br>Djihad-warriors craft their explosive bottles from salvaged alcohol poured into glass bottles with a soaked cloth as a wick. Simple but effective, these incendiary weapons are the weapon of choice for Jehammetan warriors during their raids.`,
     magazine: `1`,
   },
   'explosifs': {
     name: `Explosives`,
-    properties: `Thunder, Explosive`,
+    properties: `Thunder Strike, Explosive`,
     description: `<b>Explosives</b><br>The ores and chemical agents needed for explosives are extracted from the mountain, supplied by Neolibyans, or purchased from the Protectorate. Everything is then refined deep inside the fortress. In combat, Hellvetics primarily use plastic explosive, which attaches easily to targets and detonates with a timer or remote detonator. For tunnel digging, Hellvetics use explosives held in place by high-thrust rods.<br><br><b>SPECIALTY:</b> Hellvetics\\' Resources grant them access to all types of explosives and detonators. A Soldier leaving the Alpine Fortress with more than 2 explosives is considered wasteful. The limit for a Sapper is 4 charges.`,
     magazine: `1`,
   },
   'poudre-noire': {
     name: `Black Powder`,
-    properties: `Thunder, Explosive`,
+    properties: `Thunder Strike, Explosive`,
     magazine: `1`,
   },
   'tnt': {
     name: `TNT`,
-    properties: `Thunder, Explosive`,
+    properties: `Thunder Strike, Explosive`,
     magazine: `1`,
   },
   'raccordeur': {
     name: `Cascader`,
-    properties: `Thunder, Area damage (45°)`,
+    properties: `Thunder Strike, Area Damage (45°)`,
     description: `<b>Cascader</b><br>A vocoder at full power is already painful, but plugged into a Cascader — a kind of scepter fitted with amplifier blocks and speakers — it transforms a nasal voice into a roar of divine fury. Mountain slopes tremble, avalanches form and crash into the valley below with a thunderous din. Waves form on still water, dust swirls around huts. The sound pressure pierces eardrums and can knock a person to the ground, then hurl them further away. Ribs crack and veins burst.<br><br><b>SPECIALTY:</b> Cascaders are area weapons that hit allies and enemies alike. They cause serious Traumas in a 45° cone.`,
     caliber: `4x E-Cube`,
     magazine: `8`,
   },
   'vocodeur': {
     name: `Vocoder`,
-    properties: `Thunder, Area damage (45°)`,
+    properties: `Thunder Strike, Area Damage (45°)`,
     description: `<b>Vocoder</b><br>The vocoder is part of the Chroniclers\\' deterrence arsenal. This device modulates and distorts sounds. It also overmodulates voices and amplifies them, giving them a mechanical, metallic quality. A microphone sits in the leather mask at mouth level; the modulator and speaker hang at chest level. A vocoder\\'s volume can be adjusted continuously, from a subtle whisper to an infernal din audible for kilometers. Extra buttons allow a delay, frequency adjustment, and a deafening feedback shriek. A properly used vocoder is a Chronicler\\'s most effective weapon. Within the Server, voice distortions are never used.<br><br><b>SPECIALTY:</b> A vocoder\\'s E-Cube power draw is minimal, allowing it to produce sounds for several days without interruption. As long as a Chronicler regularly recharges their vocoder in a Server or Alcove, their electronic voice will always follow them everywhere.`,
     caliber: `E-Cube`,
   },
@@ -664,53 +664,53 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
   },
   'defricheur-blinf': {
     name: `Stubbed Trailblazer`,
-    properties: `Regularity (2T)`,
+    properties: `Smooth Running (2T)`,
     description: `<b>Stubbed Trailblazer</b><br>Special forces also use a lighter, stubbed version of the Trailblazer. Its range is significantly reduced, but its design allows for operations in confined spaces and close-quarters combat without difficulty. It can be used with one hand.<br><br><b>SPECIALTY:</b> None.`,
-    caliber: `HF Full Jacket`,
+    caliber: `High Frequency Full Jacket`,
     magazine: `20`,
   },
   'defricheur-creuse': {
     name: `Stubbed Trailblazer`,
-    properties: `Regularity (2T)`,
+    properties: `Smooth Running (2T)`,
     description: `<b>Stubbed Trailblazer</b><br>Special forces also use a lighter, stubbed version of the Trailblazer. Its range is significantly reduced, but its design allows for operations in confined spaces and close-quarters combat without difficulty. It can be used with one hand.<br><br><b>SPECIALTY:</b> None.`,
-    caliber: `HF Hollow Point`,
+    caliber: `High Frequency Hollow Point`,
     magazine: `20`,
   },
   'moulinette': {
     name: `Grinder`,
-    properties: `Muzzle-loaded, Scatter`,
+    properties: `Muzzle Loader, Scatter`,
     description: `<b>Grinder</b><br>This legendary variant of the Marvel is a sawed-off barrel wielded one-handed. Designed by Artisan Wismuth 50 winters ago, it is fitted with a crank-operated mill that grinds screws and stones into ammunition. One simply needs to find small scraps of metal — not difficult for those who know how to look — then add powder and fire.<br><br><b>SPECIALTY:</b> The Grinder\\'s ammunition deals horrible damage but lacks great penetration (damage halved against an armor value of 2 or more).`,
     caliber: `Black Powder`,
     magazine: `1`,
   },
   'pistolet-automatique': {
     name: `Automatic Pistol`,
-    properties: `Regularity (3T)`,
+    properties: `Smooth Running (3T)`,
     caliber: `4.6x30mm`,
     magazine: `20`,
   },
   'pistolet-de-detresse': {
     name: `Signal Pistol`,
-    properties: `Incendiary`,
+    properties: `Fire Hazardous`,
     caliber: `Special`,
     magazine: `1`,
   },
   'pistolet-lourd': {
     name: `Heavy Pistol`,
-    properties: `Thunder`,
+    properties: `Thunder Strike`,
     caliber: `.50 GL`,
     magazine: `12`,
   },
   'pistolet-mitrailleur': {
     name: `Submachine Gun`,
-    properties: `Regularity (2T), Burst (3)`,
+    properties: `Smooth Running (2T), Salvoes (3)`,
     description: `<b>Submachine Gun</b><br>Palers recover these submachine guns from the Dispensers\\' archives. These compact, reliable weapons fire salvaged standard cartridges. A bayonet or combat knife can also be attached as a safety mechanism.<br><br><b>SPECIALTY:</b> None.`,
-    caliber: `4.6x30 mm`,
+    caliber: `4.6x30mm`,
     magazine: `35`,
   },
   'pistolet-a-silex': {
     name: `Flintlock Pistol`,
-    properties: `Muzzle-loaded`,
+    properties: `Muzzle Loader`,
     description: `<b>Flintlock Pistol</b><br>The firing mechanism and design of the flintlock pistol are similar to its larger sibling, the Judge\\'s Musket. Range and penetration are lower, but its compact size compensates: when a musket is spent, the Judge drops it and draws the flintlock from their belt. Once that is fired, they draw another pistol.<br><br><b>SPECIALTY:</b> A Judge can carry multiple pistols. Like the musket, reloading takes 2 actions.`,
     caliber: `Lead Bullet`,
     magazine: `1`,
@@ -983,7 +983,7 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
   },
   'mod-freon': {
     name: `Freon`,
-    properties: `Attack: activation + AGI+Ranged Weapons: +2D. Penetration (5), Damage 1 × level`,
+    properties: `Attack: activation + AGI+Ranged Weapons: +2D. Piercing (5), Damage 1 × level`,
     description: `<b>Freon</b><br>This refrigerant gas escapes from its cartridge through a flexible tube running along the Chronicler\\'s arm to their palm. The gas causes severe frostbite but cannot penetrate protection with an armor value exceeding 4. The Chronicler must combine its activation with AGI+Ranged Weapons. A freon projector has +2D handling. The gas sprays about 3 m, and anyone hit suffers 1D damage per module level. The level determines the number of charges, which must be recharged at an Alcove or Dispenser.`,
   },
   'mod-fumigateur': {
@@ -1019,7 +1019,7 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
   'mod-foreur-tunnel': {
     name: `Tunnel Driller`,
     properties: `Concrete and rock: 10 damage per round, tank at risk of being hit, -6D in combat, 3 Slots`,
-    description: `<b>Tunnel Driller</b><br>The tunnel driller is both the largest and most advanced module. To carry it, arms and shoulders must be reinforced. Stabilizers absorb vibrations and convert kinetic energy into heat. Powered by Petreo, the tank sits on the back. Ultra-resistant harnesses fitted with tunnel drillers are deployed on rescue missions during cave-ins. They drill through rock and concrete for 10 damage per round. However, they are completely useless in combat: -6D to attack and active defense. The tank faces the same risks as the arc welder\\'s (3 Slots).`,
+    description: `<b>Tunnel Driller</b><br>The tunnel driller is both the largest and most advanced module. To carry it, arms and shoulders must be reinforced. Stabilizers absorb vibrations and convert kinetic energy into heat. Powered by Petro, the tank sits on the back. Ultra-resistant harnesses fitted with tunnel drillers are deployed on rescue missions during cave-ins. They drill through rock and concrete for 10 damage per round. However, they are completely useless in combat: -6D to attack and active defense. The tank faces the same risks as the arc welder\\'s (3 Slots).`,
   },
   'mod-poids-lourd': {
     name: `Heavyweight`,
@@ -1157,7 +1157,7 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
   },
   'canon': {
     name: `Cannon`,
-    properties: `Thunder, Slots used 4, Slots 2`,
+    properties: `Thunder Strike, Slots used 4, Slots 2`,
     caliber: `Shells`,
     magazine: `4`,
   },
@@ -1169,8 +1169,8 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
   },
   'lance-flammes': {
     name: `Flamethrower`,
-    properties: `Incendiary, Slots used 2, Slots 1`,
-    caliber: `Petreo`,
+    properties: `Fire Hazardous, Slots used 2, Slots 1`,
+    caliber: `Petro`,
     magazine: `20`,
   },
   'lance-harpons': {
@@ -1181,7 +1181,7 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
   },
   'mitrailleuse': {
     name: `Machine Gun`,
-    properties: `Burst (10), Jam, Slots used 1, Slots 2`,
+    properties: `Salvoes (10), Jamming, Slots used 1, Slots 2`,
     caliber: `5.56×45mm`,
     magazine: `Belt`,
   },
@@ -1197,7 +1197,7 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
   'charrette-autoportee': {
     name: `Self-Propelled Cart`,
     properties: `Spd. 1, Acc. 1, Brk. 1, Armor –, Body 10, Structure 5, Slots –`,
-    description: `<b>Self-Propelled Cart</b><br>Equipped with a Petreo engine, a gearbox with a direct-drive rotary axle, and two wide-tire wheels, Scrapper self-propelled carts are certainly not models of aesthetics. However, these monstrous steel workhorses can dislodge any type of obstacle, or haul heavy artifacts trapped in the depths back to the surface. As a rule, a self-propelled cart is bought by a group of Scrappers who all share it. It forms the core of all their operations. Only Scrappers who have proven themselves with engines are allowed to maintain a self-propelled cart, and only under supervision.<br><br><b>SPECIALTY:</b> The self-propelled cart has an average Strength of 30.`,
+    description: `<b>Self-Propelled Cart</b><br>Equipped with a Petro engine, a gearbox with a direct-drive rotary axle, and two wide-tire wheels, Scrapper self-propelled carts are certainly not models of aesthetics. However, these monstrous steel workhorses can dislodge any type of obstacle, or haul heavy artifacts trapped in the depths back to the surface. As a rule, a self-propelled cart is bought by a group of Scrappers who all share it. It forms the core of all their operations. Only Scrappers who have proven themselves with engines are allowed to maintain a self-propelled cart, and only under supervision.<br><br><b>SPECIALTY:</b> The self-propelled cart has an average Strength of 30.`,
   },
   'kom': {
     name: `Kom`,
@@ -1404,15 +1404,15 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
   },
   'gants-rasoirs': {
     name: `Razor Gloves`,
-    properties: `Stun (F/4), Terrifying (1), Regularity (3T)`,
+    properties: `Dazed (F/4), Terrifying (1), Smooth Running (3T)`,
   },
   'garrot-lutte': {
     name: `Garotte`,
-    properties: `Stun (F/3), Special`,
+    properties: `Dazed (F/3), Special`,
   },
   'scindo': {
     name: `Scindo`,
-    properties: `Regularity (3T), Special`,
+    properties: `Smooth Running (3T), Special`,
   },
   'mini-grenaille': {
     name: `.410 shot – "Tiny"`,
@@ -1581,8 +1581,8 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
     properties: `Generates (30) Qt per windy hour. Storms damage the mill. Slots 2`,
   },
   'generateur-petro': {
-    name: `Petreo Generator`,
-    properties: `(1)L of Petreo generates 20 Qt. Storage: Tank (40L), Slots 2`,
+    name: `Petro Generator`,
+    properties: `(1)L of Petro generates 20 Qt. Storage: Tank (40L), Slots 2`,
   },
   'generateur-charbon': {
     name: `Coal Generator`,
@@ -1590,7 +1590,7 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
   },
   'tronconneuse': {
     name: `Chainsaw`,
-    properties: `Incendiary, Special`,
+    properties: `Out of Control (2), Terrifying (3), Special`,
   },
   'machette': {
     name: `Machete`,
@@ -1604,7 +1604,7 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
   },
   'rapiere': {
     name: `Rapier`,
-    properties: `Regularity (2T)`,
+    properties: `Smooth Running (2T)`,
   },
   'lance-katharsys': {
     name: `Lance`,
@@ -1623,113 +1623,113 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
   },
   'derringer': {
     name: `Derringer`,
-    properties: `Stealthy, Stealth 2, Double Barrel`,
+    properties: `Camouflage (2C), Double Barreled`,
     caliber: `.357`,
     magazine: `2`,
   },
   'revolver-resistance-grenaille': {
     name: `Resistance Revolver (Shot)`,
-    caliber: `.410`,
-    magazine: `2`,
+    caliber: `.410 Shot`,
+    magazine: `5`,
   },
   'revolver-resistance-chevrotine': {
     name: `Resistance Revolver (Slug)`,
     properties: `Scatter`,
-    caliber: `.410`,
-    magazine: `2`,
+    caliber: `.410 Slug`,
+    magazine: `5`,
   },
   'fusil-canon-scie-corneille': {
     name: `Raven's Sawn-Off Rifle`,
-    properties: `Scatter, Double Barrel`,
-    caliber: `12 mm`,
+    properties: `Scatter, Double Barreled`,
+    caliber: `Caliber 12`,
     magazine: `2`,
   },
   'poivriere-grenaille': {
     name: `Pepperbox (Shot)`,
-    properties: `Scatter`,
-    caliber: `.410`,
+    properties: `Salvoes (4), Scatter, Single Loader (2)`,
+    caliber: `.410 Shot`,
     magazine: `4`,
   },
   'poivriere-chevrotine': {
     name: `Pepperbox (Slug)`,
-    caliber: `.410`,
+    caliber: `.410 Slug`,
     magazine: `4`,
   },
   'smartgun': {
     name: `Smartgun`,
-    properties: `Biometric encoding, Regularity (3T)`,
+    properties: `Sensitive, Smooth Running (1T)`,
     caliber: `4.6×30mm`,
     magazine: `20`,
   },
   'carabine-air-comprime': {
     name: `Repeating Air Rifle`,
-    properties: `Long Reload (1H), Sensitive`,
-    caliber: `.357`,
-    magazine: `8`,
+    properties: `Extended Reload (1H), Sensitive`,
+    caliber: `Lead Bullet`,
+    magazine: `20`,
   },
   'fragger': {
     name: `Fragger`,
-    properties: `Explosive (area), Special`,
-    caliber: `Fragmentation Rounds`,
-    magazine: `6`,
+    properties: `Gruesome (1), Piercing (2)`,
+    caliber: `Fragger Round`,
+    magazine: `20`,
   },
   'tube-canon': {
     name: `Pipe Rifle`,
-    properties: `Muzzle-loaded`,
-    caliber: `Lead Ball`,
-    magazine: `1`,
+    properties: `Single Loader (2)`,
+    caliber: `.357`,
+    magazine: `8`,
   },
   'carabine-militaire-blafards': {
     name: `Military Carbine`,
-    caliber: `.357`,
-    magazine: `10`,
+    caliber: `5.56x45mm`,
+    magazine: `15`,
   },
   'fusil-de-guerre': {
     name: `Battle Rifle`,
     properties: `Sensitive`,
-    caliber: `7.62`,
-    magazine: `10`,
+    caliber: `7.62mm`,
+    magazine: `20`,
   },
   'fusil-pompe-antiemeutes': {
     name: `Riot Shotgun`,
-    properties: `Scatter`,
-    caliber: `12 mm`,
-    magazine: `6`,
+    properties: `Jamming, Scatter, Single Loader (3)`,
+    caliber: `Caliber 12`,
+    magazine: `8`,
   },
   'fusil-anti-materiel': {
     name: `Anti-Matériel Rifle`,
-    properties: `Anti-armor, Sensitive`,
-    caliber: `14 mm`,
+    properties: `Piercing (4), Sensitive, Thunder Strike`,
+    caliber: `14mm`,
     magazine: `5`,
   },
   'canon-vapeur-katharsys': {
     name: `Steam Cannon`,
-    properties: `Thunder, Explosive, Slots 4`,
-    caliber: `Shells`,
+    properties: `Panic (3) Area Damage (35°), Special`,
+    caliber: `Coal (10kg)`,
     magazine: `4`,
   },
   'denier': {
     name: `Denier`,
-    properties: `Biometric encoding, Special`,
-    caliber: `E-Cube`,
-    magazine: `10`,
+    properties: `Area Damage (90°), Dazed (12), Piercing (10), Panic (4)`,
+    caliber: `E-Cube X3`,
+    magazine: `8`,
   },
   'canon-rotatif': {
     name: `Rotary Gun`,
-    properties: `Burst (4), Muzzle-loaded`,
-    caliber: `Lead Ball`,
-    magazine: `6`,
+    properties: `Salvoes (2), Smooth Running (2T), Special`,
+    caliber: `.410 Slug`,
+    magazine: `200`,
   },
   'lanceur-marqueur': {
     name: `Marker Launcher`,
-    properties: `Marks pheromantic targets`,
-    caliber: `Marker`,
-    magazine: `4`,
+    properties: `Deviation, Muzzle Loader`,
+    caliber: `Cartridge`,
+    magazine: `1`,
   },
   'tribut-nullpellia': {
     name: `Nullpellia's Toll`,
-    properties: `Thunder, Explosive, Terrifying (5), Lethal, Special`,
-    caliber: `E-Cube`,
+    properties: `INT+Engineering (4), Fires automatically after 5 hours`,
+    caliber: `Coal (60kg)`,
     magazine: `1`,
   },
   'reste-luciole': {
@@ -1762,7 +1762,7 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
   },
   'reste-ichor-feu': {
     name: `Fire Ichor`,
-    properties: `Deviation, Explosive, Incendiary; Attracts drones`,
+    properties: `Deviation, Explosive, Fire Hazardous; Attracts drones`,
   },
   'reste-lampe-lard': {
     name: `Lard Lamp`,
@@ -1810,7 +1810,7 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
   },
   'reste-bombe-infectieuse': {
     name: `Infection Bomb`,
-    properties: `Cloud (4m), Deviation, Incendiary`,
+    properties: `Cloud (4m), Deviation, Fire Hazardous`,
   },
   'reste-dard-menthu': {
     name: `Menthu's Stinger`,
@@ -1853,7 +1853,7 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
   },
   'mine-mollusk': {
     name: `Mollusk Mine`,
-    properties: `Stealth 4, Explosive (Damage 14), Thunder; Detonates when a Psychonaut in their primary phase enters within (2)m`,
+    properties: `Stealth 4, Explosive (Damage 14), Thunder Strike; Detonates when a Psychonaut in their primary phase enters within (2)m`,
   },
   'bile-de-gendo': {
     name: `Gendo's Bile`,
@@ -1873,7 +1873,7 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
   },
   'filet-byssus': {
     name: `Byssus Net`,
-    properties: `Entanglement (-6D)`,
+    properties: `Entangled (-6D)`,
   },
   'decrocheur': {
     name: `Husk Wire`,
@@ -1927,7 +1927,7 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
   },
   'art-larmes-orphelin': {
     name: `Orphan's Tears`,
-    properties: `Cloud (5m, 10), Stun (4), Deviation, Terrifying (4). Storage: Internal cell (200Qt)`,
+    properties: `Cloud (5m, 10), Dazed (4), Deviation, Terrifying (4). Storage: Internal cell (200Qt)`,
     magazine: `1`,
   },
   'art-gardien': {
@@ -1953,7 +1953,7 @@ export const itemTranslationsEn: Record<string, ItemTranslation> = {
   },
   'art-radiance': {
     name: `Radiance`,
-    properties: `Lethal, Penetration (10). Storage: 5 × E-Cube (600Qt)`,
+    properties: `Fatal, Piercing (10). Storage: 5 × E-Cube (600Qt)`,
     magazine: `4`,
   },
   'art-memorial': {
