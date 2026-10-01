@@ -822,11 +822,6 @@ export const useCharacterStore = defineStore('character', {
       })
       const clan = character.clan && config.clansByName.get(character.clan)
       clan && this.setClan(clan)
-      character.potentials &&
-        character.potentials.forEach(([name, v]) => {
-          const potential = PotentialsByName.get(name)
-          potential && this.potentials.set(potential, Math.min(v, 3))
-        })
       character.legacies &&
         character.legacies.forEach(([name, v]) => {
           const legacy = AllLegacies.find(l => l.name === name)
@@ -861,6 +856,12 @@ export const useCharacterStore = defineStore('character', {
       this.renegadeCultNames = character.renegadeCultNames ?? []
       this.cultRelationships = normalizeCultRelationships(character.cultRelationships)
       this.other = normalizeOtherData(character.other)
+      // Restored last: setRank/setCult/etc. call adjustPotentials(), which drops potentials that look ineligible mid-load
+      character.potentials &&
+        character.potentials.forEach(([name, v]) => {
+          const potential = PotentialsByName.get(name)
+          potential && this.potentials.set(potential, Math.min(v, 3))
+        })
       this.isLoading = false
     },
     adjustProperties() {
