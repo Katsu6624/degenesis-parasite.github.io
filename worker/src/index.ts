@@ -4,6 +4,7 @@ interface Env {
   REPORT_THRESHOLD: string
   FRONTEND_ORIGIN: string
   ADMIN_SECRET: string
+  NOTIFY_EMAIL: string
 }
 
 interface CharacterRow {
@@ -162,6 +163,24 @@ export default {
       const threshold = parseInt(env.REPORT_THRESHOLD ?? '3')
       const hidden = newCount >= threshold ? 1 : 0
       await env.DB.prepare('UPDATE characters SET report_count = ?, hidden = ? WHERE id = ?').bind(newCount, hidden, charId).run()
+
+      if (env.NOTIFY_EMAIL) {
+        const char = await env.DB.prepare('SELECT character_name, pseudo FROM characters WHERE id = ?').bind(charId).first<CharacterRow>()
+        const subject = hidden
+          ? `[Parasite] Personnage masqué automatiquement (${newCount} signalements)`
+          : `[Parasite] Nouveau signalement (${newCount}/${env.REPORT_THRESHOLD ?? '3'})`
+        const body = `Personnage : ${char?.character_name ?? '?'}\nPseudo : ${char?.pseudo ?? '?'}\nID : ${charId}\nSignalements : ${newCount}\n${hidden ? '\nMasqué automatiquement.' : ''}`
+        await fetch('https://api.mailchannels.net/tx/v1/send', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            personalizations: [{ to: [{ email: env.NOTIFY_EMAIL }] }],
+            from: { email: 'noreply@parasite-api.shiney273.workers.dev', name: 'Parasite API' },
+            subject,
+            content: [{ type: 'text/plain', value: body }],
+          }),
+        }).catch(() => {})
+      }
 
       return json({ ok: true, hidden: hidden === 1 }, 200, env)
     }
