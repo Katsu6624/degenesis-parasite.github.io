@@ -214,6 +214,20 @@
     });
   }
 
+  // Bottom ornament, identical to the one on the story pages
+  function drawPageFooter(page, pageWidth, margin, color) {
+    var y = 38, mid = pageWidth / 2, t = 0.7;
+    drawDiamond(page, margin, y, 3.5, color);
+    drawDiamond(page, pageWidth - margin, y, 3.5, color);
+    page.drawLine({ start: { x: margin + 4, y: y }, end: { x: margin + 49, y: y }, thickness: t, color: color });
+    page.drawLine({ start: { x: margin + 49, y: y }, end: { x: margin + 56, y: y - 6 }, thickness: t, color: color });
+    page.drawLine({ start: { x: margin + 56, y: y - 6 }, end: { x: mid - 12, y: y - 6 }, thickness: t, color: color });
+    page.drawLine({ start: { x: pageWidth - margin - 4, y: y }, end: { x: pageWidth - margin - 49, y: y }, thickness: t, color: color });
+    page.drawLine({ start: { x: pageWidth - margin - 49, y: y }, end: { x: pageWidth - margin - 56, y: y - 6 }, thickness: t, color: color });
+    page.drawLine({ start: { x: pageWidth - margin - 56, y: y - 6 }, end: { x: mid + 12, y: y - 6 }, thickness: t, color: color });
+    drawDiamond(page, mid, y - 6, 3.5, color);
+  }
+
   async function appendCultRelationshipsPage(pdf, store, options) {
     options = options || {};
     if (!pdf || !store || !store.cultRelationships) return;
@@ -230,7 +244,7 @@
     var rowGap = 10;
     var cardWidth = (pageWidth - margin * 2 - columnGap * 2) / 3;
     var cardHeight = cardWidth * CARD_HEIGHT / CARD_WIDTH;
-    var gridTop = 752;
+    var gridTop = 778;
 
     page.drawRectangle({
       x: 0,
@@ -245,34 +259,7 @@
     );
     drawDecoratedHeading(page, regular, title, 810, pageWidth, margin, 10, titleColor, 1.75);
 
-    var nameLabel = String(options.nameLabel || "NAME:").toUpperCase();
-    var nameLabelSize = 7;
-    var nameLabelTracking = 0.35;
-    var nameBlockWidth = 280;
-    var nameBlockX = (pageWidth - nameBlockWidth) / 2;
-    var nameLabelWidth = trackedTextWidth(regular, nameLabel, nameLabelSize, nameLabelTracking);
-    var nameLineStart = nameBlockX + nameLabelWidth + 10;
-    var nameLineY = 779;
-    drawTrackedText(page, regular, nameLabel, nameBlockX, nameLineY + 2, nameLabelSize, titleColor, nameLabelTracking);
-    page.drawLine({
-      start: { x: nameLineStart, y: nameLineY },
-      end: { x: nameBlockX + nameBlockWidth, y: nameLineY },
-      thickness: 0.55,
-      color: titleColor
-    });
-    if (store.characterName) {
-      var safeName = safeForFont(regular, store.characterName);
-      var nameSize = 8.5;
-      var nameWidth = regular.widthOfTextAtSize(safeName, nameSize);
-      var nameLineEnd = nameBlockX + nameBlockWidth;
-      page.drawText(safeName, {
-        x: nameLineStart + Math.max(4, (nameLineEnd - nameLineStart - nameWidth) / 2),
-        y: nameLineY + 3,
-        size: nameSize,
-        font: regular,
-        color: titleColor
-      });
-    }
+    drawPageFooter(page, pageWidth, margin, titleColor);
 
     CULT_CARDS.forEach(function (card, index) {
       var row = Math.floor(index / 3);
@@ -305,13 +292,13 @@
       drawDie(page, value, x + cardWidth - dieSize - 6, y + 6, dieSize);
     });
 
-    drawDecoratedHeading(page, regular, safeForFont(regular, String(options.notesLabel || "NOTES").toUpperCase()), 246, pageWidth, margin, 9, titleColor, 1.8);
+    drawDecoratedHeading(page, regular, safeForFont(regular, String(options.notesLabel || "NOTES").toUpperCase()), 276, pageWidth, margin, 9, titleColor, 1.8);
     var notes = store.other && Array.isArray(store.other.notes) ? store.other.notes : [];
     var notesLeft = margin + 18;
     var notesRight = pageWidth - margin - 18;
-    var notesTop = 220;
+    var notesTop = 250;
     var notesStep = 16.2;
-    for (var noteIndex = 0; noteIndex < 10; noteIndex++) {
+    for (var noteIndex = 0; noteIndex < 12; noteIndex++) {
       var lineY = notesTop - noteIndex * notesStep;
       page.drawLine({
         start: { x: notesLeft, y: lineY },

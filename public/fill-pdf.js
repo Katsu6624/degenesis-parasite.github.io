@@ -278,7 +278,7 @@
         console.warn("Could not export Cult Relationships to PDF.", e);
       }
     }
-    await appendStoryPages(pdf, store, { title: "Histoire", nameLabel: "Nom :" });
+    await appendStoryPages(pdf, store, { title: "Histoire" });
     var filledBytes = await pdf.save();
     var blob = new Blob([filledBytes], { type: "application/pdf" });
     var url = URL.createObjectURL(blob);
@@ -366,7 +366,7 @@
   // Section title: centred tracked caps on a stepped line with diamonds at both ends, like "ARCHÉTYPE"
   function storyHeading(PDFLib, page, font, text, centerY, pageWidth, margin, size) {
     var color = PDFLib.rgb(0, 0, 0);
-    var tracking = 1.9;
+    var tracking = 1.75;
     var width = storyTrackedWidth(font, text, size, tracking);
     var textX = (pageWidth - width) / 2;
     var gap = 13, shoulder = 49, dogleg = 7, drop = 6, t = 0.7;
@@ -398,81 +398,72 @@
     storyDiamond(page, mid, y - 6, 3.5, color);
   }
 
-  // options: { title, nameLabel }
+  // options: { title }
   async function appendStoryPages(pdf, store, options) {
     var story = (store.story || "").replace(/\r\n?/g, "\n").replace(/\t/g, "    ").trim();
     if (!story) return;
     var PDFLib = window.PDFLib;
     var font = await pdf.embedFont(PDFLib.StandardFonts.Helvetica);
-    var bold = await pdf.embedFont(PDFLib.StandardFonts.HelveticaBold);
     var sheet = pdf.getPage(0);
     var pageWidth = sheet.getWidth();
     var pageHeight = sheet.getHeight();
     var margin = 28;
-    var textLeft = 52;
-    var textRight = pageWidth - 52;
-    var maxWidth = textRight - textLeft;
+    // Same ruled-paper geometry as the NOTES block of the cult relationships page
+    var ruleLeft = margin + 18;
+    var ruleRight = pageWidth - margin - 18;
+    var textLeft = ruleLeft + 4;
+    var maxWidth = ruleRight - 4 - textLeft;
+    var step = 16.2;
     var fontSize = 10.5;
-    var lineHeight = 14.5;
-    var bottomLimit = 62;
+    var firstRule = pageHeight - 66;
+    var logoWidth = 140, logoHeight = 60, logoBottom = 56;
+    var ruleBottom = logoBottom + logoHeight + 14;
     var ink = PDFLib.rgb(0.07, 0.07, 0.07);
+    var ruleColor = PDFLib.rgb(0.42, 0.42, 0.42);
+    var title = toPdfSafeText(font, options.title.toUpperCase());
 
     var logo = null;
     try {
       logo = await pdf.embedPage(sheet, { left: 228, bottom: pageHeight - 76, right: 368, top: pageHeight - 16 });
     } catch (e) {}
 
-    var pageNumber = 0;
     function newPage() {
-      var page = pdf.addPage([pageWidth, pageHeight]);
-      pageNumber++;
-      storyFooter(PDFLib, page, pageWidth, margin);
-      return page;
+      var pg = pdf.addPage([pageWidth, pageHeight]);
+      storyHeading(PDFLib, pg, font, title, 810, pageWidth, margin, 10);
+      storyFooter(PDFLib, pg, pageWidth, margin);
+      for (var ry = firstRule; ry >= ruleBottom; ry -= step) {
+        pg.drawLine({ start: { x: ruleLeft, y: ry }, end: { x: ruleRight, y: ry }, thickness: 0.45, color: ruleColor });
+      }
+      return pg;
     }
 
     var page = newPage();
-    var y;
-    storyHeading(PDFLib, page, font, toPdfSafeText(font, options.title.toUpperCase()), pageHeight - 42, pageWidth, margin, 10);
+    var y = firstRule;
 
-    // "NOM : <character>" on a ruled line, like the sheet fields
-    var nameLabel = toPdfSafeText(font, options.nameLabel.toUpperCase());
-    var nameLabelWidth = storyTrackedWidth(font, nameLabel, 7, 0.4);
-    var blockWidth = 280;
-    var blockX = (pageWidth - blockWidth) / 2;
-    var lineY = pageHeight - 74;
-    storyDrawTracked(page, font, nameLabel, blockX, lineY + 2, 7, ink, 0.4);
-    page.drawLine({ start: { x: blockX + nameLabelWidth + 8, y: lineY }, end: { x: blockX + blockWidth, y: lineY }, thickness: 0.55, color: ink });
-    if (store.characterName) {
-      var safeName = toPdfSafeText(font, store.characterName);
-      var nameWidth = font.widthOfTextAtSize(safeName, 9);
-      var lineStart = blockX + nameLabelWidth + 8;
-      page.drawText(safeName, { x: lineStart + Math.max(4, (blockX + blockWidth - lineStart - nameWidth) / 2), y: lineY + 3, size: 9, font: font, color: ink });
+    function ensureRoom() {
+      if (y < ruleBottom) {
+        page = newPage();
+        y = firstRule;
+      }
     }
-    y = lineY - 28;
 
     var paragraphs = toPdfSafeText(font, story).split("\n");
     for (var p = 0; p < paragraphs.length; p++) {
       var para = paragraphs[p];
-      if (para.trim() === "") {
-        y -= lineHeight * 0.6;
-        continue;
-      }
-      var lines = wrapParagraph(font, para, fontSize, maxWidth);
-      for (var l = 0; l < lines.length; l++) {
-        if (y - lineHeight < bottomLimit) {
-          page = newPage();
-          storyHeading(PDFLib, page, font, toPdfSafeText(font, options.title.toUpperCase()), pageHeight - 42, pageWidth, margin, 10);
-          y = pageHeight - 78;
+      if (para.trim() !== "") {
+        var lines = wrapParagraph(font, para, fontSize, maxWidth);
+        for (var l = 0; l < lines.length; l++) {
+          ensureRoom();
+          page.drawText(lines[l], { x: textLeft, y: y + 3, size: fontSize, font: font, color: ink });
+          y -= step;
         }
-        page.drawText(lines[l], { x: textLeft, y: y - fontSize, size: fontSize, font: font, color: ink });
-        y -= lineHeight;
+      } else {
+        y -= step;
       }
     }
 
     // The Degenesis logo closes the character file: bottom of the last page, above the footer
     if (logo) {
-      var logoWidth = 140, logoHeight = 60, logoBottom = 56;
-      if (y < logoBottom + logoHeight + 14) page = newPage();
       page.drawPage(logo, { x: (pageWidth - logoWidth) / 2, y: logoBottom, width: logoWidth, height: logoHeight });
     }
   }
@@ -732,7 +723,7 @@
         console.warn("Could not export Cult Relationships to PDF.", e);
       }
     }
-    await appendStoryPages(pdf, store, { title: "Story", nameLabel: "Name:" });
+    await appendStoryPages(pdf, store, { title: "Story" });
     var filledBytes = await pdf.save();
     var blob = new Blob([filledBytes], { type: "application/pdf" });
     var url = URL.createObjectURL(blob);
