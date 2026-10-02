@@ -1,4 +1,5 @@
 <template>
+  <div class="community-root">
   <div class="community-tab pa-4">
     <div class="community-tab__header mb-4">
       <h1 class="text-h5">{{ $t('community.title') }}</h1>
@@ -93,19 +94,19 @@
           <div class="char-card-icons">
             <v-tooltip :text="char.culture ? t(`culturesConceptsCults.${char.culture}`) : '?'" location="top">
               <template #activator="{ props: tp }">
-                <img v-if="char.culture" v-bind="tp" :src="`${baseUrl}logotypes/cultures/${char.culture}.svg`" class="char-logotype char-logotype--dark" />
+                <img v-if="char.culture" v-bind="tp" :src="`${baseUrl}logotypes/cultures/${char.culture}.svg`" class="char-logotype" :class="isDark ? 'char-logotype--dark' : 'char-logotype--light'" />
                 <span v-else v-bind="tp" class="char-logotype-unknown">?</span>
               </template>
             </v-tooltip>
             <v-tooltip :text="char.concept ? t(`culturesConceptsCults.${char.concept}`) : '?'" location="top">
               <template #activator="{ props: tp }">
-                <img v-if="char.concept" v-bind="tp" :src="`${baseUrl}logotypes/concepts/${char.concept}.svg`" class="char-logotype char-logotype--dark" />
+                <img v-if="char.concept" v-bind="tp" :src="`${baseUrl}logotypes/concepts/${char.concept}.svg`" class="char-logotype" :class="isDark ? 'char-logotype--dark' : 'char-logotype--light'" />
                 <span v-else v-bind="tp" class="char-logotype-unknown">?</span>
               </template>
             </v-tooltip>
             <v-tooltip :text="char.cult ? t(`culturesConceptsCults.${char.cult}`) : '?'" location="top">
               <template #activator="{ props: tp }">
-                <img v-if="char.cult" v-bind="tp" :src="`${baseUrl}logotypes/cults/${char.cult}.svg`" class="char-logotype char-logotype--dark" />
+                <img v-if="char.cult" v-bind="tp" :src="`${baseUrl}logotypes/cults/${char.cult}.svg`" class="char-logotype" :class="isDark ? 'char-logotype--dark' : 'char-logotype--light'" />
                 <span v-else v-bind="tp" class="char-logotype-unknown">?</span>
               </template>
             </v-tooltip>
@@ -244,11 +245,13 @@
     </v-dialog>
 
   </div>
+  </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useTheme } from 'vuetify'
 import { mdiAccount, mdiEye, mdiEyeOff } from '@mdi/js'
 import { listCharacters, reportCharacter, deleteCharacter, updateDescription, portraitUrl, fetchPortraitsForImport } from '@/services/communityApi'
 import type { CommunityCharacter } from '@/services/communityApi'
@@ -258,6 +261,8 @@ import config from '@/config'
 const emit = defineEmits<{ (e: 'import', character: Record<string, unknown>): void }>()
 const { t } = useI18n()
 const baseUrl = import.meta.env.BASE_URL
+const theme = useTheme()
+const isDark = computed(() => theme.global.current.value.dark)
 
 const characters = ref<CommunityCharacter[]>([])
 const total = ref(0)
@@ -406,6 +411,12 @@ onMounted(load)
 </script>
 
 <style scoped>
+.community-root {
+  min-height: 100vh;
+  color: rgb(var(--v-theme-on-surface));
+  background: rgb(var(--v-theme-surface));
+}
+
 .community-tab {
   max-width: 1200px;
   margin: 0 auto;
@@ -540,6 +551,10 @@ onMounted(load)
 
 .char-logotype--dark {
   filter: invert(1) brightness(0.75);
+}
+
+.char-logotype--light {
+  filter: brightness(0);
 }
 
 .char-logotype-unknown {
