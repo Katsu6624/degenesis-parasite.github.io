@@ -24,7 +24,7 @@ interface CharacterRow {
 function cors(env: Env) {
   return {
     'Access-Control-Allow-Origin': env.FRONTEND_ORIGIN,
-    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, PATCH, DELETE, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type, X-Character-Secret, Authorization',
   }
 }
