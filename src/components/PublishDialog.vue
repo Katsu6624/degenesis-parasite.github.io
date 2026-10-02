@@ -26,6 +26,15 @@
             auto-grow
             class="mb-2"
           />
+          <template v-if="storyText">
+            <v-checkbox
+              v-model="includeStory"
+              :label="$t('community.publishStory')"
+              density="compact"
+              hide-details
+            />
+            <p class="text-caption text-medium-emphasis mb-2">{{ $t('community.publishStoryHint') }}</p>
+          </template>
           <v-alert v-if="error" type="error" density="compact" class="mb-2">{{ error }}</v-alert>
         </template>
         <template v-else>
@@ -79,6 +88,11 @@ const store = useCharacterStore()
 
 const pseudo = ref('')
 const description = ref('')
+const includeStory = ref(false)
+const storyText = computed(() => {
+  const story = props.prefilledCharacter ? props.prefilledCharacter.story : store.story
+  return typeof story === 'string' ? story.trim() : ''
+})
 const loading = ref(false)
 const error = ref('')
 const result = ref<PublishResult | null>(null)
@@ -100,7 +114,8 @@ async function publish() {
     delete charData.portrait
     delete charData.portraitOriginal
     delete charData.portraitFiche
-    delete charData.story
+    if (includeStory.value && storyText.value) charData.story = storyText.value
+    else delete charData.story
 
     result.value = await publishCharacter({
       pseudo: pseudo.value.trim(),
@@ -124,6 +139,7 @@ function close() {
   if (result.value) {
     pseudo.value = ''
     description.value = ''
+    includeStory.value = false
     result.value = null
     error.value = ''
   }

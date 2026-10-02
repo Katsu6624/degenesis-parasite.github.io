@@ -126,6 +126,27 @@
           </v-tooltip>
         </div>
         <div class="char-card-actions" @click.stop>
+          <div class="char-card-quick">
+            <v-btn
+              size="small"
+              variant="tonal"
+              class="char-card-quick-btn"
+              :prepend-icon="mdiChartBoxOutline"
+              @click="openQuickView(char, 'stats')"
+            >
+              {{ $t('community.viewStats') }}
+            </v-btn>
+            <v-btn
+              v-if="hasStory(char)"
+              size="small"
+              variant="tonal"
+              class="char-card-quick-btn"
+              :prepend-icon="mdiBookOpenPageVariantOutline"
+              @click="openQuickView(char, 'story')"
+            >
+              {{ $t('community.viewStory') }}
+            </v-btn>
+          </div>
           <v-btn
             block
             variant="flat"
@@ -213,6 +234,14 @@
       {{ $t('community.importSuccess') }}
     </v-snackbar>
 
+    <CharacterQuickView
+      v-model="quickOpen"
+      :mode="quickMode"
+      :name="quickChar?.character_name ?? '?'"
+      :subtitle="quickChar ? rankLabel(quickChar) : ''"
+      :data="quickData"
+    />
+
     <!-- Delete dialog -->
     <v-dialog v-model="showDelete" max-width="440" persistent>
       <v-card>
@@ -253,10 +282,11 @@
 import { ref, onMounted, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useTheme } from 'vuetify'
-import { mdiAccount, mdiEye, mdiEyeOff } from '@mdi/js'
+import { mdiAccount, mdiEye, mdiEyeOff, mdiChartBoxOutline, mdiBookOpenPageVariantOutline } from '@mdi/js'
 import { listCharacters, reportCharacter, deleteCharacter, updateDescription, portraitUrl, fetchPortraitsForImport } from '@/services/communityApi'
 import type { CommunityCharacter } from '@/services/communityApi'
 import LegacyChips from './LegacyChips.vue'
+import CharacterQuickView from './CharacterQuickView.vue'
 import { CULT_RELATIONSHIP_KEYS } from '@/config/cultRelationships'
 import config from '@/config'
 
@@ -403,6 +433,22 @@ async function importChar(char: CommunityCharacter) {
   } catch {
     // ignore
   }
+}
+
+const quickOpen = ref(false)
+const quickMode = ref<'stats' | 'story'>('stats')
+const quickChar = ref<CommunityCharacter | null>(null)
+const quickData = computed(() => (quickChar.value ? charData(quickChar.value) : {}))
+
+function hasStory(char: CommunityCharacter): boolean {
+  const story = charData(char).story
+  return typeof story === 'string' && story.trim().length > 0
+}
+
+function openQuickView(char: CommunityCharacter, mode: 'stats' | 'story') {
+  quickChar.value = char
+  quickMode.value = mode
+  quickOpen.value = true
 }
 
 function legacyNames(char: CommunityCharacter): string[] {
@@ -579,6 +625,18 @@ onMounted(load)
   border: 1px dashed rgba(var(--v-theme-on-surface), 0.25);
   border-radius: 4px;
   flex-shrink: 0;
+}
+
+.char-card-quick {
+  display: flex;
+  gap: 6px;
+}
+
+.char-card-quick-btn {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.65rem !important;
+  letter-spacing: 0.03em !important;
 }
 
 .char-card-actions {
