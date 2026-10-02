@@ -11,6 +11,7 @@ import { inventory } from "./inventory";
 import { other } from "./other";
 import { cultRelationships } from "./cultRelationships"
 import { community } from "./community";
+import { folders } from "./folders";
 
 export default {
   de: {
@@ -26,6 +27,7 @@ export default {
     other: other.de,
     cultRelationships: cultRelationships.de,
     community: community.de,
+    folders: folders.de,
   },
   en: {
     messages: messages.en,
@@ -40,6 +42,7 @@ export default {
     other: other.en,
     cultRelationships: cultRelationships.en,
     community: community.en,
+    folders: folders.en,
   },
   fr: {
     messages: messages.fr,
@@ -54,5 +57,6 @@ export default {
     other: other.fr,
     cultRelationships: cultRelationships.fr,
     community: community.fr,
+    folders: folders.fr,
   }
 }

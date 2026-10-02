@@ -15,6 +15,44 @@ const storeCharacter = (character: Character) => {
 
 const deleteCharacter = (name: string) => {
   localStorage.removeItem(`character-${name}`)
+  const data = loadFolders()
+  if (name in data.assignments) {
+    delete data.assignments[name]
+    storeFolders(data)
+  }
+}
+
+export interface FoldersData {
+  folders: string[]
+  assignments: Record<string, string>
+}
+
+// Not prefixed with "character-" so it is never mistaken for a stored character
+const FOLDERS_KEY = 'folders-index'
+
+const loadFolders = (): FoldersData => {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(FOLDERS_KEY) || '{}')
+    return {
+      folders: Array.isArray(parsed.folders) ? parsed.folders : [],
+      assignments: parsed.assignments && typeof parsed.assignments === 'object' ? parsed.assignments : {}
+    }
+  } catch {
+    return { folders: [], assignments: {} }
+  }
+}
+
+const storeFolders = (data: FoldersData) => {
+  localStorage.setItem(FOLDERS_KEY, JSON.stringify(data))
+}
+
+const renameFolderAssignment = (oldName: string, newName: string) => {
+  const data = loadFolders()
+  if (oldName !== newName && oldName in data.assignments) {
+    data.assignments[newName] = data.assignments[oldName]
+    delete data.assignments[oldName]
+    storeFolders(data)
+  }
 }
 
 const keyToCharacterName = (localStorageKey: string) =>
@@ -72,6 +110,9 @@ export default {
   loadCharacter,
   storeCharacter,
   deleteCharacter,
+  loadFolders,
+  storeFolders,
+  renameFolderAssignment,
   loadAllCharacters,
   characterIsStored,
   loadLocale,

@@ -20,10 +20,59 @@
       <div class="text-body-2 text-grey-darken-1 mt-1">Créez un nouveau personnage pour commencer.</div>
     </div>
 
-    <!-- Cards grid -->
-    <div v-else class="chars-grid">
+    <!-- Filters + folders toolbar -->
+    <div v-else class="chars-toolbar">
+      <v-row dense>
+        <v-col cols="12" sm="3">
+          <v-text-field v-model="search" :label="$t('folders.search')" variant="outlined" density="compact" clearable hide-details />
+        </v-col>
+        <v-col cols="12" sm="2">
+          <v-select v-model="filterCult" :label="$t('folders.filterCult')" :items="cultOptions" variant="outlined" density="compact" clearable hide-details />
+        </v-col>
+        <v-col cols="12" sm="2">
+          <v-select v-model="filterCulture" :label="$t('folders.filterCulture')" :items="cultureOptions" variant="outlined" density="compact" clearable hide-details />
+        </v-col>
+        <v-col cols="12" sm="2">
+          <v-select v-model="filterConcept" :label="$t('folders.filterConcept')" :items="conceptOptions" variant="outlined" density="compact" clearable hide-details />
+        </v-col>
+        <v-col cols="12" sm="3">
+          <v-select v-model="filterFolder" :label="$t('folders.filterFolder')" :items="folderFilterOptions" variant="outlined" density="compact" clearable hide-details />
+        </v-col>
+      </v-row>
+      <div class="mt-3">
+        <v-btn size="small" variant="outlined" :prepend-icon="mdiFolderPlusOutline" @click="openFolderDialog(null)">
+          {{ $t('folders.newFolder') }}
+        </v-btn>
+      </div>
+    </div>
+
+    <div v-if="characters.length > 0 && sections.length === 0" class="text-center text-medium-emphasis pa-8">
+      {{ $t('folders.noResults') }}
+    </div>
+
+    <!-- Folder sections -->
+    <section v-for="section in sections" :key="section.key" class="chars-section">
+      <div v-if="!section.plain" class="chars-section-header" @click="toggleCollapsed(section.key)">
+        <v-icon size="18" :icon="collapsed.has(section.key) ? mdiChevronRight : mdiChevronDown"></v-icon>
+        <v-icon size="18" :icon="section.folder === null ? mdiFolderOutline : mdiFolder" class="ml-1"></v-icon>
+        <span class="chars-section-title">{{ section.label }}</span>
+        <span class="chars-section-count">{{ section.chars.length }}</span>
+        <v-spacer></v-spacer>
+        <template v-if="section.folder !== null">
+          <v-btn icon size="x-small" variant="text" :title="$t('folders.renameFolder')" @click.stop="openFolderDialog(section.folder)">
+            <v-icon size="16" :icon="mdiPencilOutline"></v-icon>
+          </v-btn>
+          <v-btn icon size="x-small" variant="text" :title="$t('folders.deleteFolder')" @click.stop="askDeleteFolder(section.folder)">
+            <v-icon size="16" :icon="mdiDeleteOutline"></v-icon>
+          </v-btn>
+        </template>
+      </div>
+      <div v-if="!collapsed.has(section.key) && section.chars.length === 0" class="chars-section-empty">
+        {{ $t('folders.emptyFolder') }}
+      </div>
+    <div v-if="!collapsed.has(section.key) && section.chars.length > 0" class="chars-grid">
       <div
-        v-for="character in characters"
+        v-for="character in section.chars"
         :key="character.name"
         class="char-card"
         :class="{ 'char-card--highlighted': character.name === props.highlightedCharacter }"
@@ -122,9 +171,38 @@
             <v-icon :icon="mdiDeleteOutline" size="16" class="mr-2"></v-icon>
             Supprimer
           </v-btn>
+          <v-menu location="top">
+            <template #activator="{ props: mp }">
+              <v-btn v-bind="mp" block variant="text" class="char-card-action-btn">
+                <v-icon :icon="mdiFolderOutline" size="16" class="mr-2"></v-icon>
+                {{ $t('folders.moveToFolder') }}: {{ folderOf(character.name) ?? $t('folders.noFolder') }}
+              </v-btn>
+            </template>
+            <v-list density="compact">
+              <v-list-item
+                :active="folderOf(character.name) === null"
+                :title="$t('folders.noFolder')"
+                @click="assignFolder(character.name, null)"
+              ></v-list-item>
+              <v-list-item
+                v-for="f in foldersData.folders"
+                :key="f"
+                :active="folderOf(character.name) === f"
+                :title="f"
+                @click="assignFolder(character.name, f)"
+              ></v-list-item>
+              <v-divider></v-divider>
+              <v-list-item
+                :prepend-icon="mdiFolderPlusOutline"
+                :title="$t('folders.newFolder')"
+                @click="openFolderDialog(null, character.name)"
+              ></v-list-item>
+            </v-list>
+          </v-menu>
         </div>
       </div>
     </div>
+    </section>
 
     <!-- Crop dialog -->
     <ImageCropperDialog
@@ -140,6 +218,43 @@
 
     <!-- Publish dialog -->
     <PublishDialog v-model="showPublishDialog" :prefilled-character="publishCharacter" />
+
+    <!-- Create / rename folder dialog -->
+    <v-dialog v-model="folderDialog" max-width="380">
+      <v-card>
+        <v-card-title class="text-h6">{{ folderEditing === null ? $t('folders.newFolder') : $t('folders.renameFolder') }}</v-card-title>
+        <v-card-text>
+          <v-text-field
+            v-model="folderNameInput"
+            :label="$t('folders.folderName')"
+            :error-messages="folderError"
+            variant="outlined"
+            density="compact"
+            maxlength="40"
+            autofocus
+            @keyup.enter="saveFolder"
+          />
+        </v-card-text>
+        <v-card-actions class="justify-end">
+          <v-btn variant="text" @click="folderDialog = false">{{ $t('folders.cancel') }}</v-btn>
+          <v-btn color="red-darken-2" variant="flat" :disabled="!folderNameInput.trim()" @click="saveFolder">
+            {{ folderEditing === null ? $t('folders.create') : $t('folders.rename') }}
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <!-- Delete folder dialog -->
+    <v-dialog v-model="deleteFolderDialog" max-width="400">
+      <v-card>
+        <v-card-title class="text-h6">{{ $t('folders.deleteFolder') }} : {{ pendingDeleteFolder }}</v-card-title>
+        <v-card-text>{{ $t('folders.deleteFolderDesc') }}</v-card-text>
+        <v-card-actions class="justify-end">
+          <v-btn variant="text" @click="deleteFolderDialog = false">{{ $t('folders.cancel') }}</v-btn>
+          <v-btn color="red-darken-2" variant="flat" @click="doDeleteFolder">{{ $t('folders.delete') }}</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
 
     <!-- Confirm delete dialog -->
     <v-dialog v-model="deleteDialog" max-width="400">
@@ -175,7 +290,15 @@ import {
   mdiShareVariant,
   mdiDeleteOutline,
   mdiAccountMultiple,
+  mdiFolder,
+  mdiFolderOutline,
+  mdiFolderPlusOutline,
+  mdiChevronRight,
+  mdiChevronDown,
+  mdiPencilOutline,
 } from '@mdi/js'
+import config from '@/config'
+import { CULT_RELATIONSHIP_KEYS } from '@/config/cultRelationships'
 
 const props = defineProps<{
   characters: Character[]
@@ -195,6 +318,164 @@ const theme = useTheme()
 const isDark = computed(() => theme.global.current.value.dark)
 const baseUrl = import.meta.env.BASE_URL
 const appStore = useApplicationStore()
+
+// Filters
+const NO_FOLDER = '__none__'
+const search = ref<string | null>('')
+const filterCult = ref<string | null>(null)
+const filterCulture = ref<string | null>(null)
+const filterConcept = ref<string | null>(null)
+const filterFolder = ref<string | null>(null)
+
+const cultOptions = computed(() =>
+  CULT_RELATIONSHIP_KEYS.map(k => ({ title: t(`culturesConceptsCults.${k}`), value: k }))
+)
+const cultureOptions = computed(() =>
+  Object.values(config.cultures).map(c => ({ title: t(`culturesConceptsCults.${c.name}`), value: c.name }))
+)
+const conceptOptions = computed(() =>
+  Object.values(config.concepts).map(c => ({ title: t(`culturesConceptsCults.${c.name}`), value: c.name }))
+)
+
+// Folders (local to this browser, stored separately from the characters)
+const foldersData = ref(browserStorage.loadFolders())
+const collapsed = ref(new Set<string>())
+
+function persistFolders() {
+  browserStorage.storeFolders(foldersData.value)
+}
+
+function folderOf(name: string): string | null {
+  const folder = foldersData.value.assignments[name]
+  return folder && foldersData.value.folders.includes(folder) ? folder : null
+}
+
+const folderFilterOptions = computed(() => [
+  { title: t('folders.noFolder'), value: NO_FOLDER },
+  ...foldersData.value.folders.map(f => ({ title: f, value: f })),
+])
+
+const filteredCharacters = computed(() => {
+  const q = (search.value || '').trim().toLowerCase()
+  return props.characters.filter(c =>
+    (!q || c.name.toLowerCase().includes(q)) &&
+    (!filterCult.value || c.cult === filterCult.value) &&
+    (!filterCulture.value || c.culture === filterCulture.value) &&
+    (!filterConcept.value || c.concept === filterConcept.value)
+  )
+})
+
+const filtersActive = computed(() =>
+  !!((search.value || '').trim() || filterCult.value || filterCulture.value || filterConcept.value)
+)
+
+interface Section {
+  key: string
+  label: string
+  folder: string | null
+  plain: boolean
+  chars: Character[]
+}
+
+const sections = computed<Section[]>(() => {
+  const result: Section[] = []
+  const list = filteredCharacters.value
+  for (const f of foldersData.value.folders) {
+    if (filterFolder.value && filterFolder.value !== f) continue
+    const chars = list.filter(c => folderOf(c.name) === f)
+    if (chars.length === 0 && filtersActive.value) continue
+    result.push({ key: `f:${f}`, label: f, folder: f, plain: false, chars })
+  }
+  if (!filterFolder.value || filterFolder.value === NO_FOLDER) {
+    const chars = list.filter(c => folderOf(c.name) === null)
+    if (chars.length > 0) {
+      result.push({
+        key: 'none',
+        label: t('folders.noFolder'),
+        folder: null,
+        plain: foldersData.value.folders.length === 0,
+        chars,
+      })
+    }
+  }
+  return result
+})
+
+function toggleCollapsed(key: string) {
+  const next = new Set(collapsed.value)
+  if (next.has(key)) next.delete(key)
+  else next.add(key)
+  collapsed.value = next
+}
+
+function assignFolder(characterName: string, folder: string | null) {
+  if (folder === null) delete foldersData.value.assignments[characterName]
+  else foldersData.value.assignments[characterName] = folder
+  persistFolders()
+}
+
+const folderDialog = ref(false)
+const folderEditing = ref<string | null>(null)
+const folderAssignAfter = ref<string | null>(null)
+const folderNameInput = ref('')
+const folderError = ref('')
+
+function openFolderDialog(editing: string | null, assignCharacter: string | null = null) {
+  folderEditing.value = editing
+  folderAssignAfter.value = assignCharacter
+  folderNameInput.value = editing ?? ''
+  folderError.value = ''
+  folderDialog.value = true
+}
+
+function saveFolder() {
+  const name = folderNameInput.value.trim()
+  if (!name) return
+  const data = foldersData.value
+  const old = folderEditing.value
+  if (data.folders.some(f => f.toLowerCase() === name.toLowerCase() && f !== old)) {
+    folderError.value = t('folders.folderExists')
+    return
+  }
+  if (old === null) {
+    data.folders.push(name)
+    if (folderAssignAfter.value) data.assignments[folderAssignAfter.value] = name
+  } else if (old !== name) {
+    data.folders[data.folders.indexOf(old)] = name
+    for (const [charName, f] of Object.entries(data.assignments)) {
+      if (f === old) data.assignments[charName] = name
+    }
+    if (filterFolder.value === old) filterFolder.value = name
+    if (collapsed.value.has(`f:${old}`)) {
+      const next = new Set(collapsed.value)
+      next.delete(`f:${old}`)
+      next.add(`f:${name}`)
+      collapsed.value = next
+    }
+  }
+  persistFolders()
+  folderDialog.value = false
+}
+
+const deleteFolderDialog = ref(false)
+const pendingDeleteFolder = ref('')
+
+function askDeleteFolder(folder: string) {
+  pendingDeleteFolder.value = folder
+  deleteFolderDialog.value = true
+}
+
+function doDeleteFolder() {
+  const folder = pendingDeleteFolder.value
+  const data = foldersData.value
+  data.folders = data.folders.filter(f => f !== folder)
+  for (const [charName, f] of Object.entries(data.assignments)) {
+    if (f === folder) delete data.assignments[charName]
+  }
+  if (filterFolder.value === folder) filterFolder.value = null
+  persistFolders()
+  deleteFolderDialog.value = false
+}
 
 // Publish
 const showPublishDialog = ref(false)
@@ -318,6 +599,47 @@ function rankLabel(character: Character): string {
   align-items: center;
   justify-content: center;
   padding: 80px 24px;
+}
+
+.chars-toolbar {
+  padding: 20px 28px 0;
+}
+
+.chars-section {
+  padding-top: 8px;
+}
+
+.chars-section-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 12px 28px 0;
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: rgba(var(--v-theme-on-surface), 0.05);
+  border-left: 3px solid rgb(var(--v-theme-primary));
+  cursor: pointer;
+  user-select: none;
+}
+
+.chars-section-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.chars-section-count {
+  font-size: 0.7rem;
+  padding: 1px 8px;
+  border-radius: 10px;
+  background: rgba(var(--v-theme-on-surface), 0.12);
+}
+
+.chars-section-empty {
+  margin: 12px 28px 0;
+  font-size: 0.8rem;
+  color: rgba(var(--v-theme-on-surface), 0.45);
 }
 
 .chars-grid {

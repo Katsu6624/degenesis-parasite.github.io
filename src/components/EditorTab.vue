@@ -899,6 +899,7 @@ const renameCharacter = () => {
   if (nameCandidate.length > 0 && (!characterExists(nameCandidate) || nameCandidate == oldName)) {
     store.setCharacterName(nameCandidate)
     if (!createRenamedCopy.value) {
+      browserStorage.renameFolderAssignment(oldName, nameCandidate)
       browserStorage.deleteCharacter(oldName)
     }
     renameDialogOpen.value = false
