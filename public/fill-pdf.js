@@ -271,7 +271,14 @@
 
     fillInventory(form, store);
 
-    await appendStoryPages(pdf, store, { title: "Histoire", nameLabel: "Nom :", legaciesLabel: "Héritages" });
+    if (typeof window.appendCultRelationshipsPage === "function") {
+      try {
+        await window.appendCultRelationshipsPage(pdf, store, { nameLabel: "Nom :", notesLabel: "Notes" });
+      } catch (e) {
+        console.warn("Could not export Cult Relationships to PDF.", e);
+      }
+    }
+    await appendStoryPages(pdf, store, { title: "Histoire", nameLabel: "Nom :" });
     var filledBytes = await pdf.save();
     var blob = new Blob([filledBytes], { type: "application/pdf" });
     var url = URL.createObjectURL(blob);
@@ -377,13 +384,6 @@
     storyDrawTracked(page, font, text, textX, lowY - size * 0.35, size, color, tracking);
   }
 
-  // Black tab with a slanted end and white tracked caps, like "DESCRIPTION" / "POTENTIELS"
-  function storyLabelBar(PDFLib, page, boldFont, text, x, topY, width) {
-    var h = 13;
-    page.drawSvgPath("M 0 0 L " + width + " 0 L " + (width - 9) + " " + h + " L 0 " + h + " Z", { x: x, y: topY, color: PDFLib.rgb(0, 0, 0) });
-    storyDrawTracked(page, boldFont, text, x + 6, topY - h + 3.6, 7, PDFLib.rgb(1, 1, 1), 1.2);
-  }
-
   function storyFooter(PDFLib, page, pageWidth, margin) {
     var color = PDFLib.rgb(0, 0, 0);
     var y = 38, mid = pageWidth / 2, t = 0.7;
@@ -398,23 +398,7 @@
     storyDiamond(page, mid, y - 6, 3.5, color);
   }
 
-  function storyLegacyNames(store) {
-    var i18n = window.__i18n;
-    var names = [];
-    try {
-      Array.from(store.legacies.entries()).forEach(function (entry) {
-        if (entry[1] > 0) {
-          var key = "legacies." + entry[0].name;
-          var label;
-          try { label = (i18n.global || i18n).t(key); } catch (e) { label = key; }
-          names.push(label && label !== key ? label : entry[0].name);
-        }
-      });
-    } catch (e) {}
-    return names.sort(function (a, b) { return a.localeCompare(b); });
-  }
-
-  // options: { title, nameLabel, legaciesLabel }
+  // options: { title, nameLabel }
   async function appendStoryPages(pdf, store, options) {
     var story = (store.story || "").replace(/\r\n?/g, "\n").replace(/\t/g, "    ").trim();
     if (!story) return;
@@ -468,18 +452,6 @@
       page.drawText(safeName, { x: lineStart + Math.max(4, (blockX + blockWidth - lineStart - nameWidth) / 2), y: lineY + 3, size: 9, font: font, color: ink });
     }
     y = lineY - 28;
-
-    var legacies = storyLegacyNames(store);
-    if (legacies.length > 0) {
-      storyLabelBar(PDFLib, page, bold, toPdfSafeText(bold, options.legaciesLabel.toUpperCase()), textLeft, y, 150);
-      y -= 13 + 8;
-      var legacyLines = wrapParagraph(font, toPdfSafeText(font, legacies.join("   -   ")), fontSize, maxWidth);
-      legacyLines.forEach(function (line) {
-        page.drawText(line, { x: textLeft + 2, y: y - fontSize, size: fontSize, font: font, color: ink });
-        y -= lineHeight;
-      });
-      y -= 14;
-    }
 
     var paragraphs = toPdfSafeText(font, story).split("\n");
     for (var p = 0; p < paragraphs.length; p++) {
@@ -749,7 +721,14 @@
 
     fillInventory_en(form, store);
 
-    await appendStoryPages(pdf, store, { title: "Story", nameLabel: "Name:", legaciesLabel: "Legacies" });
+    if (typeof window.appendCultRelationshipsPage === "function") {
+      try {
+        await window.appendCultRelationshipsPage(pdf, store, { nameLabel: "Name:", notesLabel: "Notes" });
+      } catch (e) {
+        console.warn("Could not export Cult Relationships to PDF.", e);
+      }
+    }
+    await appendStoryPages(pdf, store, { title: "Story", nameLabel: "Name:" });
     var filledBytes = await pdf.save();
     var blob = new Blob([filledBytes], { type: "application/pdf" });
     var url = URL.createObjectURL(blob);
