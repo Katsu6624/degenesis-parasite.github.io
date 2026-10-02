@@ -46,6 +46,14 @@ const storeFolders = (data: FoldersData) => {
   localStorage.setItem(FOLDERS_KEY, JSON.stringify(data))
 }
 
+const loadFoldersEnabled = (): boolean => {
+  return localStorage.getItem('preference-folders-enabled') !== 'false'
+}
+
+const storeFoldersEnabled = (value: boolean) => {
+  localStorage.setItem('preference-folders-enabled', value.toString())
+}
+
 const renameFolderAssignment = (oldName: string, newName: string) => {
   const data = loadFolders()
   if (oldName !== newName && oldName in data.assignments) {
@@ -112,6 +120,8 @@ export default {
   deleteCharacter,
   loadFolders,
   storeFolders,
+  loadFoldersEnabled,
+  storeFoldersEnabled,
   renameFolderAssignment,
   loadAllCharacters,
   characterIsStored,

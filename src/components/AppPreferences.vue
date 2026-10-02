@@ -52,6 +52,18 @@
     ></v-checkbox>
   </div>
   <v-divider class="my-4"></v-divider>
+  <div class="pa-1">
+    <div class="pa-1 text-subtitle-2">{{ $t('folders.optionTitle') }}</div>
+    <v-checkbox
+      v-model="foldersEnabled"
+      :label="$t('folders.optionLabel')"
+      density="compact"
+      hide-details
+      @update:model-value="(v: boolean | null) => browserStorage.storeFoldersEnabled(!!v)"
+    ></v-checkbox>
+    <div class="pa-1 text-caption text-grey-darken-1">{{ $t('folders.optionDescription') }}</div>
+  </div>
+  <v-divider class="my-4"></v-divider>
   <v-form>
     <div class="pa-1 text-subtitle-2">
       {{ $t('messages.locale') }}
@@ -78,6 +90,7 @@ const i18n = useI18n()
 const theme = useTheme()
 
 const currentTheme = ref(theme.global.name.value)
+const foldersEnabled = ref(browserStorage.loadFoldersEnabled())
 const replaySplash = ref(localStorage.getItem('parasite-splash-seen') !== 'true')
 
 function onReplaySplashChange(value: boolean) {

@@ -35,11 +35,11 @@
         <v-col cols="12" sm="2">
           <v-select v-model="filterConcept" :label="$t('folders.filterConcept')" :items="conceptOptions" variant="outlined" density="compact" clearable hide-details />
         </v-col>
-        <v-col cols="12" sm="3">
+        <v-col v-if="foldersEnabled" cols="12" sm="3">
           <v-select v-model="filterFolder" :label="$t('folders.filterFolder')" :items="folderFilterOptions" variant="outlined" density="compact" clearable hide-details />
         </v-col>
       </v-row>
-      <div class="mt-3">
+      <div v-if="foldersEnabled" class="mt-3">
         <v-btn size="small" variant="outlined" :prepend-icon="mdiFolderPlusOutline" @click="openFolderDialog(null)">
           {{ $t('folders.newFolder') }}
         </v-btn>
@@ -171,7 +171,7 @@
             <v-icon :icon="mdiDeleteOutline" size="16" class="mr-2"></v-icon>
             Supprimer
           </v-btn>
-          <v-menu location="top">
+          <v-menu v-if="foldersEnabled" location="top">
             <template #activator="{ props: mp }">
               <v-btn v-bind="mp" block variant="text" class="char-card-action-btn">
                 <v-icon :icon="mdiFolderOutline" size="16" class="mr-2"></v-icon>
@@ -338,6 +338,7 @@ const conceptOptions = computed(() =>
 )
 
 // Folders (local to this browser, stored separately from the characters)
+const foldersEnabled = browserStorage.loadFoldersEnabled()
 const foldersData = ref(browserStorage.loadFolders())
 const collapsed = ref(new Set<string>())
 
@@ -380,6 +381,9 @@ interface Section {
 const sections = computed<Section[]>(() => {
   const result: Section[] = []
   const list = filteredCharacters.value
+  if (!foldersEnabled) {
+    return list.length > 0 ? [{ key: 'all', label: '', folder: null, plain: true, chars: list }] : []
+  }
   for (const f of foldersData.value.folders) {
     if (filterFolder.value && filterFolder.value !== f) continue
     const chars = list.filter(c => folderOf(c.name) === f)

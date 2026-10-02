@@ -1,5 +1,8 @@
 export const folders = {
   fr: {
+    optionTitle: 'Dossiers',
+    optionLabel: 'Activer les dossiers dans « Mes Personnages »',
+    optionDescription: 'Permet de ranger vos personnages dans des dossiers. Vos dossiers sont conservés si vous désactivez l\'option.',
     search: 'Rechercher',
     filterCult: 'Culte',
     filterCulture: 'Culture',
@@ -22,6 +25,9 @@ export const folders = {
     delete: 'Supprimer',
   },
   en: {
+    optionTitle: 'Folders',
+    optionLabel: 'Enable folders in "My Characters"',
+    optionDescription: 'Lets you sort your characters into folders. Your folders are kept if you turn the option off.',
     search: 'Search',
     filterCult: 'Cult',
     filterCulture: 'Culture',
@@ -44,6 +50,9 @@ export const folders = {
     delete: 'Delete',
   },
   de: {
+    optionTitle: 'Ordner',
+    optionLabel: 'Ordner in „Meine Charaktere“ aktivieren',
+    optionDescription: 'Ermöglicht es, Charaktere in Ordnern zu sortieren. Deine Ordner bleiben erhalten, wenn du die Option ausschaltest.',
     search: 'Suchen',
     filterCult: 'Kult',
     filterCulture: 'Kultur',
