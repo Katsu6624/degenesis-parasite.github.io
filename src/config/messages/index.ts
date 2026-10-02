@@ -12,6 +12,7 @@ import { other } from "./other";
 import { cultRelationships } from "./cultRelationships"
 import { community } from "./community";
 import { folders } from "./folders";
+import { backup } from "./backup";
 
 export default {
   de: {
@@ -28,6 +29,7 @@ export default {
     cultRelationships: cultRelationships.de,
     community: community.de,
     folders: folders.de,
+    backup: backup.de,
   },
   en: {
     messages: messages.en,
@@ -43,6 +45,7 @@ export default {
     cultRelationships: cultRelationships.en,
     community: community.en,
     folders: folders.en,
+    backup: backup.en,
   },
   fr: {
     messages: messages.fr,
@@ -58,5 +61,6 @@ export default {
     cultRelationships: cultRelationships.fr,
     community: community.fr,
     folders: folders.fr,
+    backup: backup.fr,
   }
 }

@@ -10,6 +10,18 @@
         <v-btn :prepend-icon="mdiImport" variant="outlined" @click="emit('import')">
           {{ $t('messages.importCharacter') }}
         </v-btn>
+        <v-menu>
+          <template #activator="{ props: bp }">
+            <v-btn v-bind="bp" :prepend-icon="mdiContentSaveOutline" variant="outlined">
+              {{ $t('backup.menu') }}
+            </v-btn>
+          </template>
+          <v-list density="compact">
+            <v-list-item :prepend-icon="mdiExport" :title="$t('backup.export')" @click="doExport"></v-list-item>
+            <v-list-item :prepend-icon="mdiImport" :title="$t('backup.import')" @click="backupInput?.click()"></v-list-item>
+          </v-list>
+        </v-menu>
+        <input ref="backupInput" type="file" accept=".json,application/json" style="display:none" @change="onBackupFile" />
       </div>
     </div>
 
@@ -219,6 +231,30 @@
     <!-- Publish dialog -->
     <PublishDialog v-model="showPublishDialog" :prefilled-character="publishCharacter" />
 
+    <!-- Import collection dialog -->
+    <v-dialog v-model="backupDialog" max-width="480">
+      <v-card>
+        <v-card-title class="text-h6">{{ $t('backup.importTitle') }}</v-card-title>
+        <v-card-text>
+          <p class="mb-3">{{ $t('backup.summary', backupStats) }}</p>
+          <template v-if="backupStats.conflicts > 0">
+            <div class="text-subtitle-2">{{ $t('backup.onConflict') }}</div>
+            <v-radio-group v-model="backupOverwrite" hide-details density="compact">
+              <v-radio :value="false" :label="$t('backup.skip')"></v-radio>
+              <v-radio :value="true" :label="$t('backup.overwrite')"></v-radio>
+            </v-radio-group>
+            <p class="text-caption mt-2">{{ $t('backup.activeNote') }}</p>
+          </template>
+        </v-card-text>
+        <v-card-actions class="justify-end">
+          <v-btn variant="text" @click="backupDialog = false">{{ $t('backup.cancel') }}</v-btn>
+          <v-btn color="red-darken-2" variant="flat" @click="confirmBackupImport">{{ $t('backup.confirm') }}</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <v-snackbar v-model="backupSnack" timeout="4000" :color="backupSnackColor">{{ backupSnackText }}</v-snackbar>
+
     <!-- Create / rename folder dialog -->
     <v-dialog v-model="folderDialog" max-width="380">
       <v-card>
@@ -296,7 +332,11 @@ import {
   mdiChevronRight,
   mdiChevronDown,
   mdiPencilOutline,
+  mdiContentSaveOutline,
+  mdiExport,
 } from '@mdi/js'
+import { exportCollection, parseBackup, analyzeBackup, applyBackup } from '@/util/collectionBackup'
+import type { CollectionBackup } from '@/util/collectionBackup'
 import config from '@/config'
 import { CULT_RELATIONSHIP_KEYS } from '@/config/cultRelationships'
 
@@ -318,6 +358,53 @@ const theme = useTheme()
 const isDark = computed(() => theme.global.current.value.dark)
 const baseUrl = import.meta.env.BASE_URL
 const appStore = useApplicationStore()
+
+// Collection backup
+const backupInput = ref<HTMLInputElement | null>(null)
+const backupDialog = ref(false)
+const backupOverwrite = ref(false)
+const backupStats = ref({ total: 0, fresh: 0, conflicts: 0 })
+const backupSnack = ref(false)
+const backupSnackText = ref('')
+const backupSnackColor = ref('green-darken-2')
+let pendingBackup: CollectionBackup | null = null
+
+function showBackupMessage(text: string, color = 'green-darken-2') {
+  backupSnackText.value = text
+  backupSnackColor.value = color
+  backupSnack.value = true
+}
+
+function doExport() {
+  const count = exportCollection()
+  showBackupMessage(t('backup.exported', { count }))
+}
+
+async function onBackupFile(event: Event) {
+  const input = event.target as HTMLInputElement
+  const file = input.files?.[0]
+  input.value = ''
+  if (!file) return
+  try {
+    pendingBackup = parseBackup(await file.text())
+  } catch {
+    showBackupMessage(t('backup.invalidFile'), 'red-darken-2')
+    return
+  }
+  backupStats.value = analyzeBackup(pendingBackup)
+  backupOverwrite.value = false
+  backupDialog.value = true
+}
+
+function confirmBackupImport() {
+  if (!pendingBackup) return
+  const { imported, skipped } = applyBackup(pendingBackup, backupOverwrite.value, props.activeCharacterName)
+  pendingBackup = null
+  backupDialog.value = false
+  foldersData.value = browserStorage.loadFolders()
+  appStore.refresh()
+  showBackupMessage(t('backup.done', { imported, skipped }))
+}
 
 // Filters
 const NO_FOLDER = '__none__'
