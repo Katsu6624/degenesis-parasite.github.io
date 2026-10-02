@@ -73,6 +73,7 @@ import { ref, computed } from 'vue'
 import { mdiContentCopy } from '@mdi/js'
 import { useCharacterStore } from '@/store'
 import { publishCharacter } from '@/services/communityApi'
+import browserStorage from '@/store/browserStorage'
 import type { PublishResult } from '@/services/communityApi'
 
 const props = defineProps<{
@@ -117,12 +118,14 @@ async function publish() {
     if (includeStory.value && storyText.value) charData.story = storyText.value
     else delete charData.story
 
-    result.value = await publishCharacter({
+    const published = await publishCharacter({
       pseudo: pseudo.value.trim(),
       description: description.value.trim() || undefined,
       character: charData,
       portraits: Object.keys(portraits).length ? portraits : undefined,
     })
+    browserStorage.storePublishedSecret(published.id, published.secret)
+    result.value = published
   } catch (e) {
     error.value = e instanceof Error ? e.message : 'Erreur inconnue'
   } finally {

@@ -165,6 +165,17 @@
             {{ reportedIds.has(char.id) ? $t('community.reportSent') : $t('community.report') }}
           </v-btn>
           <v-btn
+            v-if="secrets[char.id]"
+            block
+            variant="tonal"
+            color="amber-darken-2"
+            class="char-card-action-btn"
+            :prepend-icon="mdiKeyVariant"
+            @click="openMySecret(char)"
+          >
+            {{ $t('community.mySecret') }}
+          </v-btn>
+          <v-btn
             block
             variant="text"
             color="grey"
@@ -240,6 +251,29 @@
       :data="quickData"
     />
 
+    <!-- Own secret code dialog -->
+    <v-dialog v-model="showMySecret" max-width="460">
+      <v-card class="secret-card">
+        <v-card-title class="text-h6">{{ $t('community.mySecretTitle') }}</v-card-title>
+        <v-card-text>
+          <p class="text-body-2 mb-3">{{ $t('community.mySecretDesc') }}</p>
+          <v-text-field
+            :model-value="mySecretValue"
+            readonly
+            variant="outlined"
+            density="compact"
+            hide-details
+            :append-inner-icon="mdiContentCopy"
+            @click:append-inner="copyMySecret"
+          />
+          <p v-if="mySecretCopied" class="text-caption mt-2">{{ $t('community.copied') }}</p>
+        </v-card-text>
+        <v-card-actions class="justify-end">
+          <v-btn variant="text" @click="showMySecret = false">{{ $t('messages.close') }}</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
     <!-- Delete dialog -->
     <v-dialog v-model="showDelete" max-width="440" persistent>
       <v-card>
@@ -280,7 +314,8 @@
 import { ref, onMounted, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useTheme } from 'vuetify'
-import { mdiAccount, mdiEye, mdiEyeOff } from '@mdi/js'
+import { mdiAccount, mdiEye, mdiEyeOff, mdiKeyVariant, mdiContentCopy } from '@mdi/js'
+import browserStorage from '@/store/browserStorage'
 import { listCharacters, reportCharacter, deleteCharacter, updateDescription, portraitUrl, fetchPortraitsForImport } from '@/services/communityApi'
 import type { CommunityCharacter } from '@/services/communityApi'
 import LegacyChips from './LegacyChips.vue'
@@ -304,6 +339,25 @@ const filterCult = ref('')
 const filterCulture = ref('')
 const filterConcept = ref('')
 const reportedIds = ref(new Set<string>())
+const secrets = ref(browserStorage.loadPublishedSecrets())
+const showMySecret = ref(false)
+const mySecretValue = ref('')
+const mySecretCopied = ref(false)
+
+function openMySecret(char: CommunityCharacter) {
+  mySecretValue.value = secrets.value[char.id] ?? ''
+  mySecretCopied.value = false
+  showMySecret.value = true
+}
+
+async function copyMySecret() {
+  try {
+    await navigator.clipboard.writeText(mySecretValue.value)
+    mySecretCopied.value = true
+  } catch {
+    mySecretCopied.value = false
+  }
+}
 const importedSnack = ref(false)
 
 const showEditDesc = ref(false)
@@ -373,7 +427,7 @@ function rankLabel(char: CommunityCharacter): string {
 function openEditDesc(char: CommunityCharacter) {
   editDescTarget.value = char
   editDescText.value = char.description ?? ''
-  editDescSecret.value = ''
+  editDescSecret.value = secrets.value[char.id] ?? ''
   editDescError.value = ''
   showEditDescSecret.value = false
   showEditDesc.value = true
@@ -396,7 +450,7 @@ async function doEditDesc() {
 
 function openDelete(char: CommunityCharacter) {
   deleteTarget.value = char
-  deleteSecret.value = ''
+  deleteSecret.value = secrets.value[char.id] ?? ''
   deleteError.value = ''
   showDeleteSecret.value = false
   showDelete.value = true
@@ -408,6 +462,8 @@ async function doDelete() {
   deleteError.value = ''
   try {
     await deleteCharacter(deleteTarget.value.id, deleteSecret.value.trim())
+    browserStorage.removePublishedSecret(deleteTarget.value.id)
+    secrets.value = browserStorage.loadPublishedSecrets()
     characters.value = characters.value.filter(c => c.id !== deleteTarget.value!.id)
     showDelete.value = false
   } catch (e) {
@@ -623,6 +679,11 @@ onMounted(load)
   border: 1px dashed rgba(var(--v-theme-on-surface), 0.25);
   border-radius: 4px;
   flex-shrink: 0;
+}
+
+/* The app-wide dark card style is 95% opaque; this dialog shows a code and needs a solid background */
+.secret-card.v-card--variant-elevated {
+  background-color: rgb(var(--v-theme-surface)) !important;
 }
 
 .char-card-quick {

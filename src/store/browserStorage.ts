@@ -54,6 +54,32 @@ const storeFoldersEnabled = (value: boolean) => {
   localStorage.setItem('preference-folders-enabled', value.toString())
 }
 
+// Secret codes of characters published to the community, kept so their author can edit or delete them later
+const SECRETS_KEY = 'published-secrets'
+
+const loadPublishedSecrets = (): Record<string, string> => {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(SECRETS_KEY) || '{}')
+    return parsed && typeof parsed === 'object' ? parsed : {}
+  } catch {
+    return {}
+  }
+}
+
+const storePublishedSecret = (id: string, secret: string) => {
+  const secrets = loadPublishedSecrets()
+  secrets[id] = secret
+  localStorage.setItem(SECRETS_KEY, JSON.stringify(secrets))
+}
+
+const removePublishedSecret = (id: string) => {
+  const secrets = loadPublishedSecrets()
+  if (id in secrets) {
+    delete secrets[id]
+    localStorage.setItem(SECRETS_KEY, JSON.stringify(secrets))
+  }
+}
+
 const renameFolderAssignment = (oldName: string, newName: string) => {
   const data = loadFolders()
   if (oldName !== newName && oldName in data.assignments) {
@@ -122,6 +148,9 @@ export default {
   storeFolders,
   loadFoldersEnabled,
   storeFoldersEnabled,
+  loadPublishedSecrets,
+  storePublishedSecret,
+  removePublishedSecret,
   renameFolderAssignment,
   loadAllCharacters,
   characterIsStored,
