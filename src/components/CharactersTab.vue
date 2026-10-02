@@ -16,8 +16,8 @@
     <!-- Empty state -->
     <div v-if="characters.length === 0" class="chars-empty">
       <v-icon size="80" color="grey-darken-2" :icon="mdiAccountGroupOutline"></v-icon>
-      <div class="text-h6 text-grey-darken-2 mt-4">Aucun personnage sauvegardé.</div>
-      <div class="text-body-2 text-grey-darken-1 mt-1">Créez un nouveau personnage pour commencer.</div>
+      <div class="text-h6 text-grey-darken-2 mt-4">{{ $t('folders.noCharacters') }}</div>
+      <div class="text-body-2 text-grey-darken-1 mt-1">{{ $t('folders.noCharactersHint') }}</div>
     </div>
 
     <!-- Filters + folders toolbar -->
@@ -91,7 +91,7 @@
           <!-- Crop overlay button -->
           <button v-if="character.portrait" class="char-portrait-crop-btn" @click.stop="openCrop(character)">
             <v-icon size="14" :icon="mdiCrop"></v-icon>
-            <span>Recadrer</span>
+            <span>{{ $t('folders.crop') }}</span>
           </button>
         </div>
 
@@ -109,7 +109,7 @@
               :class="isDark ? 'char-logotype--dark' : 'char-logotype--light'"
               :title="t(`culturesConceptsCults.${character.culture}`)"
             />
-            <span v-else class="char-logotype-unknown" title="Culture non sélectionnée">?</span>
+            <span v-else class="char-logotype-unknown" :title="$t('folders.cultureNotSelected')">?</span>
             <img
               v-if="character.concept"
               :src="`${baseUrl}logotypes/concepts/${character.concept}.svg`"
@@ -117,7 +117,7 @@
               :class="isDark ? 'char-logotype--dark' : 'char-logotype--light'"
               :title="t(`culturesConceptsCults.${character.concept}`)"
             />
-            <span v-else class="char-logotype-unknown" title="Concept non sélectionné">?</span>
+            <span v-else class="char-logotype-unknown" :title="$t('folders.conceptNotSelected')">?</span>
             <template v-if="character.clan">
               <img
                 :src="`${baseUrl}logotypes/clans/${character.clan}.svg`"
@@ -134,7 +134,7 @@
                 :title="t(`culturesConceptsCults.${character.cult}`)"
               />
             </template>
-            <span v-else class="char-logotype-unknown" title="Culte non sélectionné">?</span>
+            <span v-else class="char-logotype-unknown" :title="$t('folders.cultNotSelected')">?</span>
           </div>
         </div>
 
@@ -149,7 +149,7 @@
             @click="shareChar(character)"
           >
             <v-icon :icon="mdiShareVariant" size="16" class="mr-2"></v-icon>
-            Partager
+            {{ $t('folders.share') }}
           </v-btn>
           <v-btn
             block
@@ -169,7 +169,7 @@
             @click="confirmDelete(character.name)"
           >
             <v-icon :icon="mdiDeleteOutline" size="16" class="mr-2"></v-icon>
-            Supprimer
+            {{ $t('folders.delete') }}
           </v-btn>
           <v-menu v-if="foldersEnabled" location="top">
             <template #activator="{ props: mp }">
@@ -259,13 +259,13 @@
     <!-- Confirm delete dialog -->
     <v-dialog v-model="deleteDialog" max-width="400">
       <v-card>
-        <v-card-title class="text-h6">Supprimer le personnage ?</v-card-title>
+        <v-card-title class="text-h6">{{ $t('folders.deleteCharacterTitle') }}</v-card-title>
         <v-card-text>
-          <strong>{{ pendingDeleteName }}</strong> sera définitivement supprimé. Cette action est irréversible.
+          <strong>{{ pendingDeleteName }}</strong> {{ $t('folders.deleteCharacterBody') }}
         </v-card-text>
         <v-card-actions class="justify-end">
-          <v-btn variant="text" @click="deleteDialog = false">Annuler</v-btn>
-          <v-btn color="red-darken-2" variant="flat" @click="doDelete">Supprimer</v-btn>
+          <v-btn variant="text" @click="deleteDialog = false">{{ $t('folders.cancel') }}</v-btn>
+          <v-btn color="red-darken-2" variant="flat" @click="doDelete">{{ $t('folders.delete') }}</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
