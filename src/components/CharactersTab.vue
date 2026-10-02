@@ -569,6 +569,7 @@ function rankLabel(character: Character): string {
 <style scoped>
 .chars-root {
   min-height: 100vh;
+  color: rgb(var(--v-theme-on-surface));
   background: rgb(var(--v-theme-surface));
 }
 
