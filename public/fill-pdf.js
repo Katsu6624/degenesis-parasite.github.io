@@ -271,6 +271,7 @@
 
     fillInventory(form, store);
 
+    await appendStoryPages(pdf, store, "Histoire");
     var filledBytes = await pdf.save();
     var blob = new Blob([filledBytes], { type: "application/pdf" });
     var url = URL.createObjectURL(blob);
@@ -281,6 +282,100 @@
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+  }
+
+
+  // ─── Story pages ───
+  var storyCharCache = {};
+  var STORY_CHAR_FALLBACKS = { "\u2011": "-", "\u2010": "-", "\u2212": "-", "\u00a0": " ", "\u202f": " ", "\u2192": "->", "\u2190": "<-", "\u2713": "v", "\u2605": "*", "\u2606": "*", "\u201a": ",", "\u2043": "-" };
+
+  function toPdfSafeChar(font, ch) {
+    var cacheKey = ch;
+    if (storyCharCache[cacheKey] !== undefined) return storyCharCache[cacheKey];
+    var candidates = [ch];
+    if (STORY_CHAR_FALLBACKS[ch]) candidates.push(STORY_CHAR_FALLBACKS[ch]);
+    try { candidates.push(ch.normalize("NFD").replace(/[\u0300-\u036f]/g, "")); } catch (e) {}
+    var out = "?";
+    for (var i = 0; i < candidates.length; i++) {
+      var cand = candidates[i];
+      if (!cand) continue;
+      try { font.encodeText(cand); out = cand; break; } catch (e) {}
+    }
+    storyCharCache[cacheKey] = out;
+    return out;
+  }
+
+  function toPdfSafeText(font, text) {
+    return Array.from(String(text)).map(function (ch) {
+      return ch.charCodeAt(0) === 10 ? ch : toPdfSafeChar(font, ch);
+    }).join("");
+  }
+
+  function wrapParagraph(font, text, size, maxWidth) {
+    var lines = [];
+    var words = text.split(" ");
+    var line = "";
+    for (var i = 0; i < words.length; i++) {
+      var word = words[i];
+      var test = line ? line + " " + word : word;
+      if (font.widthOfTextAtSize(test, size) <= maxWidth) {
+        line = test;
+        continue;
+      }
+      if (line) lines.push(line);
+      line = "";
+      while (font.widthOfTextAtSize(word, size) > maxWidth) {
+        var cut = word.length - 1;
+        while (cut > 1 && font.widthOfTextAtSize(word.slice(0, cut), size) > maxWidth) cut--;
+        lines.push(word.slice(0, cut));
+        word = word.slice(cut);
+      }
+      line = word;
+    }
+    lines.push(line);
+    return lines;
+  }
+
+  async function appendStoryPages(pdf, store, title) {
+    var story = (store.story || "").replace(/\r\n?/g, "\n").replace(/\t/g, "    ").trim();
+    if (!story) return;
+    var PDFLib = window.PDFLib;
+    var font = await pdf.embedFont(PDFLib.StandardFonts.Helvetica);
+    var bold = await pdf.embedFont(PDFLib.StandardFonts.HelveticaBold);
+    var size = pdf.getPage(0).getSize();
+    var margin = 50;
+    var maxWidth = size.width - margin * 2;
+    var fontSize = 11;
+    var lineHeight = 15;
+    var dark = PDFLib.rgb(0.1, 0.1, 0.1);
+
+    var page = pdf.addPage([size.width, size.height]);
+    var y = size.height - margin;
+
+    page.drawText(toPdfSafeText(bold, title.toUpperCase()), { x: margin, y: y - 18, size: 20, font: bold, color: dark });
+    y -= 26;
+    page.drawText(toPdfSafeText(font, store.characterName || ""), { x: margin, y: y - 12, size: 12, font: font, color: PDFLib.rgb(0.4, 0.4, 0.4) });
+    y -= 20;
+    page.drawLine({ start: { x: margin, y: y - 4 }, end: { x: size.width - margin, y: y - 4 }, thickness: 1, color: PDFLib.rgb(0.75, 0.1, 0.1) });
+    y -= 24;
+
+    var paragraphs = toPdfSafeText(font, story).split("\n");
+    for (var p = 0; p < paragraphs.length; p++) {
+      var para = paragraphs[p];
+      if (para.trim() === "") {
+        y -= lineHeight * 0.6;
+        continue;
+      }
+      var lines = wrapParagraph(font, para, fontSize, maxWidth);
+      for (var l = 0; l < lines.length; l++) {
+        if (y - lineHeight < margin) {
+          page = pdf.addPage([size.width, size.height]);
+          y = size.height - margin;
+        }
+        page.drawText(lines[l], { x: margin, y: y - fontSize, size: fontSize, font: font, color: dark });
+        y -= lineHeight;
+      }
+    }
   }
 
   var WEAPON_CATEGORIES = ['armesDeCorpsACorps', 'armesDeJet', 'armesAProjectiles', 'fusils', 'armesLourdes', 'armesDePoing', 'armesSoniques', 'artefactsEthylens'];
@@ -531,6 +626,7 @@
 
     fillInventory_en(form, store);
 
+    await appendStoryPages(pdf, store, "Story");
     var filledBytes = await pdf.save();
     var blob = new Blob([filledBytes], { type: "application/pdf" });
     var url = URL.createObjectURL(blob);

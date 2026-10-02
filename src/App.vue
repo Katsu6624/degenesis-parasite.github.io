@@ -192,6 +192,7 @@
     >
       <v-tabs v-model="tab" bg-color="grey-darken-3">
         <v-tab value="edit">{{ $t('messages.editCharacter') }}</v-tab>
+        <v-tab value="story">{{ $t('story.title') }}</v-tab>
         <v-tab value="sheet">{{ $t('messages.characterSheet') }}</v-tab>
         <v-tab value="cultRelationships">{{ $t('cultRelationships.title') }}</v-tab>
         <v-tab value="other">{{ $t('other.title') }}</v-tab>
@@ -210,6 +211,9 @@
       <v-window v-model="tab">
         <v-window-item value="edit">
           <Editor> </Editor>
+        </v-window-item>
+        <v-window-item value="story">
+          <StoryTab :readonly="isSharedView" />
         </v-window-item>
         <v-window-item value="sheet">
           <div class="bg-grey-lighten-3">
@@ -274,6 +278,7 @@ import NpcGeneratorTab from '@/components/NpcGeneratorTab.vue'
 import NpcSimpleGeneratorTab from '@/components/NpcSimpleGeneratorTab.vue'
 import NameGeneratorTab from '@/components/NameGeneratorTab.vue'
 import CharactersTab from '@/components/CharactersTab.vue'
+import StoryTab from '@/components/StoryTab.vue'
 import CultRelationshipsTab from '@/components/CultRelationshipsTab.vue'
 import OtherTab from '@/components/OtherTab.vue'
 import CommunityTab from '@/components/CommunityTab.vue'

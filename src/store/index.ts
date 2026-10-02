@@ -96,6 +96,7 @@ export type State = {
   ignoreAutoLC: boolean
   legacyChoices: Record<string, { attributes?: string[]; skills?: string[] }>
   potentialChoices: Record<string, string>
+  story: string
   errorMessage: string | null
   sidewinderOldCultName: string | null
   imposteurCultName: string | null
@@ -142,6 +143,7 @@ export const useCharacterStore = defineStore('character', {
     ignoreAutoLC: false,
     legacyChoices: {},
     potentialChoices: {},
+    story: '',
     errorMessage: null,
     sidewinderOldCultName: null,
     imposteurCultName: null,
@@ -562,6 +564,7 @@ export const useCharacterStore = defineStore('character', {
         state.cultRelationships,
         state.other,
         Object.keys(state.potentialChoices).length > 0 ? state.potentialChoices : undefined,
+        state.story || undefined,
       )
     },
     maxEgo(): number {
@@ -848,6 +851,7 @@ export const useCharacterStore = defineStore('character', {
       this.manualLC = character.manualLC ?? null
       this.legacyChoices = character.legacyChoices ? { ...character.legacyChoices } : {}
       this.potentialChoices = character.potentialChoices ? { ...character.potentialChoices } : {}
+      this.story = character.story ?? ''
       this.sidewinderOldCultName = character.sidewinderOldCultName ?? null
       this.mentalPowerChoice = character.mentalPowerChoice ?? null
       this.mentalResistanceChoice = character.mentalResistanceChoice ?? null

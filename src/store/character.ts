@@ -41,6 +41,7 @@ export class Character {
     readonly cultRelationships?: CultRelationships,
     readonly other?: OtherData,
     readonly potentialChoices?: Record<string, string>,
+    readonly story?: string,
   ) {
     this.storageVersion = 'v1'
     const legacyEditorMode = wasCreatedWithFreeMode ? (wasCreatedWithFreeMode ? EditorMode.Free : editorMode) : editorMode

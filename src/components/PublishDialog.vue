@@ -100,6 +100,7 @@ async function publish() {
     delete charData.portrait
     delete charData.portraitOriginal
     delete charData.portraitFiche
+    delete charData.story
 
     result.value = await publishCharacter({
       pseudo: pseudo.value.trim(),

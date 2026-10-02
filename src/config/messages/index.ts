@@ -13,6 +13,7 @@ import { cultRelationships } from "./cultRelationships"
 import { community } from "./community";
 import { folders } from "./folders";
 import { backup } from "./backup";
+import { story } from "./story";
 
 export default {
   de: {
@@ -30,6 +31,7 @@ export default {
     community: community.de,
     folders: folders.de,
     backup: backup.de,
+    story: story.de,
   },
   en: {
     messages: messages.en,
@@ -46,6 +48,7 @@ export default {
     community: community.en,
     folders: folders.en,
     backup: backup.en,
+    story: story.en,
   },
   fr: {
     messages: messages.fr,
@@ -62,5 +65,6 @@ export default {
     community: community.fr,
     folders: folders.fr,
     backup: backup.fr,
+    story: story.fr,
   }
 }
