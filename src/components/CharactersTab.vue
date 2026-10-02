@@ -148,6 +148,7 @@
             </template>
             <span v-else class="char-logotype-unknown" :title="$t('folders.cultNotSelected')">?</span>
           </div>
+          <LegacyChips :names="legacyNames(character)" />
         </div>
 
         <!-- Actions -->
@@ -318,6 +319,7 @@ import browserStorage from '@/store/browserStorage'
 import { useApplicationStore } from '@/store/application'
 import ImageCropperDialog from './ImageCropperDialog.vue'
 import PublishDialog from './PublishDialog.vue'
+import LegacyChips from './LegacyChips.vue'
 import {
   mdiAccountPlusOutline,
   mdiAccountGroupOutline,
@@ -639,6 +641,11 @@ async function shareChar(character: Character) {
   }
   sharing.value = null
   shareCopied.value = true
+}
+
+// Legacies shown on the card
+function legacyNames(character: Character): string[] {
+  return (character.legacies ?? []).filter(([, value]) => value > 0).map(([name]) => name)
 }
 
 // Rank label

@@ -111,6 +111,7 @@
               </template>
             </v-tooltip>
           </div>
+          <LegacyChips :names="legacyNames(char)" />
           <v-tooltip
             v-if="char.description"
             location="top"
@@ -255,6 +256,7 @@ import { useTheme } from 'vuetify'
 import { mdiAccount, mdiEye, mdiEyeOff } from '@mdi/js'
 import { listCharacters, reportCharacter, deleteCharacter, updateDescription, portraitUrl, fetchPortraitsForImport } from '@/services/communityApi'
 import type { CommunityCharacter } from '@/services/communityApi'
+import LegacyChips from './LegacyChips.vue'
 import { CULT_RELATIONSHIP_KEYS } from '@/config/cultRelationships'
 import config from '@/config'
 
@@ -401,6 +403,14 @@ async function importChar(char: CommunityCharacter) {
   } catch {
     // ignore
   }
+}
+
+function legacyNames(char: CommunityCharacter): string[] {
+  const legacies = charData(char).legacies
+  if (!Array.isArray(legacies)) return []
+  return legacies
+    .filter((l): l is [string, number] => Array.isArray(l) && typeof l[0] === 'string' && Number(l[1]) > 0)
+    .map(([name]) => name)
 }
 
 function charData(char: CommunityCharacter): Record<string, unknown> {
