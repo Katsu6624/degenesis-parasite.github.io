@@ -131,7 +131,6 @@
               size="small"
               variant="tonal"
               class="char-card-quick-btn"
-              :prepend-icon="mdiChartBoxOutline"
               @click="openQuickView(char, 'stats')"
             >
               {{ $t('community.viewStats') }}
@@ -141,7 +140,6 @@
               size="small"
               variant="tonal"
               class="char-card-quick-btn"
-              :prepend-icon="mdiBookOpenPageVariantOutline"
               @click="openQuickView(char, 'story')"
             >
               {{ $t('community.viewStory') }}
@@ -282,7 +280,7 @@
 import { ref, onMounted, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useTheme } from 'vuetify'
-import { mdiAccount, mdiEye, mdiEyeOff, mdiChartBoxOutline, mdiBookOpenPageVariantOutline } from '@mdi/js'
+import { mdiAccount, mdiEye, mdiEyeOff } from '@mdi/js'
 import { listCharacters, reportCharacter, deleteCharacter, updateDescription, portraitUrl, fetchPortraitsForImport } from '@/services/communityApi'
 import type { CommunityCharacter } from '@/services/communityApi'
 import LegacyChips from './LegacyChips.vue'
@@ -633,10 +631,19 @@ onMounted(load)
 }
 
 .char-card-quick-btn {
-  flex: 1;
+  flex: 1 1 0;
   min-width: 0;
-  font-size: 0.65rem !important;
-  letter-spacing: 0.03em !important;
+  height: auto !important;
+  min-height: 32px;
+  padding: 4px 6px !important;
+  font-size: 0.62rem !important;
+  letter-spacing: 0.02em !important;
+  line-height: 1.2;
+}
+
+.char-card-quick-btn :deep(.v-btn__content) {
+  white-space: normal;
+  text-align: center;
 }
 
 .char-card-actions {
