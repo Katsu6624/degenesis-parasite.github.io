@@ -271,7 +271,7 @@
 
     fillInventory(form, store);
 
-    await appendStoryPages(pdf, store, "Histoire");
+    await appendStoryPages(pdf, store, { title: "Histoire", nameLabel: "Nom :", legaciesLabel: "Héritages" });
     var filledBytes = await pdf.save();
     var blob = new Blob([filledBytes], { type: "application/pdf" });
     var url = URL.createObjectURL(blob);
@@ -285,16 +285,16 @@
   }
 
 
-  // ─── Story pages ───
+  // ─── Story pages (Degenesis sheet style) ───
   var storyCharCache = {};
-  var STORY_CHAR_FALLBACKS = { "\u2011": "-", "\u2010": "-", "\u2212": "-", "\u00a0": " ", "\u202f": " ", "\u2192": "->", "\u2190": "<-", "\u2713": "v", "\u2605": "*", "\u2606": "*", "\u201a": ",", "\u2043": "-" };
+  var STORY_CHAR_FALLBACKS = { "‑": "-", "‐": "-", "−": "-", " ": " ", " ": " ", "→": "->", "←": "<-", "✓": "v", "★": "*", "☆": "*", "‚": ",", "⁃": "-" };
 
   function toPdfSafeChar(font, ch) {
     var cacheKey = ch;
     if (storyCharCache[cacheKey] !== undefined) return storyCharCache[cacheKey];
     var candidates = [ch];
     if (STORY_CHAR_FALLBACKS[ch]) candidates.push(STORY_CHAR_FALLBACKS[ch]);
-    try { candidates.push(ch.normalize("NFD").replace(/[\u0300-\u036f]/g, "")); } catch (e) {}
+    try { candidates.push(ch.normalize("NFD").replace(/[̀-ͯ]/g, "")); } catch (e) {}
     var out = "?";
     for (var i = 0; i < candidates.length; i++) {
       var cand = candidates[i];
@@ -336,28 +336,150 @@
     return lines;
   }
 
-  async function appendStoryPages(pdf, store, title) {
+  function storyTrackedWidth(font, text, size, tracking) {
+    if (!text) return 0;
+    return font.widthOfTextAtSize(text, size) + tracking * Math.max(0, Array.from(text).length - 1);
+  }
+
+  function storyDrawTracked(page, font, text, x, y, size, color, tracking) {
+    Array.from(text).forEach(function (ch) {
+      page.drawText(ch, { x: x, y: y, size: size, font: font, color: color });
+      x += font.widthOfTextAtSize(ch, size) + tracking;
+    });
+  }
+
+  function storyDiamond(page, x, y, r, color) {
+    var pts = [[x, y + r], [x + r, y], [x, y - r], [x - r, y]];
+    for (var i = 0; i < 4; i++) {
+      var n = pts[(i + 1) % 4];
+      page.drawLine({ start: { x: pts[i][0], y: pts[i][1] }, end: { x: n[0], y: n[1] }, thickness: 0.7, color: color });
+    }
+  }
+
+  // Section title: centred tracked caps on a stepped line with diamonds at both ends, like "ARCHÉTYPE"
+  function storyHeading(PDFLib, page, font, text, centerY, pageWidth, margin, size) {
+    var color = PDFLib.rgb(0, 0, 0);
+    var tracking = 1.9;
+    var width = storyTrackedWidth(font, text, size, tracking);
+    var textX = (pageWidth - width) / 2;
+    var gap = 13, shoulder = 49, dogleg = 7, drop = 6, t = 0.7;
+    var leftEnd = textX - gap;
+    var rightStart = textX + width + gap;
+    var lowY = centerY - drop;
+    storyDiamond(page, margin, centerY, 3.5, color);
+    storyDiamond(page, pageWidth - margin, centerY, 3.5, color);
+    page.drawLine({ start: { x: margin + 4, y: centerY }, end: { x: margin + shoulder, y: centerY }, thickness: t, color: color });
+    page.drawLine({ start: { x: margin + shoulder, y: centerY }, end: { x: margin + shoulder + dogleg, y: lowY }, thickness: t, color: color });
+    page.drawLine({ start: { x: margin + shoulder + dogleg, y: lowY }, end: { x: leftEnd, y: lowY }, thickness: t, color: color });
+    page.drawLine({ start: { x: pageWidth - margin - 4, y: centerY }, end: { x: pageWidth - margin - shoulder, y: centerY }, thickness: t, color: color });
+    page.drawLine({ start: { x: pageWidth - margin - shoulder, y: centerY }, end: { x: pageWidth - margin - shoulder - dogleg, y: lowY }, thickness: t, color: color });
+    page.drawLine({ start: { x: pageWidth - margin - shoulder - dogleg, y: lowY }, end: { x: rightStart, y: lowY }, thickness: t, color: color });
+    storyDrawTracked(page, font, text, textX, lowY - size * 0.35, size, color, tracking);
+  }
+
+  // Black tab with a slanted end and white tracked caps, like "DESCRIPTION" / "POTENTIELS"
+  function storyLabelBar(PDFLib, page, boldFont, text, x, topY, width) {
+    var h = 13;
+    page.drawSvgPath("M 0 0 L " + width + " 0 L " + (width - 9) + " " + h + " L 0 " + h + " Z", { x: x, y: topY, color: PDFLib.rgb(0, 0, 0) });
+    storyDrawTracked(page, boldFont, text, x + 6, topY - h + 3.6, 7, PDFLib.rgb(1, 1, 1), 1.2);
+  }
+
+  function storyFooter(PDFLib, page, pageWidth, margin) {
+    var color = PDFLib.rgb(0, 0, 0);
+    var y = 38, mid = pageWidth / 2, t = 0.7;
+    storyDiamond(page, margin, y, 3.5, color);
+    storyDiamond(page, pageWidth - margin, y, 3.5, color);
+    page.drawLine({ start: { x: margin + 4, y: y }, end: { x: margin + 49, y: y }, thickness: t, color: color });
+    page.drawLine({ start: { x: margin + 49, y: y }, end: { x: margin + 56, y: y - 6 }, thickness: t, color: color });
+    page.drawLine({ start: { x: margin + 56, y: y - 6 }, end: { x: mid - 12, y: y - 6 }, thickness: t, color: color });
+    page.drawLine({ start: { x: pageWidth - margin - 4, y: y }, end: { x: pageWidth - margin - 49, y: y }, thickness: t, color: color });
+    page.drawLine({ start: { x: pageWidth - margin - 49, y: y }, end: { x: pageWidth - margin - 56, y: y - 6 }, thickness: t, color: color });
+    page.drawLine({ start: { x: pageWidth - margin - 56, y: y - 6 }, end: { x: mid + 12, y: y - 6 }, thickness: t, color: color });
+    storyDiamond(page, mid, y - 6, 3.5, color);
+  }
+
+  function storyLegacyNames(store) {
+    var i18n = window.__i18n;
+    var names = [];
+    try {
+      Array.from(store.legacies.entries()).forEach(function (entry) {
+        if (entry[1] > 0) {
+          var key = "legacies." + entry[0].name;
+          var label;
+          try { label = (i18n.global || i18n).t(key); } catch (e) { label = key; }
+          names.push(label && label !== key ? label : entry[0].name);
+        }
+      });
+    } catch (e) {}
+    return names.sort(function (a, b) { return a.localeCompare(b); });
+  }
+
+  // options: { title, nameLabel, legaciesLabel }
+  async function appendStoryPages(pdf, store, options) {
     var story = (store.story || "").replace(/\r\n?/g, "\n").replace(/\t/g, "    ").trim();
     if (!story) return;
     var PDFLib = window.PDFLib;
     var font = await pdf.embedFont(PDFLib.StandardFonts.Helvetica);
     var bold = await pdf.embedFont(PDFLib.StandardFonts.HelveticaBold);
-    var size = pdf.getPage(0).getSize();
-    var margin = 50;
-    var maxWidth = size.width - margin * 2;
-    var fontSize = 11;
-    var lineHeight = 15;
-    var dark = PDFLib.rgb(0.1, 0.1, 0.1);
+    var sheet = pdf.getPage(0);
+    var pageWidth = sheet.getWidth();
+    var pageHeight = sheet.getHeight();
+    var margin = 28;
+    var textLeft = 52;
+    var textRight = pageWidth - 52;
+    var maxWidth = textRight - textLeft;
+    var fontSize = 10.5;
+    var lineHeight = 14.5;
+    var bottomLimit = 62;
+    var ink = PDFLib.rgb(0.07, 0.07, 0.07);
 
-    var page = pdf.addPage([size.width, size.height]);
-    var y = size.height - margin;
+    var logo = null;
+    try {
+      logo = await pdf.embedPage(sheet, { left: 228, bottom: pageHeight - 76, right: 368, top: pageHeight - 16 });
+    } catch (e) {}
 
-    page.drawText(toPdfSafeText(bold, title.toUpperCase()), { x: margin, y: y - 18, size: 20, font: bold, color: dark });
-    y -= 26;
-    page.drawText(toPdfSafeText(font, store.characterName || ""), { x: margin, y: y - 12, size: 12, font: font, color: PDFLib.rgb(0.4, 0.4, 0.4) });
-    y -= 20;
-    page.drawLine({ start: { x: margin, y: y - 4 }, end: { x: size.width - margin, y: y - 4 }, thickness: 1, color: PDFLib.rgb(0.75, 0.1, 0.1) });
-    y -= 24;
+    var pageNumber = 0;
+    function newPage() {
+      var page = pdf.addPage([pageWidth, pageHeight]);
+      pageNumber++;
+      storyFooter(PDFLib, page, pageWidth, margin);
+      return page;
+    }
+
+    var page = newPage();
+    var y;
+    if (logo) {
+      page.drawPage(logo, { x: (pageWidth - 140) / 2, y: pageHeight - 76, width: 140, height: 60 });
+    }
+    storyHeading(PDFLib, page, font, toPdfSafeText(font, options.title.toUpperCase()), pageHeight - 92, pageWidth, margin, 10);
+
+    // "NOM : <character>" on a ruled line, like the sheet fields
+    var nameLabel = toPdfSafeText(font, options.nameLabel.toUpperCase());
+    var nameLabelWidth = storyTrackedWidth(font, nameLabel, 7, 0.4);
+    var blockWidth = 280;
+    var blockX = (pageWidth - blockWidth) / 2;
+    var lineY = pageHeight - 124;
+    storyDrawTracked(page, font, nameLabel, blockX, lineY + 2, 7, ink, 0.4);
+    page.drawLine({ start: { x: blockX + nameLabelWidth + 8, y: lineY }, end: { x: blockX + blockWidth, y: lineY }, thickness: 0.55, color: ink });
+    if (store.characterName) {
+      var safeName = toPdfSafeText(font, store.characterName);
+      var nameWidth = font.widthOfTextAtSize(safeName, 9);
+      var lineStart = blockX + nameLabelWidth + 8;
+      page.drawText(safeName, { x: lineStart + Math.max(4, (blockX + blockWidth - lineStart - nameWidth) / 2), y: lineY + 3, size: 9, font: font, color: ink });
+    }
+    y = lineY - 28;
+
+    var legacies = storyLegacyNames(store);
+    if (legacies.length > 0) {
+      storyLabelBar(PDFLib, page, bold, toPdfSafeText(bold, options.legaciesLabel.toUpperCase()), textLeft, y, 150);
+      y -= 13 + 8;
+      var legacyLines = wrapParagraph(font, toPdfSafeText(font, legacies.join("   -   ")), fontSize, maxWidth);
+      legacyLines.forEach(function (line) {
+        page.drawText(line, { x: textLeft + 2, y: y - fontSize, size: fontSize, font: font, color: ink });
+        y -= lineHeight;
+      });
+      y -= 14;
+    }
 
     var paragraphs = toPdfSafeText(font, story).split("\n");
     for (var p = 0; p < paragraphs.length; p++) {
@@ -368,11 +490,12 @@
       }
       var lines = wrapParagraph(font, para, fontSize, maxWidth);
       for (var l = 0; l < lines.length; l++) {
-        if (y - lineHeight < margin) {
-          page = pdf.addPage([size.width, size.height]);
-          y = size.height - margin;
+        if (y - lineHeight < bottomLimit) {
+          page = newPage();
+          storyHeading(PDFLib, page, font, toPdfSafeText(font, options.title.toUpperCase()), pageHeight - 42, pageWidth, margin, 10);
+          y = pageHeight - 78;
         }
-        page.drawText(lines[l], { x: margin, y: y - fontSize, size: fontSize, font: font, color: dark });
+        page.drawText(lines[l], { x: textLeft, y: y - fontSize, size: fontSize, font: font, color: ink });
         y -= lineHeight;
       }
     }
@@ -626,7 +749,7 @@
 
     fillInventory_en(form, store);
 
-    await appendStoryPages(pdf, store, "Story");
+    await appendStoryPages(pdf, store, { title: "Story", nameLabel: "Name:", legaciesLabel: "Legacies" });
     var filledBytes = await pdf.save();
     var blob = new Blob([filledBytes], { type: "application/pdf" });
     var url = URL.createObjectURL(blob);
