@@ -127,6 +127,11 @@ const story = computed(() => (typeof props.data.story === 'string' ? props.data.
   color: rgb(var(--v-theme-on-surface));
 }
 
+/* The app-wide dark card style is 95% opaque; this reading window needs a solid background */
+.qv-card.v-card--variant-elevated {
+  background-color: rgb(var(--v-theme-surface)) !important;
+}
+
 .qv-title {
   display: flex;
   align-items: baseline;
