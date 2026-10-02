@@ -131,7 +131,7 @@
             content-class="char-desc-tooltip"
           >
             <template #activator="{ props: tp }">
-              <div v-bind="tp" class="char-card-description">{{ char.description }}</div>
+              <div v-bind="tp" v-clip-fade class="char-card-description">{{ char.description }}</div>
             </template>
             <span class="char-desc-tooltip-text">{{ char.description }}</span>
           </v-tooltip>
@@ -156,43 +156,53 @@
               {{ $t('community.viewStory') }}
             </v-btn>
           </div>
-          <v-btn
-            block
-            variant="flat"
-            color="red-darken-3"
-            class="char-card-action-btn"
-            @click="importChar(char)"
-          >
-            {{ $t('community.import') }}
-          </v-btn>
-          <v-btn
-            block
-            variant="outlined"
-            color="red-darken-3"
-            class="char-card-action-btn"
-            :disabled="reportedIds.has(char.id)"
-            @click="report(char.id)"
-          >
-            {{ reportedIds.has(char.id) ? $t('community.reportSent') : $t('community.report') }}
-          </v-btn>
-          <v-btn
-            block
-            variant="text"
-            color="grey"
-            class="char-card-action-btn"
-            @click="openEditDesc(char)"
-          >
-            {{ $t('community.editDesc') }}
-          </v-btn>
-          <v-btn
-            block
-            variant="text"
-            color="grey"
-            class="char-card-action-btn"
-            @click="openDelete(char)"
-          >
-            {{ $t('community.delete') }}
-          </v-btn>
+          <div class="char-icon-row">
+            <v-tooltip :text="$t('community.import')" location="top">
+              <template #activator="{ props: tp }">
+                <button
+                  v-bind="tp"
+                  type="button"
+                  class="char-icon-btn char-icon-btn--primary"
+                  :aria-label="$t('community.import')"
+                  @click="importChar(char)"
+                ><CardIcon name="download" /></button>
+              </template>
+            </v-tooltip>
+            <v-tooltip :text="reportedIds.has(char.id) ? $t('community.reportSent') : $t('community.report')" location="top">
+              <template #activator="{ props: tp }">
+                <button
+                  v-bind="tp"
+                  type="button"
+                  class="char-icon-btn"
+                  :disabled="reportedIds.has(char.id)"
+                  :aria-label="$t('community.report')"
+                  @click="report(char.id)"
+                ><CardIcon name="report" /></button>
+              </template>
+            </v-tooltip>
+            <v-tooltip :text="$t('community.editDesc')" location="top">
+              <template #activator="{ props: tp }">
+                <button
+                  v-bind="tp"
+                  type="button"
+                  class="char-icon-btn"
+                  :aria-label="$t('community.editDesc')"
+                  @click="openEditDesc(char)"
+                ><CardIcon name="edit" /></button>
+              </template>
+            </v-tooltip>
+            <v-tooltip :text="$t('community.delete')" location="top">
+              <template #activator="{ props: tp }">
+                <button
+                  v-bind="tp"
+                  type="button"
+                  class="char-icon-btn char-icon-btn--danger"
+                  :aria-label="$t('community.delete')"
+                  @click="openDelete(char)"
+                ><CardIcon name="delete" /></button>
+              </template>
+            </v-tooltip>
+          </div>
         </div>
       </div>
     </div>
@@ -328,6 +338,7 @@ import { listCharacters, reportCharacter, deleteCharacter, updateDescription, po
 import type { CommunityCharacter } from '@/services/communityApi'
 import LegacyChips from './LegacyChips.vue'
 import CharacterQuickView from './CharacterQuickView.vue'
+import CardIcon from './CardIcon.vue'
 import { CULT_RELATIONSHIP_KEYS } from '@/config/cultRelationships'
 import config from '@/config'
 
@@ -513,6 +524,27 @@ async function importChar(char: CommunityCharacter) {
   }
 }
 
+// Marks an element as clipped when its text overflows, so the CSS can fade the cut-off edge
+const clipObservers = new WeakMap<HTMLElement, ResizeObserver>()
+function updateClipped(el: HTMLElement) {
+  el.classList.toggle('is-clipped', el.scrollHeight - el.clientHeight > 1)
+}
+const vClipFade = {
+  mounted(el: HTMLElement) {
+    const observer = new ResizeObserver(() => updateClipped(el))
+    observer.observe(el)
+    clipObservers.set(el, observer)
+    updateClipped(el)
+  },
+  updated(el: HTMLElement) {
+    updateClipped(el)
+  },
+  unmounted(el: HTMLElement) {
+    clipObservers.get(el)?.disconnect()
+    clipObservers.delete(el)
+  },
+}
+
 const quickOpen = ref(false)
 const quickMode = ref<'stats' | 'story'>('stats')
 const quickChar = ref<CommunityCharacter | null>(null)
@@ -666,12 +698,17 @@ onMounted(load)
   line-height: 1.4;
   cursor: help;
   white-space: pre-line;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
+  /* Takes all the room left by the other blocks (legacies, portrait...) instead of a fixed line count */
+  flex: 1 1 0;
+  min-height: calc(1.4em * 4);
   overflow: hidden;
   text-align: left;
   width: 100%;
+}
+
+.char-card-description.is-clipped {
+  -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 1.8em), transparent);
+  mask-image: linear-gradient(to bottom, #000 calc(100% - 1.8em), transparent);
 }
 
 .char-card-icons {
@@ -760,10 +797,53 @@ onMounted(load)
   gap: 6px;
 }
 
-.char-card-action-btn {
-  font-size: 0.73rem !important;
-  letter-spacing: 0.06em !important;
-  justify-content: center !important;
+.char-icon-row {
+  display: flex;
+  gap: 6px;
+}
+
+/* Angular buttons with cut corners, echoing the label tabs of the character sheet */
+.char-icon-btn {
+  flex: 1 1 0;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  color: rgba(var(--v-theme-on-surface), 0.85);
+  background: rgba(var(--v-theme-on-surface), 0.12);
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+  transition: background 0.15s, color 0.15s;
+}
+
+.char-icon-btn:hover:not(:disabled) {
+  background: rgba(var(--v-theme-on-surface), 0.24);
+}
+
+.char-icon-btn:focus-visible {
+  outline: 2px solid rgb(var(--v-theme-primary));
+  outline-offset: -2px;
+}
+
+.char-icon-btn:disabled {
+  cursor: default;
+  opacity: 0.4;
+}
+
+.char-icon-btn--primary {
+  flex: 1.6 1 0;
+  color: #fff;
+  background: rgb(var(--v-theme-primary));
+}
+
+.char-icon-btn--primary:hover:not(:disabled) {
+  background: rgba(var(--v-theme-primary), 0.8);
+}
+
+.char-icon-btn--danger:hover:not(:disabled) {
+  color: #fff;
+  background: rgb(var(--v-theme-primary));
 }
 </style>
 
