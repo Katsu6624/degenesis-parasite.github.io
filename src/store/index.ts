@@ -942,7 +942,12 @@ export const useCharacterStore = defineStore('character', {
     },
     setRank(rank: Rank) {
       if (rank.cult.name == this.cult.name) {
-        if (rank.isEligible(this.cult, this.skillValues, this.originValues, this.clan)) {
+        const clanMatches = !rank.clan || rank.clan.name == this.clan?.name
+        const allowed =
+          this.editorMode === EditorMode.Free
+            ? clanMatches
+            : rank.isEligible(this.cult, this.skillValues, this.originValues, this.clan)
+        if (allowed) {
           this.rank = rank
         }
       }
@@ -1166,7 +1171,11 @@ export const useCharacterStore = defineStore('character', {
       this.expertLCModified = false
     },
     adjustRank() {
-      if (!this.rank.isEligible(this.cult, this.skillValues, this.originValues, this.clan)) {
+      const stillValid =
+        this.editorMode === EditorMode.Free
+          ? this.rank.cult.name == this.cult.name && (!this.rank.clan || this.rank.clan.name == this.clan?.name)
+          : this.rank.isEligible(this.cult, this.skillValues, this.originValues, this.clan)
+      if (!stillValid) {
         this.rank = minimumRank(this.cult, this.clan)
       }
       this.adjustPotentials()
