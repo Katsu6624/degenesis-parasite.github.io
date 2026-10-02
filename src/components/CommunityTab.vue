@@ -2,8 +2,19 @@
   <div class="community-root">
   <div class="community-tab pa-4">
     <div class="community-tab__header mb-4">
-      <h1 class="text-h5">{{ $t('community.title') }}</h1>
-      <p class="text-body-2 text-medium-emphasis">{{ $t('community.subtitle') }}</p>
+      <div>
+        <h1 class="text-h5">{{ $t('community.title') }}</h1>
+        <p class="text-body-2 text-medium-emphasis">{{ $t('community.subtitle') }}</p>
+      </div>
+      <v-btn
+        variant="outlined"
+        size="small"
+        :prepend-icon="mdiKeyVariant"
+        class="community-secrets-btn"
+        @click="openSecrets"
+      >
+        {{ $t('community.mySecrets') }}
+      </v-btn>
     </div>
 
     <!-- Filters -->
@@ -165,17 +176,6 @@
             {{ reportedIds.has(char.id) ? $t('community.reportSent') : $t('community.report') }}
           </v-btn>
           <v-btn
-            v-if="secrets[char.id]"
-            block
-            variant="tonal"
-            color="amber-darken-2"
-            class="char-card-action-btn"
-            :prepend-icon="mdiKeyVariant"
-            @click="openMySecret(char)"
-          >
-            {{ $t('community.mySecret') }}
-          </v-btn>
-          <v-btn
             block
             variant="text"
             color="grey"
@@ -251,25 +251,33 @@
       :data="quickData"
     />
 
-    <!-- Own secret code dialog -->
-    <v-dialog v-model="showMySecret" max-width="460">
+    <!-- My secret codes dialog -->
+    <v-dialog v-model="showSecrets" max-width="520" scrollable>
       <v-card class="secret-card">
-        <v-card-title class="text-h6">{{ $t('community.mySecretTitle') }}</v-card-title>
+        <v-card-title class="text-h6">{{ $t('community.mySecrets') }}</v-card-title>
         <v-card-text>
-          <p class="text-body-2 mb-3">{{ $t('community.mySecretDesc') }}</p>
-          <v-text-field
-            :model-value="mySecretValue"
-            readonly
-            variant="outlined"
-            density="compact"
-            hide-details
-            :append-inner-icon="mdiContentCopy"
-            @click:append-inner="copyMySecret"
-          />
-          <p v-if="mySecretCopied" class="text-caption mt-2">{{ $t('community.copied') }}</p>
+          <p class="text-body-2 mb-3">{{ $t('community.mySecretsDesc') }}</p>
+          <div v-if="secretEntries.length === 0" class="text-body-2 text-medium-emphasis">
+            {{ $t('community.noSecrets') }}
+          </div>
+          <v-list v-else density="compact" class="secret-list">
+            <v-list-item
+              v-for="entry in secretEntries"
+              :key="entry.id"
+              class="secret-item"
+              @click="copySecret(entry)"
+            >
+              <v-list-item-title class="secret-name">{{ entry.name }}</v-list-item-title>
+              <v-list-item-subtitle class="secret-code">{{ entry.secret }}</v-list-item-subtitle>
+              <template #append>
+                <v-icon :icon="copiedId === entry.id ? mdiCheck : mdiContentCopy" size="18"></v-icon>
+              </template>
+            </v-list-item>
+          </v-list>
+          <p v-if="copiedId" class="text-caption mt-2">{{ $t('community.copied') }}</p>
         </v-card-text>
         <v-card-actions class="justify-end">
-          <v-btn variant="text" @click="showMySecret = false">{{ $t('messages.close') }}</v-btn>
+          <v-btn variant="text" @click="showSecrets = false">{{ $t('messages.close') }}</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -314,7 +322,7 @@
 import { ref, onMounted, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useTheme } from 'vuetify'
-import { mdiAccount, mdiEye, mdiEyeOff, mdiKeyVariant, mdiContentCopy } from '@mdi/js'
+import { mdiAccount, mdiEye, mdiEyeOff, mdiKeyVariant, mdiContentCopy, mdiCheck } from '@mdi/js'
 import browserStorage from '@/store/browserStorage'
 import { listCharacters, reportCharacter, deleteCharacter, updateDescription, portraitUrl, fetchPortraitsForImport } from '@/services/communityApi'
 import type { CommunityCharacter } from '@/services/communityApi'
@@ -340,22 +348,38 @@ const filterCulture = ref('')
 const filterConcept = ref('')
 const reportedIds = ref(new Set<string>())
 const secrets = ref(browserStorage.loadPublishedSecrets())
-const showMySecret = ref(false)
-const mySecretValue = ref('')
-const mySecretCopied = ref(false)
+const showSecrets = ref(false)
+const copiedId = ref('')
 
-function openMySecret(char: CommunityCharacter) {
-  mySecretValue.value = secrets.value[char.id] ?? ''
-  mySecretCopied.value = false
-  showMySecret.value = true
+interface SecretEntry {
+  id: string
+  name: string
+  secret: string
 }
 
-async function copyMySecret() {
+const secretEntries = computed<SecretEntry[]>(() =>
+  Object.entries(secrets.value).map(([id, entry]) => {
+    const known = characters.value.find(c => c.id === id)
+    return {
+      id,
+      secret: entry.secret,
+      name: entry.name || known?.character_name || `#${id.slice(0, 8)}`,
+    }
+  }).sort((x, y) => x.name.localeCompare(y.name))
+)
+
+function openSecrets() {
+  secrets.value = browserStorage.loadPublishedSecrets()
+  copiedId.value = ''
+  showSecrets.value = true
+}
+
+async function copySecret(entry: SecretEntry) {
   try {
-    await navigator.clipboard.writeText(mySecretValue.value)
-    mySecretCopied.value = true
+    await navigator.clipboard.writeText(entry.secret)
+    copiedId.value = entry.id
   } catch {
-    mySecretCopied.value = false
+    copiedId.value = ''
   }
 }
 const importedSnack = ref(false)
@@ -427,7 +451,7 @@ function rankLabel(char: CommunityCharacter): string {
 function openEditDesc(char: CommunityCharacter) {
   editDescTarget.value = char
   editDescText.value = char.description ?? ''
-  editDescSecret.value = secrets.value[char.id] ?? ''
+  editDescSecret.value = secrets.value[char.id]?.secret ?? ''
   editDescError.value = ''
   showEditDescSecret.value = false
   showEditDesc.value = true
@@ -450,7 +474,7 @@ async function doEditDesc() {
 
 function openDelete(char: CommunityCharacter) {
   deleteTarget.value = char
-  deleteSecret.value = secrets.value[char.id] ?? ''
+  deleteSecret.value = secrets.value[char.id]?.secret ?? ''
   deleteError.value = ''
   showDeleteSecret.value = false
   showDelete.value = true
@@ -533,6 +557,11 @@ onMounted(load)
 }
 
 .community-tab__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
   padding-bottom: 8px;
 }
 
@@ -684,6 +713,23 @@ onMounted(load)
 /* The app-wide dark card style is 95% opaque; this dialog shows a code and needs a solid background */
 .secret-card.v-card--variant-elevated {
   background-color: rgb(var(--v-theme-surface)) !important;
+}
+
+.secret-name {
+  font-weight: 700;
+}
+
+.secret-code {
+  font-family: monospace;
+  font-size: 0.78rem;
+  opacity: 1 !important;
+  word-break: break-all;
+  white-space: normal !important;
+}
+
+.secret-item {
+  cursor: pointer;
+  border-radius: 6px;
 }
 
 .char-card-quick {

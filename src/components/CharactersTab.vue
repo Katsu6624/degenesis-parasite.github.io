@@ -238,6 +238,7 @@
         <v-card-title class="text-h6">{{ $t('backup.importTitle') }}</v-card-title>
         <v-card-text>
           <p class="mb-3">{{ $t('backup.summary', backupStats) }}</p>
+          <p v-if="backupStats.codes > 0" class="mb-3">{{ $t('backup.summaryCodes', backupStats) }}</p>
           <template v-if="backupStats.conflicts > 0">
             <div class="text-subtitle-2">{{ $t('backup.onConflict') }}</div>
             <v-radio-group v-model="backupOverwrite" hide-details density="compact">
@@ -365,7 +366,7 @@ const appStore = useApplicationStore()
 const backupInput = ref<HTMLInputElement | null>(null)
 const backupDialog = ref(false)
 const backupOverwrite = ref(false)
-const backupStats = ref({ total: 0, fresh: 0, conflicts: 0 })
+const backupStats = ref({ total: 0, fresh: 0, conflicts: 0, codes: 0 })
 const backupSnack = ref(false)
 const backupSnackText = ref('')
 const backupSnackColor = ref('green-darken-2')
@@ -378,8 +379,8 @@ function showBackupMessage(text: string, color = 'green-darken-2') {
 }
 
 function doExport() {
-  const count = exportCollection()
-  showBackupMessage(t('backup.exported', { count }))
+  const { count, codes } = exportCollection()
+  showBackupMessage(codes > 0 ? t('backup.exportedCodes', { count, codes }) : t('backup.exported', { count }))
 }
 
 async function onBackupFile(event: Event) {

@@ -1,5 +1,5 @@
 import browserStorage from '@/store/browserStorage'
-import type { FoldersData } from '@/store/browserStorage'
+import type { FoldersData, PublishedSecret } from '@/store/browserStorage'
 import type { Character } from '@/store/character'
 
 const BACKUP_APP = 'parasite-degenesis'
@@ -11,9 +11,10 @@ export interface CollectionBackup {
   exportedAt: string
   characters: Character[]
   folders: FoldersData
+  publishedSecrets: Record<string, PublishedSecret>
 }
 
-export function exportCollection(): number {
+export function exportCollection(): { count: number; codes: number } {
   const characters = browserStorage.loadAllCharacters().map(({ character }) => character)
   const backup: CollectionBackup = {
     app: BACKUP_APP,
@@ -21,6 +22,7 @@ export function exportCollection(): number {
     exportedAt: new Date().toISOString(),
     characters,
     folders: browserStorage.loadFolders(),
+    publishedSecrets: browserStorage.loadPublishedSecrets(),
   }
   const blob = new Blob([JSON.stringify(backup)], { type: 'application/json' })
   const url = URL.createObjectURL(blob)
@@ -29,7 +31,7 @@ export function exportCollection(): number {
   link.download = `parasite-collection-${backup.exportedAt.slice(0, 10)}.json`
   link.click()
   URL.revokeObjectURL(url)
-  return characters.length
+  return { count: characters.length, codes: Object.keys(backup.publishedSecrets).length }
 }
 
 export function parseBackup(text: string): CollectionBackup {
@@ -46,13 +48,28 @@ export function parseBackup(text: string): CollectionBackup {
     assignments:
       data.folders?.assignments && typeof data.folders.assignments === 'object' ? data.folders.assignments : {},
   }
-  return { app: data.app, version: data.version, exportedAt: data.exportedAt, characters, folders }
+  const publishedSecrets: Record<string, PublishedSecret> = {}
+  const rawSecrets = data.publishedSecrets
+  if (rawSecrets && typeof rawSecrets === 'object') {
+    for (const [id, entry] of Object.entries(rawSecrets as Record<string, unknown>)) {
+      const secret = (entry as PublishedSecret | null)?.secret
+      if (typeof secret === 'string' && secret) {
+        publishedSecrets[id] = { secret, name: String((entry as PublishedSecret).name ?? '') }
+      }
+    }
+  }
+  return { app: data.app, version: data.version, exportedAt: data.exportedAt, characters, folders, publishedSecrets }
 }
 
 export function analyzeBackup(backup: CollectionBackup) {
   const existing = new Set(browserStorage.loadAllCharacters().map(({ name }) => name))
   const conflicts = backup.characters.filter((c) => existing.has(c.name)).length
-  return { total: backup.characters.length, fresh: backup.characters.length - conflicts, conflicts }
+  return {
+    total: backup.characters.length,
+    fresh: backup.characters.length - conflicts,
+    conflicts,
+    codes: Object.keys(backup.publishedSecrets).length,
+  }
 }
 
 // The active character is never overwritten: the editor would save its in-memory copy over the imported one
@@ -79,5 +96,10 @@ export function applyBackup(backup: CollectionBackup, overwrite: boolean, active
     if (!folderData.folders.includes(folder)) folderData.folders.push(folder)
   }
   browserStorage.storeFolders(folderData)
+  // Secret codes already known in this browser are kept, the others are restored
+  const localSecrets = browserStorage.loadPublishedSecrets()
+  for (const [id, entry] of Object.entries(backup.publishedSecrets)) {
+    if (!(id in localSecrets)) browserStorage.storePublishedSecret(id, entry.secret, entry.name)
+  }
   return { imported, skipped }
 }

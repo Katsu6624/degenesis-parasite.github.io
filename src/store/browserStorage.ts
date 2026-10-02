@@ -57,18 +57,32 @@ const storeFoldersEnabled = (value: boolean) => {
 // Secret codes of characters published to the community, kept so their author can edit or delete them later
 const SECRETS_KEY = 'published-secrets'
 
-const loadPublishedSecrets = (): Record<string, string> => {
+export interface PublishedSecret {
+  secret: string
+  name: string
+}
+
+// Older entries were stored as a bare secret string, newer ones as { secret, name }
+const loadPublishedSecrets = (): Record<string, PublishedSecret> => {
   try {
     const parsed = JSON.parse(localStorage.getItem(SECRETS_KEY) || '{}')
-    return parsed && typeof parsed === 'object' ? parsed : {}
+    if (!parsed || typeof parsed !== 'object') return {}
+    const result: Record<string, PublishedSecret> = {}
+    for (const [id, value] of Object.entries(parsed as Record<string, unknown>)) {
+      if (typeof value === 'string') result[id] = { secret: value, name: '' }
+      else if (value && typeof (value as PublishedSecret).secret === 'string') {
+        result[id] = { secret: (value as PublishedSecret).secret, name: String((value as PublishedSecret).name ?? '') }
+      }
+    }
+    return result
   } catch {
     return {}
   }
 }
 
-const storePublishedSecret = (id: string, secret: string) => {
+const storePublishedSecret = (id: string, secret: string, name: string) => {
   const secrets = loadPublishedSecrets()
-  secrets[id] = secret
+  secrets[id] = { secret, name }
   localStorage.setItem(SECRETS_KEY, JSON.stringify(secrets))
 }
 

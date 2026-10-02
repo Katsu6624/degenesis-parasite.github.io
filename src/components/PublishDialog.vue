@@ -124,7 +124,7 @@ async function publish() {
       character: charData,
       portraits: Object.keys(portraits).length ? portraits : undefined,
     })
-    browserStorage.storePublishedSecret(published.id, published.secret)
+    browserStorage.storePublishedSecret(published.id, published.secret, String(char.name ?? ''))
     result.value = published
   } catch (e) {
     error.value = e instanceof Error ? e.message : 'Erreur inconnue'
