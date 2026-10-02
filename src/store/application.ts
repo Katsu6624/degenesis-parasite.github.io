@@ -4,11 +4,13 @@ import { Character } from './character'
 
 export type State = {
   storedCharacters: Map<string, Character>
+  foldersEnabled: boolean
 }
 
 export const useApplicationStore = defineStore('application', {
   state: (): State => ({
-    storedCharacters: loadAllCharacters()
+    storedCharacters: loadAllCharacters(),
+    foldersEnabled: browserStorage.loadFoldersEnabled()
   }),
   getters: {
     getStoredCharacters(): Character[] {
@@ -19,6 +21,10 @@ export const useApplicationStore = defineStore('application', {
     }
   },
   actions: {
+    setFoldersEnabled(value: boolean) {
+      this.foldersEnabled = value
+      browserStorage.storeFoldersEnabled(value)
+    },
     refresh() {
       this.storedCharacters = loadAllCharacters()
     }

@@ -338,7 +338,7 @@ const conceptOptions = computed(() =>
 )
 
 // Folders (local to this browser, stored separately from the characters)
-const foldersEnabled = browserStorage.loadFoldersEnabled()
+const foldersEnabled = computed(() => appStore.foldersEnabled)
 const foldersData = ref(browserStorage.loadFolders())
 const collapsed = ref(new Set<string>())
 
@@ -381,7 +381,7 @@ interface Section {
 const sections = computed<Section[]>(() => {
   const result: Section[] = []
   const list = filteredCharacters.value
-  if (!foldersEnabled) {
+  if (!foldersEnabled.value) {
     return list.length > 0 ? [{ key: 'all', label: '', folder: null, plain: true, chars: list }] : []
   }
   for (const f of foldersData.value.folders) {

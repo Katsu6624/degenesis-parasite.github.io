@@ -47,7 +47,7 @@ const storeFolders = (data: FoldersData) => {
 }
 
 const loadFoldersEnabled = (): boolean => {
-  return localStorage.getItem('preference-folders-enabled') !== 'false'
+  return localStorage.getItem('preference-folders-enabled') === 'true'
 }
 
 const storeFoldersEnabled = (value: boolean) => {

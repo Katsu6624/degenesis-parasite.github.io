@@ -55,11 +55,11 @@
   <div class="pa-1">
     <div class="pa-1 text-subtitle-2">{{ $t('folders.optionTitle') }}</div>
     <v-checkbox
-      v-model="foldersEnabled"
+      :model-value="appStore.foldersEnabled"
       :label="$t('folders.optionLabel')"
       density="compact"
       hide-details
-      @update:model-value="(v: boolean | null) => browserStorage.storeFoldersEnabled(!!v)"
+      @update:model-value="(v: boolean | null) => appStore.setFoldersEnabled(!!v)"
     ></v-checkbox>
     <div class="pa-1 text-caption text-grey-darken-1">{{ $t('folders.optionDescription') }}</div>
   </div>
@@ -81,6 +81,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useCharacterStore } from '@/store'
+import { useApplicationStore } from '@/store/application'
 import browserStorage from '@/store/browserStorage'
 import { mdiTranslate, mdiTranslateOff, mdiWeatherNight, mdiWhiteBalanceSunny } from '@mdi/js'
 import { useI18n } from 'vue-i18n'
@@ -90,7 +91,7 @@ const i18n = useI18n()
 const theme = useTheme()
 
 const currentTheme = ref(theme.global.name.value)
-const foldersEnabled = ref(browserStorage.loadFoldersEnabled())
+const appStore = useApplicationStore()
 const replaySplash = ref(localStorage.getItem('parasite-splash-seen') !== 'true')
 
 function onReplaySplashChange(value: boolean) {
