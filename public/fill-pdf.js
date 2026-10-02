@@ -432,17 +432,14 @@
 
     var page = newPage();
     var y;
-    if (logo) {
-      page.drawPage(logo, { x: (pageWidth - 140) / 2, y: pageHeight - 76, width: 140, height: 60 });
-    }
-    storyHeading(PDFLib, page, font, toPdfSafeText(font, options.title.toUpperCase()), pageHeight - 92, pageWidth, margin, 10);
+    storyHeading(PDFLib, page, font, toPdfSafeText(font, options.title.toUpperCase()), pageHeight - 42, pageWidth, margin, 10);
 
     // "NOM : <character>" on a ruled line, like the sheet fields
     var nameLabel = toPdfSafeText(font, options.nameLabel.toUpperCase());
     var nameLabelWidth = storyTrackedWidth(font, nameLabel, 7, 0.4);
     var blockWidth = 280;
     var blockX = (pageWidth - blockWidth) / 2;
-    var lineY = pageHeight - 124;
+    var lineY = pageHeight - 74;
     storyDrawTracked(page, font, nameLabel, blockX, lineY + 2, 7, ink, 0.4);
     page.drawLine({ start: { x: blockX + nameLabelWidth + 8, y: lineY }, end: { x: blockX + blockWidth, y: lineY }, thickness: 0.55, color: ink });
     if (store.characterName) {
@@ -470,6 +467,13 @@
         page.drawText(lines[l], { x: textLeft, y: y - fontSize, size: fontSize, font: font, color: ink });
         y -= lineHeight;
       }
+    }
+
+    // The Degenesis logo closes the character file: bottom of the last page, above the footer
+    if (logo) {
+      var logoWidth = 140, logoHeight = 60, logoBottom = 56;
+      if (y < logoBottom + logoHeight + 14) page = newPage();
+      page.drawPage(logo, { x: (pageWidth - logoWidth) / 2, y: logoBottom, width: logoWidth, height: logoHeight });
     }
   }
 
