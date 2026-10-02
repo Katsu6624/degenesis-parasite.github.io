@@ -180,17 +180,24 @@
                 ><CardIcon name="report" /></button>
               </template>
             </v-tooltip>
-            <v-tooltip :text="$t('community.editDesc')" location="top">
-              <template #activator="{ props: tp }">
-                <button
-                  v-bind="tp"
-                  type="button"
-                  class="char-icon-btn"
-                  :aria-label="$t('community.editDesc')"
-                  @click="openEditDesc(char)"
-                ><CardIcon name="edit" /></button>
+            <v-menu location="top">
+              <template #activator="{ props: mp }">
+                <v-tooltip :text="$t('community.edit')" location="top">
+                  <template #activator="{ props: tp }">
+                    <button
+                      v-bind="mergeProps(mp, tp)"
+                      type="button"
+                      class="char-icon-btn"
+                      :aria-label="$t('community.edit')"
+                    ><CardIcon name="edit" /></button>
+                  </template>
+                </v-tooltip>
               </template>
-            </v-tooltip>
+              <v-list density="compact">
+                <v-list-item :title="$t('community.editDesc')" @click="openEditDesc(char)"></v-list-item>
+                <v-list-item :title="$t('community.editStory')" @click="openEditStory(char)"></v-list-item>
+              </v-list>
+            </v-menu>
             <v-tooltip :text="$t('community.delete')" location="top">
               <template #activator="{ props: tp }">
                 <button
@@ -261,6 +268,43 @@
       :data="quickData"
     />
 
+    <!-- Edit story dialog -->
+    <v-dialog v-model="showEditStory" max-width="640" persistent scrollable>
+      <v-card class="solid-card">
+        <v-card-title class="text-uppercase label">{{ $t('community.editStoryTitle') }}</v-card-title>
+        <v-card-text>
+          <v-textarea
+            v-model="editStoryText"
+            :label="$t('story.textTitle')"
+            :placeholder="$t('story.placeholder')"
+            variant="outlined"
+            density="compact"
+            maxlength="30000"
+            counter
+            rows="14"
+            class="mb-3"
+          />
+          <v-text-field
+            v-model="editStorySecret"
+            :label="$t('community.deleteSecret')"
+            variant="outlined"
+            density="compact"
+            :type="showEditStorySecret ? 'text' : 'password'"
+            :append-inner-icon="showEditStorySecret ? mdiEyeOff : mdiEye"
+            @click:append-inner="showEditStorySecret = !showEditStorySecret"
+          />
+          <p class="text-caption text-medium-emphasis">{{ $t('community.editStoryHint') }}</p>
+          <v-alert v-if="editStoryError" type="error" density="compact" class="mt-2">{{ editStoryError }}</v-alert>
+        </v-card-text>
+        <v-card-actions class="justify-end">
+          <v-btn variant="text" @click="showEditStory = false">{{ $t('messages.close') }}</v-btn>
+          <v-btn color="red-darken-2" variant="flat" :loading="editStoryLoading" :disabled="!editStorySecret.trim()" @click="doEditStory">
+            {{ $t('community.editDescSave') }}
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
     <!-- My secret codes dialog -->
     <v-dialog v-model="showSecrets" max-width="520" scrollable>
       <v-card class="secret-card">
@@ -329,12 +373,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, mergeProps } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useTheme } from 'vuetify'
 import { mdiAccount, mdiEye, mdiEyeOff, mdiKeyVariant, mdiContentCopy, mdiCheck } from '@mdi/js'
 import browserStorage from '@/store/browserStorage'
-import { listCharacters, reportCharacter, deleteCharacter, updateDescription, portraitUrl, fetchPortraitsForImport } from '@/services/communityApi'
+import { listCharacters, reportCharacter, deleteCharacter, updateDescription, updateStory, portraitUrl, fetchPortraitsForImport } from '@/services/communityApi'
 import type { CommunityCharacter } from '@/services/communityApi'
 import LegacyChips from './LegacyChips.vue'
 import CharacterQuickView from './CharacterQuickView.vue'
@@ -466,6 +510,44 @@ function openEditDesc(char: CommunityCharacter) {
   editDescError.value = ''
   showEditDescSecret.value = false
   showEditDesc.value = true
+}
+
+const showEditStory = ref(false)
+const editStoryTarget = ref<CommunityCharacter | null>(null)
+const editStoryText = ref('')
+const editStorySecret = ref('')
+const editStoryLoading = ref(false)
+const editStoryError = ref('')
+const showEditStorySecret = ref(false)
+
+function openEditStory(char: CommunityCharacter) {
+  editStoryTarget.value = char
+  const story = charData(char).story
+  editStoryText.value = typeof story === 'string' ? story : ''
+  editStorySecret.value = secrets.value[char.id]?.secret ?? ''
+  editStoryError.value = ''
+  showEditStorySecret.value = false
+  showEditStory.value = true
+}
+
+async function doEditStory() {
+  const target = editStoryTarget.value
+  if (!target || !editStorySecret.value.trim()) return
+  editStoryLoading.value = true
+  editStoryError.value = ''
+  try {
+    const story = editStoryText.value.trim()
+    await updateStory(target.id, editStorySecret.value.trim(), story)
+    const data = charData(target)
+    if (story) data.story = story
+    else delete data.story
+    target.character_data = JSON.stringify(data)
+    showEditStory.value = false
+  } catch (e) {
+    editStoryError.value = e instanceof Error ? e.message : 'Erreur'
+  } finally {
+    editStoryLoading.value = false
+  }
 }
 
 async function doEditDesc() {
@@ -748,7 +830,8 @@ onMounted(load)
 }
 
 /* The app-wide dark card style is 95% opaque; this dialog shows a code and needs a solid background */
-.secret-card.v-card--variant-elevated {
+.secret-card.v-card--variant-elevated,
+.solid-card.v-card--variant-elevated {
   background-color: rgb(var(--v-theme-surface)) !important;
 }
 

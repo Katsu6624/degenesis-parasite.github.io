@@ -81,6 +81,18 @@ export async function updateDescription(id: string, secret: string, description:
   }
 }
 
+export async function updateStory(id: string, secret: string, story: string): Promise<void> {
+  const res = await fetch(`${API_URL}/api/characters/${id}/story`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ secret, story }),
+  })
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}))
+    throw new Error((data as { error?: string }).error ?? 'Erreur')
+  }
+}
+
 export async function deleteCharacter(id: string, secret: string): Promise<void> {
   await fetch(`${API_URL}/api/characters/${id}`, {
     method: 'DELETE',

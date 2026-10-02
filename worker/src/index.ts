@@ -204,6 +204,25 @@ export default {
       return json({ ok: true }, 200, env)
     }
 
+    // PATCH /api/characters/:id/story (the story lives inside the character_data JSON)
+    const matchStory = path.match(/^\/api\/characters\/([a-f0-9]+)\/story$/)
+    if (method === 'PATCH' && matchStory) {
+      const charId = matchStory[1]
+      let body: { secret: string; story: string }
+      try { body = await request.json() } catch { return err('Invalid JSON', 400, env) }
+      if (!body.secret) return err('Secret requis', 400, env)
+      const hash = await hashSecret(body.secret)
+      const row = await env.DB.prepare('SELECT secret_hash, character_data FROM characters WHERE id = ?').bind(charId).first<{ secret_hash: string; character_data: string }>()
+      if (!row || row.secret_hash !== hash) return err('Non autorisé', 403, env)
+      let charData: Record<string, unknown>
+      try { charData = JSON.parse(row.character_data) } catch { return err('Données invalides', 500, env) }
+      const story = (typeof body.story === 'string' ? body.story : '').trim().slice(0, 30000)
+      if (story) charData.story = story
+      else delete charData.story
+      await env.DB.prepare('UPDATE characters SET character_data = ? WHERE id = ?').bind(JSON.stringify(charData), charId).run()
+      return json({ ok: true }, 200, env)
+    }
+
     // DELETE /api/characters/:id (admin ou auteur)
     const matchDelete = path.match(/^\/api\/characters\/([a-f0-9]+)$/)
     if (method === 'DELETE' && matchDelete) {
