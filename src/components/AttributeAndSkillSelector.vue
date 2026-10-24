@@ -3,7 +3,7 @@
     :name="attribute.name"
     :label="localizeAttributeName(attribute).toUpperCase()"
     :value="store.attributeValue(attribute)"
-    :max="store.attributeMax(attribute)"
+    :max="attributeMaxProp(attribute)"
     :bonus="store.legacyAttributeExceedsMaxBonus(attribute.name)"
     :min="attributeMin()"
     @change="(v) => store.setAttribute(attribute, v)"
@@ -24,7 +24,7 @@
       :name="skill.name"
       :label="localizeSkillName(skill)"
       :value="store.skillValue(skill)"
-      :max="store.skillMax(skill) - store.legacySkillStaticBonus(skill.name)"
+      :max="skillMaxProp(skill)"
       :min="skillMin()"
       :bonus="skillDisplayBonus(skill)"
       :active="store.isActiveSkill(skill) && (!(store.hasGifted && store.giftedRemaining > 0) || isGiftedSkill(skill))"
@@ -88,6 +88,24 @@ const isGiftedSkill = (skill: Skill): boolean =>
   GIFTED_ATTRIBUTES.includes(skill.attribute.name)
 
 const skillCount = (_skill: Skill): number => 6
+
+// In expert mode the limits must not apply: with a legacy bonus shown after the filled boxes, the boxes
+// are ignored once past `max`, so `max` is stretched to leave room for the bonus within the 6 boxes.
+const BOX_COUNT = 6
+
+const attributeMaxProp = (attribute: Attribute): number => {
+  const normal = store.attributeMax(attribute)
+  if (store.editorMode !== EditorMode.Free) return normal
+  const bonus = store.legacyAttributeExceedsMaxBonus(attribute.name)
+  return bonus > 0 ? Math.max(normal, BOX_COUNT - bonus) : normal
+}
+
+const skillMaxProp = (skill: Skill): number => {
+  const normal = store.skillMax(skill) - store.legacySkillStaticBonus(skill.name)
+  if (store.editorMode !== EditorMode.Free) return normal
+  const bonus = skillDisplayBonus(skill)
+  return bonus > 0 ? Math.max(normal, skillCount(skill) - bonus) : normal
+}
 
 const skillDisplayBonus = (skill: Skill): number => {
   const total = store.legacySkillBonus(skill.name)
